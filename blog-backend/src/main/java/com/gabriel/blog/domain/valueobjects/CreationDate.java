@@ -1,10 +1,16 @@
 package com.gabriel.blog.domain.valueobjects;
 
-import java.time.LocalDateTime;
+import com.gabriel.blog.domain.Assertions;
 
-public record CreationDate(LocalDateTime date) {
+import java.time.LocalDate;
+
+public record CreationDate(LocalDate value) implements Assertions {
+
+	public CreationDate {
+		nonNull(value, "Tried to create a CreationDate with a null value");
+	}
 
 	public static CreationDate now() {
-		return new CreationDate(LocalDateTime.now());
+		return new CreationDate(LocalDate.now());
 	}
 }
