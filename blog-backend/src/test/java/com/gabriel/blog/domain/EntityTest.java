@@ -27,6 +27,9 @@ class EntityTest {
 		final var testEntity3 = new TestEntity(new Id("any"));
 
 		assertEquals(testEntity, testEntity3);
+		assertEquals(testEntity, testEntity);
+		assertNotEquals(testEntity, "any type");
+		assertNotEquals(testEntity, null);
 		assertNotEquals(testEntity, testEntity2);
 	}
 
