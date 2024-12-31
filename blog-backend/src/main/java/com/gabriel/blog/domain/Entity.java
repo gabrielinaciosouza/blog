@@ -1,11 +1,10 @@
 package com.gabriel.blog.domain;
 
-import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Id;
 
 import java.util.Objects;
 
-public abstract class Entity {
+public abstract class Entity implements Assertions {
 
 	private final Id id;
 
@@ -15,13 +14,6 @@ public abstract class Entity {
 
 	public Id getId() {
 		return id;
-	}
-
-	protected static <T> T nonNull(final T obj, final String message) {
-		if (obj == null) {
-			throw new DomainException(message);
-		}
-		return obj;
 	}
 
 	@Override
