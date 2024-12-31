@@ -38,6 +38,6 @@ class PostTest {
 	@Test
 	void shouldCreateCorrectToString() {
 		final var post = new Post(id, title, content, creationDate);
-		assertEquals("Post{id=Id[value=any id]title=Title[value=any title], content=Content[content=any content], creationDate=" + creationDate + "}", post.toString());
+		assertEquals("Post{id=Id[value=any id]title=Title[value=any title], content=Content[value=any content], creationDate=" + creationDate + "}", post.toString());
 	}
 }
