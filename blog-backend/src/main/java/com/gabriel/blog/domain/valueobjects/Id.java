@@ -1,4 +1,10 @@
 package com.gabriel.blog.domain.valueobjects;
 
-public record Id(String value) {
+import com.gabriel.blog.domain.Assertions;
+
+public record Id(String value) implements Assertions {
+
+	public Id {
+		nonNull(value, "Id cannot be null");
+	}
 }
