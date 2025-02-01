@@ -1,10 +1,16 @@
 package com.gabriel.blog.domain.valueobjects;
 
-import com.gabriel.blog.domain.Assertions;
+import com.gabriel.blog.domain.AbstractValueObject;
 
-public record Id(String value) implements Assertions {
+public class Id extends AbstractValueObject {
 
-	public Id {
-		nonNull(value, "Tried to create an id with a null value");
+	private final String value;
+
+	public Id(final String value) {
+		this.value = nonNull(value, "Tried to create an id with a null value");
+	}
+
+	public String getValue() {
+		return value;
 	}
 }

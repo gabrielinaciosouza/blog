@@ -1,10 +1,13 @@
 package com.gabriel.blog.domain.valueobjects;
 
-import com.gabriel.blog.domain.Assertions;
+import com.gabriel.blog.domain.AbstractValueObject;
 
-public record Content(String value) implements Assertions {
+public class Content extends AbstractValueObject {
 
-	public Content {
-		nonNull(value, "Tried to create a Content with a null value");
-	}
+    final String value;
+
+    public Content(final String value) {
+        this.value = nonNull(value, "Tried to create a Content with a null value");
+    }
+
 }

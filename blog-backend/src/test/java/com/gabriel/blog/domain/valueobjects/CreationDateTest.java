@@ -21,6 +21,6 @@ class CreationDateTest {
 	@Test
 	void shouldCreateCorrectCreationDateNow() {
 		assertDoesNotThrow(() -> new CreationDate(LocalDate.now()));
-		assertEquals(LocalDate.now(), CreationDate.now().value());
+		assertEquals(LocalDate.now(), CreationDate.now().getValue());
 	}
 }
