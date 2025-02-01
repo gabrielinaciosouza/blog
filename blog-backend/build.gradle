@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id 'checkstyle'
+    id 'jacoco'
 }
 
 repositories {
@@ -54,6 +55,34 @@ tasks.withType(Checkstyle).configureEach {
         xml.required = false
         html.required = true
         html.outputLocation = file("${rootProject.projectDir}/build/reports/checkstyle.html")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test, compileQuarkusGeneratedSourcesJava
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.9
+            }
+        }
     }
 }
 
