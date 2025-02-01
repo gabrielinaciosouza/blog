@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id 'checkstyle'
 }
 
 repositories {
@@ -39,3 +40,21 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+checkstyle {
+    toolVersion = '10.21.2'
+    configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+    showViolations = true
+    configProperties['checkstyle.suppressions.file'] = file('config/checkstyle/checkstyle-suppressions.xml')
+}
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+        html.outputLocation = file("${rootProject.projectDir}/build/reports/checkstyle.html")
+    }
+}
+
+check.dependsOn checkstyleMain, checkstyleTest
