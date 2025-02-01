@@ -3,7 +3,7 @@ name: Build Project
 on:
   pull_request:
     paths:
-      - 'blog/blog-backend/**'
+      - 'blog-backend/**'
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'adoptopenjdk'
-
+        
       # Step 3: Cache Gradle dependencies
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
@@ -33,11 +33,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Step 4: Run Gradle build
+      # Step 4: Navigate to bakcend
+      - name: Navigate to backend directory
+        run: cd blog-backend
+
+      # Step 5: Run Gradle build
       - name: Run Gradle build
         run: ./gradlew build --no-daemon
 
-      # Step 5: Archive Checkstyle and Jacoco reports
+      # Step 6: Archive Checkstyle and Jacoco reports
       - name: Archive Checkstyle and Jacoco reports
         uses: actions/upload-artifact@v4
         with:
