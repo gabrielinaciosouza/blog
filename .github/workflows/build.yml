@@ -45,5 +45,5 @@ jobs:
         with:
           name: reports
           path: |
-            blog/blog-backend/build/reports/checkstyle/checkstyle.xml
-            blog/blog-backend/build/reports/jacoco/test/html/index.html
+            ./blog-backend/build/reports/checkstyle/checkstyle.xml
+            ./blog-backend/build/reports/jacoco/test/html/index.html
