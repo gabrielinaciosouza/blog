@@ -2,8 +2,8 @@ name: Build Project
 
 on:
   pull_request:
-    paths:
-      - 'blog-backend/**'
+    branches: [ "main" ]
+
 
 jobs:
   build:
