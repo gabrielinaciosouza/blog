@@ -9,24 +9,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-backend
 
     steps:
-      # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Java (using Gradle wrapper)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'graalvm'
         
-      # Step 3: Cache Gradle dependencies
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
-          # Gradle caches
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
@@ -34,15 +33,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Step 4: Navigate to bakcend
-      - name: Navigate to backend directory
-        run: cd blog-backend
 
-      # Step 5: Run Gradle build
+      - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
       - name: Run Gradle build
         run: ./gradlew build --no-daemon
 
-      # Step 6: Archive Checkstyle and Jacoco reports
       - name: Archive Checkstyle and Jacoco reports
         uses: actions/upload-artifact@v4
         with:
