@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'adoptopenjdk'
+          distribution: 'graalvm'
         
       # Step 3: Cache Gradle dependencies
       - name: Cache Gradle dependencies
