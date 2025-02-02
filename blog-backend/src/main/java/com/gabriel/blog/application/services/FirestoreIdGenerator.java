@@ -1,4 +1,4 @@
-package com.gabriel.blog.businessrules.services;
+package com.gabriel.blog.application.services;
 
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.services.IdGenerator;

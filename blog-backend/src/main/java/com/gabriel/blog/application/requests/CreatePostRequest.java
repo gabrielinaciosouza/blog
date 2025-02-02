@@ -1,4 +1,4 @@
-package com.gabriel.blog.businessrules.requests;
+package com.gabriel.blog.application.requests;
 
 import com.gabriel.blog.domain.entities.Post;
 

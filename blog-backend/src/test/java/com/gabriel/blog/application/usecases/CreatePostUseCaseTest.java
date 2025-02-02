@@ -1,4 +1,4 @@
-package com.gabriel.blog.businessrules.usecases;
+package com.gabriel.blog.application.usecases;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,8 +8,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.gabriel.blog.businessrules.repositories.PostRepository;
-import com.gabriel.blog.businessrules.requests.CreatePostRequest;
+import com.gabriel.blog.application.repositories.PostRepository;
+import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.services.IdGenerator;
 import org.junit.jupiter.api.BeforeEach;

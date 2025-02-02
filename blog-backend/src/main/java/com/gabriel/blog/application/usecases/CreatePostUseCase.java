@@ -1,8 +1,8 @@
-package com.gabriel.blog.businessrules.usecases;
+package com.gabriel.blog.application.usecases;
 
-import com.gabriel.blog.businessrules.repositories.PostRepository;
-import com.gabriel.blog.businessrules.requests.CreatePostRequest;
-import com.gabriel.blog.businessrules.responses.CreatePostResponse;
+import com.gabriel.blog.application.repositories.PostRepository;
+import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.gabriel.blog.application.responses.CreatePostResponse;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.services.IdGenerator;
 import com.gabriel.blog.domain.valueobjects.Content;

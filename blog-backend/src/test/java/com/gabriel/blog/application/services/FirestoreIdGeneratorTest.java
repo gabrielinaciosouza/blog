@@ -1,4 +1,4 @@
-package com.gabriel.blog.businessrules.services;
+package com.gabriel.blog.application.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
