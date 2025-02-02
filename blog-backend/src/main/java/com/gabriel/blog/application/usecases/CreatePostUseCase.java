@@ -9,6 +9,7 @@ import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Title;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * The {@link CreatePostUseCase} class is responsible for handling the creation of a new blog post.
@@ -22,6 +23,7 @@ import com.gabriel.blog.domain.valueobjects.Title;
  * the transformation of input data (from {@link CreatePostRequest} to {@link Post})
  * and the interaction with the repository to store the new post.</p>
  */
+@ApplicationScoped
 public class CreatePostUseCase {
 
   private static final String POSTS_DOMAIN = "posts";
