@@ -8,16 +8,42 @@ import com.google.cloud.firestore.Firestore;
 import java.util.concurrent.ExecutionException;
 import org.jboss.logging.Logger;
 
+/**
+ * Implementation of {@link PostRepository} that stores posts in Google Firestore.
+ *
+ * <p>This repository is responsible for persisting blog posts using Firestore.
+ * It converts the domain {@link Post} entity into a {@link PostModel},
+ * which is a Firestore-compatible data model, and saves it in the "posts" collection.
+ * </p>
+ *
+ * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
+ */
 public class FirestorePostRepository implements PostRepository {
 
   private static final Logger logger = Logger.getLogger(FirestorePostRepository.class);
   private static final String COLLECTION_NAME = "posts";
   private final Firestore firestore;
 
+  /**
+   * Constructs a new {@link FirestorePostRepository} with the provided Firestore instance.
+   *
+   * @param firestore the Firestore database connection; must not be {@code null}.
+   */
   public FirestorePostRepository(final Firestore firestore) {
     this.firestore = firestore;
   }
 
+  /**
+   * Saves a given {@link Post} into Firestore.
+   *
+   * <p>This method converts the domain {@link Post} entity into a {@link PostModel}
+   * and persists it in the "posts" collection of Firestore. If the operation fails,
+   * it logs the error and throws a {@link RepositoryException}.
+   * </p>
+   *
+   * @param post the blog post to be saved; must not be {@code null}.
+   * @throws RepositoryException if the save operation fails due to an execution or interruption error.
+   */
   @Override
   public void save(final Post post) {
     try {
