@@ -32,6 +32,17 @@ public class PostModel {
     this.creationDate = post.getCreationDate().toString();
   }
 
+  /**
+   * Constructs a {@link PostModel} from a given input fields.
+   */
+  public PostModel(final String postId, final String title, final String content,
+                   final String creationDate) {
+    this.postId = postId;
+    this.title = title;
+    this.content = content;
+    this.creationDate = creationDate;
+  }
+
   public String getPostId() {
     return postId;
   }
