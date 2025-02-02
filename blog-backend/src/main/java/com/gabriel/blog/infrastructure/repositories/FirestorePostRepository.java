@@ -50,8 +50,7 @@ public class FirestorePostRepository implements PostRepository {
   public void save(final Post post) {
     try {
       firestore.collection(COLLECTION_NAME)
-          .document(post.getId().getValue())
-          .set(new PostModel(post))
+          .document(post.getId().getValue()).set(PostModel.from(post))
           .get();
       logger.info("Post with id " + post.getId().getValue() + " saved successfully");
     } catch (final InterruptedException | ExecutionException e) {

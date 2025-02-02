@@ -9,15 +9,18 @@ import com.gabriel.blog.domain.entities.Post;
  */
 public class PostModel {
 
-  private String postId;
   private String title;
   private String content;
   private String creationDate;
 
   /**
-   * Default constructor required by Firestore for deserialization.
+   * Constructs a {@link PostModel} from a given input fields.
    */
-  public PostModel() {
+  public PostModel(final String title, final String content,
+                   final String creationDate) {
+    this.title = title;
+    this.content = content;
+    this.creationDate = creationDate;
   }
 
   /**
@@ -25,30 +28,11 @@ public class PostModel {
    *
    * @param post the domain entity to convert into a Firestore-compatible model.
    */
-  public PostModel(final Post post) {
-    this.postId = post.getId().getValue();
-    this.title = post.getTitle().getValue();
-    this.content = post.getContent().getValue();
-    this.creationDate = post.getCreationDate().toString();
-  }
-
-  /**
-   * Constructs a {@link PostModel} from a given input fields.
-   */
-  public PostModel(final String postId, final String title, final String content,
-                   final String creationDate) {
-    this.postId = postId;
-    this.title = title;
-    this.content = content;
-    this.creationDate = creationDate;
-  }
-
-  public String getPostId() {
-    return postId;
-  }
-
-  public void setPostId(final String postId) {
-    this.postId = postId;
+  public static PostModel from(final Post post) {
+    return new PostModel(
+        post.getTitle().getValue(),
+        post.getContent().getValue(),
+        post.getCreationDate().toString());
   }
 
   public String getTitle() {
@@ -63,15 +47,4 @@ public class PostModel {
     return content;
   }
 
-  public void setContent(final String content) {
-    this.content = content;
-  }
-
-  public String getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(final String creationDate) {
-    this.creationDate = creationDate;
-  }
 }
