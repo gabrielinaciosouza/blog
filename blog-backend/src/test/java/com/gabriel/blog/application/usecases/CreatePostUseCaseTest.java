@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.domain.entities.Post;
@@ -72,5 +73,13 @@ class CreatePostUseCaseTest {
         assertThrows(RuntimeException.class, () -> createPostUseCase.create(createPostRequest));
 
     assertEquals("Repository error", exception.getMessage());
+  }
+
+  @Test
+  void shouldThrowValidationErrorWhenRequestIsNull() {
+    final var exception =
+        assertThrows(ValidationException.class, () -> createPostUseCase.create(null));
+
+    assertEquals("Tried to create a Post with null request", exception.getMessage());
   }
 }

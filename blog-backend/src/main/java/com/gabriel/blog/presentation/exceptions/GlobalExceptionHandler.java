@@ -1,5 +1,6 @@
 package com.gabriel.blog.presentation.exceptions;
 
+import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import jakarta.ws.rs.core.MediaType;
@@ -32,6 +33,10 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
       case final DomainException domainException -> Response.status(422)
           .type(MediaType.APPLICATION_JSON)
           .entity(new ErrorResponse("Domain error", domainException.getMessage()))
+          .build();
+      case final ValidationException validationException -> Response.status(400)
+          .type(MediaType.APPLICATION_JSON)
+          .entity(new ErrorResponse("Validation error", validationException.getMessage()))
           .build();
       default -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)
           .type(MediaType.APPLICATION_JSON)

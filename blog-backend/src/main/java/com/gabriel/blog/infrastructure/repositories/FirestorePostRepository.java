@@ -5,6 +5,7 @@ import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.firestore.Firestore;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.concurrent.ExecutionException;
 import org.jboss.logging.Logger;
 
@@ -18,6 +19,7 @@ import org.jboss.logging.Logger;
  *
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  */
+@ApplicationScoped
 public class FirestorePostRepository implements PostRepository {
 
   private static final Logger logger = Logger.getLogger(FirestorePostRepository.class);

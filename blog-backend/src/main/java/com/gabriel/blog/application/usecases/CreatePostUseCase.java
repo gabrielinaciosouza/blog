@@ -1,5 +1,6 @@
 package com.gabriel.blog.application.usecases;
 
+import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.responses.CreatePostResponse;
@@ -10,6 +11,7 @@ import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Title;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.Objects;
 
 /**
  * The {@link CreatePostUseCase} class is responsible for handling the creation of a new blog post.
@@ -60,6 +62,10 @@ public class CreatePostUseCase {
    * @return a {@link CreatePostResponse} containing the information of the newly created post.
    */
   public CreatePostResponse create(final CreatePostRequest postRequest) {
+    if (Objects.isNull(postRequest)) {
+      throw new ValidationException("Tried to create a Post with null request");
+    }
+
     final var title = new Title(postRequest.title());
     final var content = new Content(postRequest.content());
     final var post =
