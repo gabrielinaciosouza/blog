@@ -38,7 +38,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Run Gradle build
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --no-daemon --stacktrace --info
 
       - name: Archive Checkstyle and Jacoco reports
         uses: actions/upload-artifact@v4
@@ -47,3 +47,10 @@ jobs:
           path: |
             ./blog-backend/build/reports
             ./blog-backend/build/jacocoHtml
+      
+      - name: Upload test reports
+      if: failure() 
+      uses: actions/upload-artifact@v4
+      with:
+        name: reports
+        path: ./blog-backend/build/reports
