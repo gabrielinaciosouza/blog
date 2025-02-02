@@ -17,7 +17,7 @@ public abstract class AbstractValueObject implements DomainObject {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     return isEquals(obj);
   }
 
@@ -27,7 +27,7 @@ public abstract class AbstractValueObject implements DomainObject {
   }
 
   @Override
-  public boolean isEquals(Object object) {
+  public boolean isEquals(final Object object) {
     return reflectionEquals(this, object, excludeFieldsFromEquality());
   }
 

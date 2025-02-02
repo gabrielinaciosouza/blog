@@ -77,7 +77,7 @@ class AbstractEntityTest {
       this.age = 0;
     }
 
-    public TestAbstractEntity(final Id id, final String name, int age) {
+    public TestAbstractEntity(final Id id, final String name, final int age) {
       super(id);
       this.name = name;
       this.age = age;

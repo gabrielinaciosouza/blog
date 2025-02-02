@@ -26,7 +26,7 @@ public abstract class AbstractEntity implements DomainObject {
   }
 
   @Override
-  public boolean isEquals(Object o) {
+  public boolean isEquals(final Object o) {
     if (this == o) {
       return true;
     }
@@ -48,7 +48,7 @@ public abstract class AbstractEntity implements DomainObject {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     return isEquals(obj);
   }
 
