@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.gabriel.blog.domain.abstractions.AbstractEntity;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.fixtures.IdFixture;

@@ -1,6 +1,6 @@
 package com.gabriel.blog.domain.entities;
 
-import com.gabriel.blog.domain.AbstractEntity;
+import com.gabriel.blog.domain.abstractions.AbstractEntity;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;

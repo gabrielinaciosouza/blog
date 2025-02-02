@@ -1,6 +1,6 @@
 package com.gabriel.blog.domain.valueobjects;
 
-import com.gabriel.blog.domain.AbstractValueObject;
+import com.gabriel.blog.domain.abstractions.AbstractValueObject;
 import com.gabriel.blog.domain.exceptions.DomainException;
 
 /**

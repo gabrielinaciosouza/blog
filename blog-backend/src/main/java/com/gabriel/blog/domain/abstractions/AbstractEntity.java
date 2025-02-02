@@ -1,4 +1,4 @@
-package com.gabriel.blog.domain;
+package com.gabriel.blog.domain.abstractions;
 
 import com.gabriel.blog.domain.valueobjects.Id;
 import java.util.Objects;

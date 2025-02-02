@@ -1,4 +1,4 @@
-package com.gabriel.blog.domain;
+package com.gabriel.blog.domain.abstractions;
 
 import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
