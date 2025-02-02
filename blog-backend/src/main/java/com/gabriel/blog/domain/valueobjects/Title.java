@@ -23,4 +23,8 @@ public class Title extends AbstractValueObject {
   public Title(final String value) {
     this.value = nonNull(value, "Tried to create a Title with a null value");
   }
+
+  public String getValue() {
+    return value;
+  }
 }

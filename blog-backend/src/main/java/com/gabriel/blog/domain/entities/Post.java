@@ -36,4 +36,16 @@ public class Post extends AbstractEntity {
     this.content = nonNull(content, "Tried to create a Post with a null content");
     this.creationDate = nonNull(creationDate, "Tried to create a Post with a null creationDate");
   }
+
+  public Title getTitle() {
+    return title;
+  }
+
+  public Content getContent() {
+    return content;
+  }
+
+  public CreationDate getCreationDate() {
+    return creationDate;
+  }
 }

@@ -22,4 +22,8 @@ public class Content extends AbstractValueObject {
   public Content(final String value) {
     this.value = nonNull(value, "Tried to create a Content with a null value");
   }
+
+  public String getValue() {
+    return value;
+  }
 }

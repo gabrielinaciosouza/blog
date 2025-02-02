@@ -1,6 +1,5 @@
 package com.gabriel.blog.domain;
 
-import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Id;
 import java.util.Objects;
 
@@ -18,11 +17,16 @@ public abstract class AbstractEntity implements DomainObject {
    * Constructs a new entity with the given identifier.
    *
    * @param id the unique identifier of the entity; must not be {@code null}
-   * @throws DomainException if {@code id} is {@code null}
+   *           * @throws DomainException if {@code id} is {@code null}
    */
   protected AbstractEntity(final Id id) {
     this.id = nonNull(id, "Tried to create an Entity with a null id");
+
     logger().info("Created new entity with id: " + id.getValue());
+  }
+
+  public Id getId() {
+    return id;
   }
 
   @Override
@@ -33,7 +37,7 @@ public abstract class AbstractEntity implements DomainObject {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AbstractEntity entity = (AbstractEntity) o;
+    final AbstractEntity entity = (AbstractEntity) o;
     return Objects.equals(id, entity.id);
   }
 

@@ -9,11 +9,12 @@ import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Title;
+import com.gabriel.blog.fixtures.IdFixture;
 import org.junit.jupiter.api.Test;
 
 class PostTest {
 
-  private static final Id id = new Id("any id");
+  private static final Id id = IdFixture.withId("any");
   private static final Title title = new Title("any title");
   private static final Content content = new Content("any content");
   private static final CreationDate creationDate = CreationDate.now();
@@ -45,11 +46,9 @@ class PostTest {
     final var post = new Post(id, title, content, creationDate);
     assertEquals(
         "Post {\"content\":\"Content {\\\"value\\\":\\\"any content\\\"}\","
-            + "\"creationDate\":\"CreationDate {\\\"value\\\":\\\""
-            +
-            creationDate.getValue()
-            + "\\\"}\",\"title\":\"Title {\\\"value\\\":\\\"any title\\\"}\","
-            + "\"id\":\"Id {\\\"value\\\":\\\"any id\\\"}\"}",
+            + "\"creationDate\":\"" + creationDate
+            + "\",\"title\":\"Title {\\\"value\\\":\\\"any title\\\"}\","
+            + "\"id\":\"Id {\\\"value\\\":\\\"any\\\"}\"}",
         post.toString());
   }
 }

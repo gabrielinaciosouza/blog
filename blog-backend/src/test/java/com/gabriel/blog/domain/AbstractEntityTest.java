@@ -7,14 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Id;
+import com.gabriel.blog.fixtures.IdFixture;
 import java.util.HashSet;
 import org.junit.jupiter.api.Test;
 
 
 class AbstractEntityTest {
 
-  private static final Id ID = new Id("any");
-  private static final Id ID2 = new Id("any2");
+  private static final Id ID = IdFixture.withId("any");
+  private static final Id ID2 = IdFixture.withId("any2");
 
   @Test
   void shouldCreateCorrectEntity() {
