@@ -16,8 +16,6 @@ import org.jboss.logging.Logger;
 @Provider
 public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
 
-  private final Logger logger = Logger.getLogger(GlobalExceptionHandler.class);
-
   /**
    * Handles custom and generic exceptions, returning appropriate responses.
    *
@@ -26,8 +24,6 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
    */
   @Override
   public Response toResponse(final Throwable exception) {
-
-    logger.error("Error: " + exception.getMessage(), exception);
 
     return switch (exception) {
       case final RepositoryException repositoryException ->

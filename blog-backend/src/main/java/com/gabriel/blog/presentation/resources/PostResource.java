@@ -8,6 +8,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.ResponseStatus;
 
 /**
  * Controller class for handling post-related operations.
@@ -38,6 +39,7 @@ public class PostResource {
    * @return The response containing the created post details.
    */
   @POST
+  @ResponseStatus(201)
   public CreatePostResponse create(final CreatePostRequest request) {
     return createPostUseCase.create(request);
   }
