@@ -50,10 +50,10 @@ class CreatePostUseCaseTest {
 
 
     assertNotNull(response);
-    assertEquals(generatedId, response.getPostId());
-    assertEquals(title, response.getTitle());
-    assertEquals(content, response.getContent());
-    assertNotNull(response.getCreationDate());
+    assertEquals(generatedId, response.postId());
+    assertEquals(title, response.title());
+    assertEquals(content, response.content());
+    assertNotNull(response.creationDate());
   }
 
   @Test
