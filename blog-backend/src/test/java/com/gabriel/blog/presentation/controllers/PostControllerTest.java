@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.gabriel.blog.application.requests.CreatePostRequest;
-import com.gabriel.blog.fixtures.PostFixture;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
@@ -18,7 +17,6 @@ class PostControllerTest {
 
   @Test
   void shouldCreatePost() {
-    final var postRequest = PostFixture.postRequest();
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
@@ -29,8 +27,8 @@ class PostControllerTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
         .body("postId", notNullValue())
-        .body("title", equalTo(postRequest.title()))
-        .body("content", equalTo(postRequest.content()))
+        .body("title", equalTo("title"))
+        .body("content", equalTo("content"))
         .body("creationDate", equalTo(LocalDate.now().toString()));
   }
 
