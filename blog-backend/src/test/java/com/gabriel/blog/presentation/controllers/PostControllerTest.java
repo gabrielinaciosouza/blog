@@ -6,14 +6,14 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.fixtures.PostFixture;
-import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
 import jakarta.ws.rs.core.MediaType;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
+@QuarkusIntegrationTest
 class PostControllerTest {
 
   @Test
