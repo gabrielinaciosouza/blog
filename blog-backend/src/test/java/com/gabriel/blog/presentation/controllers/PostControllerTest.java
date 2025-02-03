@@ -22,7 +22,7 @@ class PostControllerTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(postRequest)
+        .body(new CreatePostRequest("title", "content"))
         .post("/posts")
         .then()
         .log()
