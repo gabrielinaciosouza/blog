@@ -3,11 +3,13 @@ package com.gabriel.blog.presentation.controllers;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.responses.CreatePostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
+import com.gabriel.blog.presentation.exceptions.GlobalExceptionHandler;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
 /**
@@ -19,7 +21,6 @@ import org.jboss.logging.Logger;
 @Consumes(MediaType.APPLICATION_JSON)
 public class PostController {
 
-  private final Logger logger = Logger.getLogger(PostController.class);
   private final CreatePostUseCase createPostUseCase;
 
   /**
@@ -40,8 +41,10 @@ public class PostController {
    * @return The response containing the created post details.
    */
   @POST
-  public CreatePostResponse create(final CreatePostRequest request) {
-    logger.info("Running Request for: " + request);
-    return createPostUseCase.create(request);
+  public Response create(final CreatePostRequest request) {
+    return Response.status(Response.Status.CREATED)
+            .type(MediaType.APPLICATION_JSON)
+            .entity(createPostUseCase.create(request))
+            .build();
   }
 }

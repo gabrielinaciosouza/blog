@@ -25,7 +25,7 @@ class PostControllerTest {
         .then()
         .log()
         .ifValidationFails(LogDetail.BODY)
-        .statusCode(200)
+        .statusCode(201)
         .body("postId", notNullValue())
         .body("title", equalTo("title"))
         .body("content", equalTo("content"))
