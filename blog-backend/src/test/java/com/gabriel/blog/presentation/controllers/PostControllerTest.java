@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 class PostControllerTest {
 
-
   @Test
   void shouldCreatePost() {
     final var postRequest = PostFixture.postRequest();
@@ -70,6 +69,8 @@ class PostControllerTest {
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
         .post("/posts")
         .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
         .statusCode(400)
         .body("message", equalTo("Tried to create a Post with null request"));
   }
