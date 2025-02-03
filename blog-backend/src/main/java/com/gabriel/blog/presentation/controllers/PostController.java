@@ -8,6 +8,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.logging.Logger;
 
 /**
  * Controller class for handling post-related operations.
@@ -18,6 +19,7 @@ import jakarta.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class PostController {
 
+  private final Logger logger = Logger.getLogger(PostController.class);
   private final CreatePostUseCase createPostUseCase;
 
   /**
@@ -39,6 +41,7 @@ public class PostController {
    */
   @POST
   public CreatePostResponse create(final CreatePostRequest request) {
+    logger.info("Running Request for: " + request);
     return createPostUseCase.create(request);
   }
 }

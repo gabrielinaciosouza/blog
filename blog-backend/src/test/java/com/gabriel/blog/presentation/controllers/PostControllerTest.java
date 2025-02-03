@@ -3,6 +3,7 @@ package com.gabriel.blog.presentation.controllers;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
+import com.gabriel.blog.application.requests.CreatePostRequest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
@@ -63,6 +64,7 @@ class PostControllerTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new CreatePostRequest("title", null))
         .post("/posts")
         .then()
         .log()
