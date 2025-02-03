@@ -1,4 +1,4 @@
-package com.gabriel.blog.presentation.controllers;
+package com.gabriel.blog.it;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class PostControllerTest {
+class PostResourceTest {
 
   @Test
   void shouldCreatePost() {
