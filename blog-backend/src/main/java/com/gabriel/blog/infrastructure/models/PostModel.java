@@ -39,10 +39,6 @@ public class PostModel {
     return title;
   }
 
-  public void setTitle(final String title) {
-    this.title = title;
-  }
-
   public String getContent() {
     return content;
   }
