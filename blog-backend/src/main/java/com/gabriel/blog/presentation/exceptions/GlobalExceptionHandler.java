@@ -1,5 +1,7 @@
 package com.gabriel.blog.presentation.exceptions;
 
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
@@ -71,6 +73,11 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
 
     public void setMessage(final String message) {
       this.message = message;
+    }
+
+    @Override
+    public String toString() {
+      return reflectionToString(this);
     }
   }
 }
