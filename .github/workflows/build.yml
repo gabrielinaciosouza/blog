@@ -22,35 +22,18 @@ jobs:
         with:
           java-version: '21'
           distribution: 'graalvm'
-        
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
       - name: Run Gradle build
-        run: ./gradlew build --no-daemon --stacktrace --info
+        run: ./gradlew build --no-daemon
 
       - name: Archive Checkstyle and Jacoco reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
             ./blog-backend/build/reports
             ./blog-backend/build/jacocoHtml
-      
-      - name: Upload test reports
-        if: failure() 
-        uses: actions/upload-artifact@v4
-        with:
-          name: reports
-          path: ./blog-backend/build/reports

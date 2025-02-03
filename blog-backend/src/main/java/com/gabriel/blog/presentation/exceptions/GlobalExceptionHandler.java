@@ -1,7 +1,5 @@
 package com.gabriel.blog.presentation.exceptions;
 
-import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
-
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
@@ -52,37 +50,13 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
     };
   }
 
-  private static class ErrorResponse {
-    private String error;
-    private String message;
-
-    public ErrorResponse(final String error, final String message) {
-      this.error = error;
-      this.message = message;
-    }
-
-    public ErrorResponse() {
-    }
-
-    public String getError() {
-      return error;
-    }
-
-    public void setError(final String error) {
-      this.error = error;
-    }
-
-    public String getMessage() {
-      return message;
-    }
-
-    public void setMessage(final String message) {
-      this.message = message;
-    }
-
-    @Override
-    public String toString() {
-      return reflectionToString(this);
-    }
+  /**
+   * Internal class to represent standardized error responses.
+   * Uses a record for simplicity and immutability.
+   *
+   * @param error   Type of the error.
+   * @param message Detailed error message.
+   */
+  private record ErrorResponse(String error, String message) {
   }
 }
