@@ -35,17 +35,7 @@ public class FirestorePostRepository implements PostRepository {
     this.firestore = firestore;
   }
 
-  /**
-   * Saves a given {@link Post} into Firestore.
-   *
-   * <p>This method converts the domain {@link Post} entity into a {@link PostModel}
-   * and persists it in the "posts" collection of Firestore. If the operation fails,
-   * it logs the error and throws a {@link RepositoryException}.
-   * </p>
-   *
-   * @param post the blog post to be saved; must not be {@code null}.
-   * @throws RepositoryException if the save operation fails due to an execution or interruption error.
-   */
+
   @Override
   public void save(final Post post) {
     try {

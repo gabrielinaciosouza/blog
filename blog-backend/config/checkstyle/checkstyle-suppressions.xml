@@ -7,4 +7,6 @@
     <suppress files=".*Generated.*" checks=".*"/>
     <suppress files=".*Fixture.java" checks="MissingJavadocType"/>
     <suppress files=".*Fixture.java" checks="MissingJavadocMethod"/>
+    <suppress files=".*MockProducer.*" checks="MissingJavadocType"/>
+    <suppress files=".*MockProducer.*" checks="MissingJavadocMethod"/>
 </suppressions>

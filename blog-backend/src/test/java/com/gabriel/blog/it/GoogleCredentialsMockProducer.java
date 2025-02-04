@@ -12,10 +12,10 @@ import jakarta.inject.Singleton;
 @ApplicationScoped
 public class GoogleCredentialsMockProducer {
 
-	@Produces
-	@Singleton
-	@Default
-	public Credentials googleCredential() {
-		return NoCredentials.getInstance();
-	}
+  @Produces
+  @Singleton
+  @Default
+  public Credentials googleCredential() {
+    return NoCredentials.getInstance();
+  }
 }

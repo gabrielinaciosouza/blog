@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class PostResourceTest {
+class PostResourceIntegrationTest {
 
   @Test
   void shouldCreatePost() {
