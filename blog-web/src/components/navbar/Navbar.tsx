@@ -14,7 +14,7 @@ const Navbar = () => {
                 <Image src="/youtube.png" alt="youtube" width={24} height={24}/>
             </div>
             <div className={styles.logo}>
-                Gabriel Inácio
+                <Image src="/logo1.png" alt="logo1" fill className={styles.image}/>
             </div>
             <div className={styles.links}>
                 <Link href="/" className={styles.link}>Homepage</Link>
