@@ -85,7 +85,8 @@ const CreatePostPage = () => {
                         </button>
                     </div>
                 )}
-                <ReactQuill 
+                <ReactQuill
+
                     className={styles.textArea} 
                     theme="bubble" 
                     value={content} 
@@ -93,7 +94,7 @@ const CreatePostPage = () => {
                     placeholder="Write your story..."
                 />
             </div>
-            <button 
+            <button
                 className={styles.publish} 
                 onClick={handlePublish} 
                 disabled={loading}
