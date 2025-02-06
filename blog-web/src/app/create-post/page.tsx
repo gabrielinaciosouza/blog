@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./createPostPage.module.css";
 import Image from "next/image";
 import ReactQuill from "react-quill-new";
@@ -11,13 +12,19 @@ const CreatePostPage = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
+    const [responseMessage, setResponseMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [postId, setPostId] = useState(null);
+    const router = useRouter();
 
     const handlePublish = async () => {
         if (!title.trim() || !content.trim()) {
-            alert("Title and content cannot be empty");
+            setResponseMessage("Title and content cannot be empty");
+            setShowModal(true);
             return;
         }
         setLoading(true);
+        setResponseMessage("");
         try {
             const response = await fetch("http://localhost:8080/posts", {
                 method: "POST",
@@ -26,17 +33,29 @@ const CreatePostPage = () => {
                 },
                 body: JSON.stringify({ title, content }),
             });
+            const data = await response.json();
             if (!response.ok) {
-                throw new Error("Failed to publish post");
+                throw new Error(data.message || "Failed to publish post");
             }
-            alert("Post published successfully!");
-            const responseBody = await response.json();
-            console.log("response " + JSON.stringify(responseBody));
+            setResponseMessage("Post saved successfully!");
+            setPostId(data.postId);
+            setShowModal(true);
         } catch (error) {
-            console.log(error);
-        
+            if (error instanceof Error) {
+                setResponseMessage(`Error: ${error.message}`);
+            } else {
+                setResponseMessage("Unknown error");
+            }
+            setShowModal(true);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        if (postId) {
+            router.push(`/posts/${postId}`);
         }
     };
 
@@ -81,6 +100,14 @@ const CreatePostPage = () => {
             >
                 {loading ? "Publishing..." : "Publish"}
             </button>
+            {showModal && (
+                <div className={styles.modal}>
+                    <div className={styles.modalContent}>
+                        <p>{responseMessage}</p>
+                        <button className={styles.closeButton} onClick={handleCloseModal}>OK</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
