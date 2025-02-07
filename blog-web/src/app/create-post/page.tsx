@@ -1,63 +1,24 @@
 "use client"
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import styles from "./createPostPage.module.css";
 import Image from "next/image";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
+import { usePublishPost } from "@/hooks/use-publish-post";
 
 const CreatePostPage = () => {
     const [open, setOpen] = useState(false);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [responseMessage, setResponseMessage] = useState("");
-    const [showModal, setShowModal] = useState(false);
-    const [postId, setPostId] = useState(null);
-    const router = useRouter();
-
-    const handlePublish = async () => {
-        if (!title.trim() || !content.trim()) {
-            setResponseMessage("Title and content cannot be empty");
-            setShowModal(true);
-            return;
-        }
-        setLoading(true);
-        setResponseMessage("");
-        try {
-            const response = await fetch("http://localhost:8080/posts", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ title, content }),
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to publish post");
-            }
-            setResponseMessage("Post saved successfully!");
-            setPostId(data.postId);
-            setShowModal(true);
-        } catch (error) {
-            if (error instanceof Error) {
-                setResponseMessage(`Error: ${error.message}`);
-            } else {
-                setResponseMessage("Unknown error");
-            }
-            setShowModal(true);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-        if (postId) {
-            router.push(`/posts/${postId}`);
-        }
-    };
+    
+    const {
+        loading,
+        responseMessage,
+        showModal,
+        handlePublish,
+        handleCloseModal,
+      } = usePublishPost(title, content);
 
     return (
         <div className={styles.container}>
