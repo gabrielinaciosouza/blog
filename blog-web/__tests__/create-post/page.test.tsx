@@ -4,7 +4,6 @@ import CreatePostPage from "../../src/app/create-post/page";
 import { describe, it, expect, vi } from "vitest";
 import React from "react";
 
-// Mock do useRouter para evitar navegação real
 vi.mock("next/navigation", () => ({
     useRouter: () => ({ push: vi.fn() }),
 }));
