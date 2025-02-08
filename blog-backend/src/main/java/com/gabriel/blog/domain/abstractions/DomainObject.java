@@ -52,7 +52,7 @@ public interface DomainObject {
    * @param fields the names of the fields to exclude from equality checks
    * @return the array of excluded field names
    */
-  default String[] excludeFieldsFromEquality(String... fields) {
+  default String[] excludeFieldsFromEquality(final String... fields) {
     return fields;
   }
 

@@ -21,7 +21,11 @@ public class Title extends AbstractValueObject {
    * @throws DomainException if the value is {@code null}
    */
   public Title(final String value) {
-    this.value = nonNull(value, "Tried to create a Title with a null value");
+    nonNull(value, "Tried to create a Title with a null value");
+    if (value.isBlank()) {
+      throw new DomainException("Tried to create a Title with a blank value");
+    }
+    this.value = value;
   }
 
   public String getValue() {

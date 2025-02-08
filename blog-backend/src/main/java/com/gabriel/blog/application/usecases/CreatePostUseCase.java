@@ -9,6 +9,7 @@ import com.gabriel.blog.domain.services.IdGenerator;
 import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.Id;
+import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Objects;
@@ -68,8 +69,11 @@ public class CreatePostUseCase {
 
     final var title = new Title(postRequest.title());
     final var content = new Content(postRequest.content());
-    final var post =
-        new Post(new Id(idGenerator.generateId(POSTS_DOMAIN)), title, content, CreationDate.now());
+    final var post = new Post(
+        new Id(idGenerator.generateId(POSTS_DOMAIN)),
+        title, content,
+        CreationDate.now(),
+        new Slug(title));
 
     postRepository.save(post);
 
@@ -77,6 +81,7 @@ public class CreatePostUseCase {
         post.getId().getValue(),
         post.getTitle().getValue(),
         post.getContent().getValue(),
-        post.getCreationDate().toString());
+        post.getCreationDate().toString(),
+        post.getSlug().getValue());
   }
 }

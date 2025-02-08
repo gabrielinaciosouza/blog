@@ -1,7 +1,5 @@
 package com.gabriel.blog.fixtures;
 
-import com.gabriel.blog.application.requests.CreatePostRequest;
-import com.gabriel.blog.application.responses.CreatePostResponse;
 import com.gabriel.blog.domain.entities.Post;
 
 public class PostFixture {
@@ -11,14 +9,7 @@ public class PostFixture {
         IdFixture.withId("any"),
         TitleFixture.title(),
         ContentFixture.content(),
-        CreationDateFixture.creationDate());
-  }
-
-  public static CreatePostRequest postRequest() {
-    return new CreatePostRequest("title", "content");
-  }
-
-  public static CreatePostResponse postResponse() {
-    return new CreatePostResponse("postId", "title", "content", "creationDate");
+        CreationDateFixture.creationDate(),
+        SlugFixture.slug());
   }
 }

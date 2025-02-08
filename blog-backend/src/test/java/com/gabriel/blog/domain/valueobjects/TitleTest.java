@@ -11,8 +11,12 @@ class TitleTest {
 
   @Test
   void shouldCreateCorrectTitle() {
-    final var thrown = assertThrows(DomainException.class, () -> new Title(null));
+    var thrown = assertThrows(DomainException.class, () -> new Title(null));
     assertEquals("Tried to create a Title with a null value", thrown.getMessage());
+
+    thrown = assertThrows(DomainException.class, () -> new Title("   "));
+    assertEquals("Tried to create a Title with a blank value", thrown.getMessage());
+
     assertDoesNotThrow(() -> new Title("any"));
   }
 }

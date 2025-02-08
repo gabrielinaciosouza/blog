@@ -29,6 +29,7 @@ class PostResourceIntegrationTest {
         .body("postId", notNullValue())
         .body("title", equalTo("title"))
         .body("content", equalTo("content"))
+        .body("slug", equalTo("title"))
         .body("creationDate", equalTo(LocalDate.now().toString()));
   }
 
@@ -44,6 +45,17 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(422)
         .body("message", equalTo("Tried to create a Title with a null value"));
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new CreatePostRequest("   ", "content"))
+        .post("/posts")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(422)
+        .body("message", equalTo("Tried to create a Title with a blank value"));
   }
 
   @Test
