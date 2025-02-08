@@ -107,7 +107,7 @@ describe('usePublishPost Hook', () => {
     });
 
     it('should redirect upon closing the modal after successful publish', async () => {
-        mockCreatePost.mockResolvedValue({ postId: '123' });
+        mockCreatePost.mockResolvedValue({ slug: 'any-title' });
 
         const { result } = renderHook(() => usePublishPost());
 
@@ -127,7 +127,7 @@ describe('usePublishPost Hook', () => {
         });
 
         expect(routerPush).toHaveBeenCalledTimes(1);
-        expect(routerPush).toHaveBeenCalledWith('/posts/123');
+        expect(routerPush).toHaveBeenCalledWith('/posts/any-title');
     });
 
     it('should show error message if title or content is empty', async () => {

@@ -53,7 +53,7 @@ export const usePublishPost = () => {
     if (postResponse) {
       localStorage.removeItem("draft-title");
       localStorage.removeItem("draft-content");
-      router.push(`/posts/${postResponse.postId}`);
+      router.push(`/posts/${postResponse.slug}`);
     }
   };
 

@@ -18,5 +18,5 @@ export const createPost = async (request: CreatePostRequest): Promise<CreatePost
         throw new Error(data.message || "Failed to publish post");
     }
 
-    return new CreatePostResponse(data.postId, data.title, data.content, data.creationDate);
+    return new CreatePostResponse(data.postId, data.title, data.content, data.creationDate, data.slug);
 };
