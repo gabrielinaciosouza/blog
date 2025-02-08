@@ -9,14 +9,14 @@ on:
 jobs:
   trigger-frontend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.files, 'blog-web') }}
+    if: ${{ github.event.pull_request.changed_files != 0 && contains(github.event.pull_request.changed_files, 'blog-web/') }}
     steps:
       - name: Frontend Build
         run: gh workflow run build-frontend.yml
 
   trigger-backend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.files, 'blog-backend') }}
+    if: ${{ github.event.pull_request.changed_files != 0 && contains(github.event.pull_request.changed_files, 'blog-backend/') }}
     steps:
       - name: Backend Build
         run: gh workflow run build-backend.yml
