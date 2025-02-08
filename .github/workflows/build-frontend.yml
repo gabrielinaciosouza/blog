@@ -1,0 +1,42 @@
+name: Build Frontend Next.js
+
+on:
+  pull_request:
+    paths:
+      - '**/blog-web/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-web
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint -- --output-file lint-report.json --format json || true
+
+      - name: Run tests
+        run: npm test -- --json --outputFile=test-report.json || true
+
+      - name: Upload Lint and Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blog-web-reports
+          path: |
+            ./blog-web/lint-report.json
+            ./blog-web/test-report.json
+          if-no-files-found: ignore
