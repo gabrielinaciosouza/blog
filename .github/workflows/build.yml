@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  pull_request:
+    paths:
+      - '**/blog-backend/**'
+      - '**/blog-web/**'
+
+jobs:
+  trigger-frontend:
+    if: contains(github.event.pull_request.changed_files, 'blog-web/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Frontend Build
+        run: gh workflow run build-frontend.yml
+
+  trigger-backend:
+    if: contains(github.event.pull_request.changed_files, 'blog-backend/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Backend Build
+        run: gh workflow run build-backend.yml

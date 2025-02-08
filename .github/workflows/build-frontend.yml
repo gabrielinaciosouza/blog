@@ -1,9 +1,10 @@
 name: Build Frontend Next.js
 
 on:
-  pull_request:
-    paths:
-      - '**/blog-web/**'
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
 
 jobs:
   build:

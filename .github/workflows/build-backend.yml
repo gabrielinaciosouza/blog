@@ -1,10 +1,10 @@
 name: Build Backend Quarkus
 
 on:
-  pull_request:
-    paths:
-      - '**/blog-backend/**'
-
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
 
 jobs:
   build:
