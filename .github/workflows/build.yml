@@ -11,10 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Frontend Build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run build-frontend.yml
 
   trigger-backend:
     runs-on: ubuntu-latest
     steps:
       - name: Backend Build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run build-backend.yml
