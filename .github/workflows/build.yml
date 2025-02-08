@@ -7,18 +7,69 @@ on:
       - '**/blog-web/**'
 
 jobs:
-  trigger-frontend:
+  build-frontend:
     runs-on: ubuntu-latest
-    steps:
-      - name: Frontend Build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run build-frontend.yml
+    defaults:
+      run:
+        working-directory: ./blog-web
 
-  trigger-backend:
-    runs-on: ubuntu-latest
     steps:
-      - name: Backend Build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run build-backend.yml
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: blog-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint -- --output-file lint-report.json --format json || true
+
+      - name: Run tests
+        run: npm test -- --json --outputFile=test-report.json || true
+
+      - name: Upload Lint and Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blog-web-reports
+          path: |
+            ./blog-web/lint-report.json
+            ./blog-web/test-report.json
+          if-no-files-found: ignore
+
+  build-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run Gradle build
+        run: ./gradlew build --no-daemon
+
+      - name: Archive Checkstyle and Jacoco reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            ./blog-backend/build/reports
+            ./blog-backend/build/jacocoHtml
