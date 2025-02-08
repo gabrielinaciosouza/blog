@@ -7,7 +7,7 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
 import { usePublishPost } from "@/hooks/usePublishPost";
 
-const CreatePostPage = () => {
+export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
     const {
         title,
@@ -73,5 +73,3 @@ const CreatePostPage = () => {
         </div>
     );
 };
-
-export default CreatePostPage;

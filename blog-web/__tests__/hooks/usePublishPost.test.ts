@@ -126,8 +126,6 @@ describe('usePublishPost Hook', () => {
             result.current.handleCloseModal();
         });
 
-        console.log("Router push mock:", routerPush.mock.calls);
-
         expect(routerPush).toHaveBeenCalledTimes(1);
         expect(routerPush).toHaveBeenCalledWith('/posts/123');
     });
