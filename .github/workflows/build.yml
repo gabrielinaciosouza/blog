@@ -9,32 +9,14 @@ on:
 jobs:
   trigger-frontend:
     runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.files, 'blog-web') }}
     steps:
-      - name: Check for frontend changes
-        id: frontend_changes
-        run: |
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^blog-web/'; then
-            echo "frontend_changed=true" >> $GITHUB_ENV
-          else
-            echo "frontend_changed=false" >> $GITHUB_ENV
-          fi
-
       - name: Frontend Build
-        if: env.frontend_changed == 'true'
         run: gh workflow run build-frontend.yml
 
   trigger-backend:
     runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.files, 'blog-backend') }}
     steps:
-      - name: Check for backend changes
-        id: backend_changes
-        run: |
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^blog-backend/'; then
-            echo "backend_changed=true" >> $GITHUB_ENV
-          else
-            echo "backend_changed=false" >> $GITHUB_ENV
-          fi
-
       - name: Backend Build
-        if: env.backend_changed == 'true'
         run: gh workflow run build-backend.yml
