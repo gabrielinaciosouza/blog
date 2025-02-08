@@ -32,6 +32,7 @@ export const usePublishPost = () => {
       return;
     }
 
+    console.log("Publishing post...");
     setLoading(true);
     setResponseMessage("");
 
@@ -54,6 +55,7 @@ export const usePublishPost = () => {
     if (postResponse) {
       localStorage.removeItem("draft-title");
       localStorage.removeItem("draft-content");
+      console.log("Redirecting to post", postResponse.postId);
       router.push(`/posts/${postResponse.postId}`);
     }
   };
