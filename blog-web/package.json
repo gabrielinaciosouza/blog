@@ -15,10 +15,6 @@
     "react-quill-new": "^3.3.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.7",
-    "@babel/preset-env": "^7.26.7",
-    "@babel/preset-react": "^7.26.3",
-    "@babel/preset-typescript": "^7.26.0",
     "@eslint/eslintrc": "^3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -28,8 +24,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitest/coverage-v8": "^3.0.5",
-    "babel-jest": "^29.7.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "identity-obj-proxy": "^3.0.0",
@@ -41,7 +35,6 @@
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5",
-    "vitest": "^3.0.5"
+    "typescript": "^5"
   }
 }
