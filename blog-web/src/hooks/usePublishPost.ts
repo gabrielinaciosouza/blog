@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createPost } from "../services/post-service";
-import CreatePostRequest from "../models/create-post-request";
+import { createPost } from "@/services/postService";
+import CreatePostRequest from "@/models/create-post-request";
 import CreatePostResponse from "@/models/create-post-response";
 
-export const usePublishPost = (title: string, content: string) => {
+export const usePublishPost = () => {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [postResponse, setPostResponse] = useState<CreatePostResponse | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedTitle = localStorage.getItem("draft-title");
+    const savedContent = localStorage.getItem("draft-content");
+    if (savedTitle) setTitle(savedTitle);
+    if (savedContent) setContent(savedContent);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("draft-title", title);
+    localStorage.setItem("draft-content", content);
+  }, [title, content]);
 
   const handlePublish = async () => {
     if (!title.trim() || !content.trim()) {
@@ -38,12 +52,17 @@ export const usePublishPost = (title: string, content: string) => {
   const handleCloseModal = () => {
     setShowModal(false);
     if (postResponse) {
-      sessionStorage.setItem(`post-${postResponse.postId}`, JSON.stringify(postResponse));
+      localStorage.removeItem("draft-title");
+      localStorage.removeItem("draft-content");
       router.push(`/posts/${postResponse.postId}`);
     }
-  };  
+  };
 
   return {
+    title,
+    setTitle,
+    content,
+    setContent,
     loading,
     responseMessage,
     showModal,

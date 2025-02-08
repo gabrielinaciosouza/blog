@@ -1,24 +1,25 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./createPostPage.module.css";
 import Image from "next/image";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.bubble.css";
-import { usePublishPost } from "@/hooks/use-publish-post";
+import { usePublishPost } from "@/hooks/usePublishPost";
 
 const CreatePostPage = () => {
     const [open, setOpen] = useState(false);
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    
     const {
+        title,
+        setTitle,
+        content,
+        setContent,
         loading,
         responseMessage,
         showModal,
         handlePublish,
-        handleCloseModal,
-      } = usePublishPost(title, content);
+        handleCloseModal
+    } = usePublishPost();
 
     return (
         <div className={styles.container}>
@@ -47,7 +48,6 @@ const CreatePostPage = () => {
                     </div>
                 )}
                 <ReactQuill
-
                     className={styles.textArea} 
                     theme="bubble" 
                     value={content} 
