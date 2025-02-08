@@ -10,25 +10,11 @@ jobs:
   trigger-frontend:
     runs-on: ubuntu-latest
     steps:
-      - name: Get changed files for frontend
-        run: |
-          echo "Changed files:"
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }}
-          echo "Checking if changes are in blog-web"
-      
       - name: Frontend Build
-        if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.changed_files, 'blog-web/') }}
         run: gh workflow run build-frontend.yml
 
   trigger-backend:
     runs-on: ubuntu-latest
     steps:
-      - name: Get changed files for backend
-        run: |
-          echo "Changed files:"
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }}
-          echo "Checking if changes are in blog-backend"
-      
       - name: Backend Build
-        if: ${{ github.event.pull_request.changed_files > 0 && contains(github.event.pull_request.changed_files, 'blog-backend/') }}
         run: gh workflow run build-backend.yml
