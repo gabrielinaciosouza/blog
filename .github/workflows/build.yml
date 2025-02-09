@@ -1,52 +1,75 @@
-name: Build Project
+name: Build
 
 on:
   pull_request:
     paths:
       - '**/blog-backend/**'
-
+      - '**/blog-web/**'
 
 jobs:
-  build:
+  build-frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-web
 
     steps:
-      # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Java (using Gradle wrapper)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: blog-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint -- --output-file lint-report.json --format json || true
+
+      - name: Run tests
+        run: npm test -- --json --outputFile=test-report.json || true
+
+      - name: Upload Lint and Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blog-web-reports
+          path: |
+            ./blog-web/lint-report.json
+            ./blog-web/test-report.json
+          if-no-files-found: ignore
+
+  build-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'adoptopenjdk'
-        
-      # Step 3: Cache Gradle dependencies
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v4
-        with:
-          # Gradle caches
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          distribution: 'graalvm'
 
-      # Step 4: Navigate to bakcend
-      - name: Navigate to backend directory
-        run: cd blog-backend
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      # Step 5: Run Gradle build
       - name: Run Gradle build
         run: ./gradlew build --no-daemon
 
-      # Step 6: Archive Checkstyle and Jacoco reports
       - name: Archive Checkstyle and Jacoco reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: reports
           path: |
-            blog/blog-backend/build/reports/checkstyle/checkstyle.xml
-            blog/blog-backend/build/reports/jacoco/test/html/index.html
+            ./blog-backend/build/reports
+            ./blog-backend/build/jacocoHtml

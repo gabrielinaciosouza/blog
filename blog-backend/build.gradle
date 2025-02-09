@@ -1,0 +1,95 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id 'checkstyle'
+    id 'jacoco'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:quarkus-google-cloud-services-bom:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkiverse.googlecloudservices:quarkus-google-cloud-firestore'
+    implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'org.apache.commons:commons-lang3'
+
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
+    testImplementation 'io.rest-assured:rest-assured'
+}
+
+group 'com.gabriel.blog'
+version '1.0.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+checkstyle {
+    toolVersion = '10.21.2'
+    configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+    showViolations = true
+    configProperties['checkstyle.suppressions.file'] = file('config/checkstyle/checkstyle-suppressions.xml')
+}
+
+tasks.withType(Checkstyle).configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+        html.outputLocation = file("${rootProject.projectDir}/build/reports/checkstyle.html")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test, compileQuarkusGeneratedSourcesJava
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.9
+            }
+        }
+    }
+}
+
+check.dependsOn checkstyleMain, checkstyleTest
+checkstyleMain.dependsOn compileQuarkusGeneratedSourcesJava
