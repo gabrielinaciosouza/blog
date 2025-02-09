@@ -2,6 +2,7 @@ package com.gabriel.blog.presentation.filters;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +40,10 @@ class LoggingFilterTest {
     loggingFilter.filter(requestContext);
 
     verify(requestContext).setEntityStream(any(ByteArrayInputStream.class));
+    verify(requestContext).getMethod();
+    verify(requestContext, times(2)).getUriInfo();
+    verify(requestContext).getHeaders();
+    verify(requestContext).hasEntity();
   }
 
   @Test
