@@ -12,15 +12,17 @@ public class PostModel {
   private String title;
   private String content;
   private String creationDate;
+  private String slug;
 
   /**
    * Constructs a {@link PostModel} from a given input fields.
    */
   public PostModel(final String title, final String content,
-                   final String creationDate) {
+                   final String creationDate, final String slug) {
     this.title = title;
     this.content = content;
     this.creationDate = creationDate;
+    this.slug = slug;
   }
 
   /**
@@ -32,7 +34,8 @@ public class PostModel {
     return new PostModel(
         post.getTitle().getValue(),
         post.getContent().getValue(),
-        post.getCreationDate().toString());
+        post.getCreationDate().toString(),
+        post.getSlug().getValue());
   }
 
   public String getTitle() {
