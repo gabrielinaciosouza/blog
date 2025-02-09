@@ -3,7 +3,7 @@ package com.gabriel.blog.application.usecases;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
-import com.gabriel.blog.application.responses.CreatePostResponse;
+import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.services.IdGenerator;
 import com.gabriel.blog.domain.valueobjects.Content;
@@ -18,7 +18,7 @@ import java.util.Objects;
  * The {@link CreatePostUseCase} class is responsible for handling the creation of a new blog post.
  * It coordinates the process of converting a {@link CreatePostRequest}
  * into a domain {@link Post} entity,
- * saving it using the {@link PostRepository}, and then returning a {@link CreatePostResponse}.
+ * saving it using the {@link PostRepository}, and then returning a {@link PostResponse}.
  *
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  *
@@ -50,19 +50,19 @@ public class CreatePostUseCase {
    * Handles the creation of a new blog post.
    * This method converts the incoming {@link CreatePostRequest}
    * into a {@link Post} entity, saves it using the {@link PostRepository}, and then returns a
-   * {@link CreatePostResponse} containing the created post's information.
+   * {@link PostResponse} containing the created post's information.
    *
    * <p>The method performs the following steps:</p>
    * <ol>
    *   <li>Converts the {@link CreatePostRequest} into a domain {@link Post} entity</li>
    *   <li>Saves the created post using the {@link PostRepository#save(Post)} method.</li>
-   *   <li>Transforms saved {@link Post} entity into {@link CreatePostResponse} and returns it.</li>
+   *   <li>Transforms saved {@link Post} entity into {@link PostResponse} and returns it.</li>
    * </ol>
    *
    * @param postRequest the request data to create a new post; must not be {@code null}.
-   * @return a {@link CreatePostResponse} containing the information of the newly created post.
+   * @return a {@link PostResponse} containing the information of the newly created post.
    */
-  public CreatePostResponse create(final CreatePostRequest postRequest) {
+  public PostResponse create(final CreatePostRequest postRequest) {
     if (Objects.isNull(postRequest)) {
       throw new ValidationException("Tried to create a Post with null request");
     }
@@ -77,7 +77,7 @@ public class CreatePostUseCase {
 
     postRepository.save(post);
 
-    return new CreatePostResponse(
+    return new PostResponse(
         post.getId().getValue(),
         post.getTitle().getValue(),
         post.getContent().getValue(),

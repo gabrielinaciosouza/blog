@@ -54,6 +54,7 @@ class CreatePostUseCaseTest {
     assertEquals(title, response.title());
     assertEquals(content, response.content());
     assertNotNull(response.creationDate());
+    assertEquals(response.slug(), "test-title");
   }
 
   @Test

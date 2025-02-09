@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.gabriel.blog.application.exceptions.NotFoundException;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import jakarta.ws.rs.core.Response;
@@ -36,6 +37,16 @@ class GlobalExceptionHandlerTest {
     assertEquals(422, response.getStatus());
     assertTrue(response.getEntity().toString().contains("Domain error"));
     assertTrue(response.getEntity().toString().contains("Invalid business rule"));
+  }
+
+  @Test
+  void shouldHandleNotFoundException() {
+    final var notFoundException = new NotFoundException("Resource not found");
+
+    final var response = exceptionHandler.toResponse(notFoundException);
+
+    assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    assertTrue(response.getEntity().toString().contains("Not found"));
   }
 
   @Test

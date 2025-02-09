@@ -1,5 +1,6 @@
 package com.gabriel.blog.presentation.exceptions;
 
+import com.gabriel.blog.application.exceptions.NotFoundException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
@@ -7,7 +8,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import org.jboss.logging.Logger;
 
 /**
  * Global exception handler class for Quarkus.
@@ -27,23 +27,25 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
 
     return switch (exception) {
       case final RepositoryException repositoryException ->
-          Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-              .type(MediaType.APPLICATION_JSON)
-              .entity(new ErrorResponse("Database error", repositoryException.getMessage()))
-              .build();
-      case final DomainException domainException -> Response.status(422)
-          .type(MediaType.APPLICATION_JSON)
-          .entity(new ErrorResponse("Domain error", domainException.getMessage()))
-          .build();
-      case final ValidationException validationException -> Response.status(400)
-          .type(MediaType.APPLICATION_JSON)
-          .entity(new ErrorResponse("Validation error", validationException.getMessage()))
-          .build();
-      default -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-          .type(MediaType.APPLICATION_JSON)
-          .entity(new ErrorResponse("Unexpected error", exception.getMessage()))
-          .build();
+          buildResponse("Database error", repositoryException.getMessage(),
+              Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+      case final DomainException domainException -> buildResponse("Domain error",
+          domainException.getMessage(), 422);
+      case final ValidationException validationException -> buildResponse("Validation error",
+          validationException.getMessage(), Response.Status.BAD_REQUEST.getStatusCode());
+      case final NotFoundException notFoundException -> buildResponse("Not found",
+          notFoundException.getMessage(), Response.Status.NOT_FOUND.getStatusCode());
+      default -> buildResponse("Internal error", exception.getMessage(),
+          Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     };
+  }
+
+  private Response buildResponse(final String error, final String message,
+                                 final int status) {
+    return Response.status(status)
+        .type(MediaType.APPLICATION_JSON)
+        .entity(new ErrorResponse(error, message))
+        .build();
   }
 
   /**

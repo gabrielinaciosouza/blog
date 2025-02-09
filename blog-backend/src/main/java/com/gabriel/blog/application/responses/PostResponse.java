@@ -13,7 +13,7 @@ import com.gabriel.blog.domain.entities.Post;
  * containing the post ID, title, content, and creation date, making it suitable for
  * returning as a response to a client after successfully creating a post.</p>
  */
-public record CreatePostResponse(
+public record PostResponse(
     String postId,
     String title,
     String content,
