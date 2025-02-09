@@ -1,5 +1,6 @@
 package com.gabriel.blog.presentation.exceptions;
 
+import com.gabriel.blog.application.exceptions.AlreadyExistsException;
 import com.gabriel.blog.application.exceptions.NotFoundException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.domain.exceptions.DomainException;
@@ -35,6 +36,8 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
           validationException.getMessage(), Response.Status.BAD_REQUEST.getStatusCode());
       case final NotFoundException notFoundException -> buildResponse("Not found",
           notFoundException.getMessage(), Response.Status.NOT_FOUND.getStatusCode());
+      case final AlreadyExistsException alreadyExistsException -> buildResponse("Already exists",
+          alreadyExistsException.getMessage(), Response.Status.CONFLICT.getStatusCode());
       default -> buildResponse("Internal error", exception.getMessage(),
           Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     };

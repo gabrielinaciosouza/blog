@@ -1,5 +1,6 @@
 package com.gabriel.blog.application.usecases;
 
+import com.gabriel.blog.application.exceptions.AlreadyExistsException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
@@ -68,12 +69,20 @@ public class CreatePostUseCase {
     }
 
     final var title = new Title(postRequest.title());
+    final var slug = new Slug(title);
+
+    final var postOptional = postRepository.findBySlug(slug);
+
+    if (postOptional.isPresent()) {
+      throw new AlreadyExistsException("Post with slug " + slug.getValue() + " already exists");
+    }
+
     final var content = new Content(postRequest.content());
     final var post = new Post(
         new Id(idGenerator.generateId(POSTS_DOMAIN)),
         title, content,
         CreationDate.now(),
-        new Slug(title));
+        slug);
 
     postRepository.save(post);
 

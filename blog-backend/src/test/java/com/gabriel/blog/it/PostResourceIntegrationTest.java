@@ -40,6 +40,31 @@ class PostResourceIntegrationTest {
   }
 
   @Test
+  void shouldNotCreatePostIfAlreadyExists() throws InterruptedException {
+    firestore.collection("posts").document("title").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "title",
+        "creationDate", LocalDate.now().toString()
+    ));
+
+    Thread.sleep(1000);
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new CreatePostRequest("title", "content"))
+        .post("/posts")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(409)
+        .body("message", equalTo("Post with slug title already exists"));
+
+    firestore.collection("posts").document("title").delete();
+  }
+
+  @Test
   void shouldValidateTitle() {
     given()
         .when()
