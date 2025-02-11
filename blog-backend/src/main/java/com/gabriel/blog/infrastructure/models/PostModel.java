@@ -6,8 +6,9 @@ import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import java.time.LocalDate;
+import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.annotation.DocumentId;
+import java.time.ZoneId;
 
 /**
  * Represents a Firestore-compatible model for storing blog posts.
@@ -16,9 +17,11 @@ import java.time.LocalDate;
  */
 public class PostModel {
 
+  @DocumentId
+  private String postId;
   private String title;
   private String content;
-  private String creationDate;
+  private Timestamp creationDate;
   private String slug;
 
   /**
@@ -30,8 +33,9 @@ public class PostModel {
   /**
    * Constructs a {@link PostModel} from a given input fields.
    */
-  public PostModel(final String title, final String content,
-                   final String creationDate, final String slug) {
+  public PostModel(final String postId, final String title, final String content,
+                   final Timestamp creationDate, final String slug) {
+    this.postId = postId;
     this.title = title;
     this.content = content;
     this.creationDate = creationDate;
@@ -45,42 +49,67 @@ public class PostModel {
    */
   public static PostModel from(final Post post) {
     return new PostModel(
+        post.getId().getValue(),
         post.getTitle().getValue(),
         post.getContent().getValue(),
-        post.getCreationDate().toString(),
+        Timestamp.ofTimeSecondsAndNanos(
+            post.getCreationDate().getValue().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+            0),
         post.getSlug().getValue());
   }
 
   /**
-   * Converts a Firestore document snapshot into a {@link Post} domain entity.
+   * Converts this {@link PostModel} into a domain {@link Post} entity.
    *
-   * @param document the Firestore document to convert into a domain entity.
-   * @return a new {@link Post} instance.
+   * @return a {@link Post} entity representing the data in this model.
    */
-  public static Post toDomain(final QueryDocumentSnapshot document) {
-    final var doc = document.toObject(PostModel.class);
+  public Post toDomain() {
     return new Post(
-        new Id(document.getId()),
-        new Title(doc.getTitle()),
-        new Content(doc.getContent()),
-        new CreationDate(LocalDate.parse(doc.getCreationDate())),
-        Slug.fromString(doc.getSlug())
-    );
+        new Id(postId),
+        new Title(title),
+        new Content(content),
+        new CreationDate(
+            creationDate.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()),
+        Slug.fromString(slug));
+  }
+
+  public String getPostId() {
+    return postId;
+  }
+
+  public void setPostId(final String postId) {
+    this.postId = postId;
   }
 
   public String getTitle() {
     return title;
   }
 
+  public void setTitle(final String title) {
+    this.title = title;
+  }
+
   public String getContent() {
     return content;
   }
 
-  public String getCreationDate() {
+  public void setContent(final String content) {
+    this.content = content;
+  }
+
+  public Timestamp getCreationDate() {
     return creationDate;
+  }
+
+  public void setCreationDate(final Timestamp creationDate) {
+    this.creationDate = creationDate;
   }
 
   public String getSlug() {
     return slug;
+  }
+
+  public void setSlug(final String slug) {
+    this.slug = slug;
   }
 }

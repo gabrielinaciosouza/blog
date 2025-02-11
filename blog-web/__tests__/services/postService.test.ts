@@ -1,6 +1,6 @@
 import { createPost } from '../../src/services/postService';
 import CreatePostRequest from '@/models/create-post-request';
-import CreatePostResponse from '@/models/create-post-response';
+import Post from '@/models/post';
 
 global.fetch = jest.fn();
 
@@ -34,7 +34,7 @@ describe('postService', () => {
         },
         body: JSON.stringify(postRequest),
       });
-      expect(result).toEqual(new CreatePostResponse(
+      expect(result).toEqual(new Post(
         postResponse.postId,
         postResponse.title,
         postResponse.content,

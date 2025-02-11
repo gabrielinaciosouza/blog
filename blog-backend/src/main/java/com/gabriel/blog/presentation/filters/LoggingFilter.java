@@ -32,7 +32,7 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
         final var requestBody = new String(requestBodyBytes, StandardCharsets.UTF_8);
         LOGGER.info("Request Body: " + requestBody);
         requestContext.setEntityStream(new ByteArrayInputStream(requestBodyBytes));
-      } catch (final IOException e) {
+      } catch (final Exception e) {
         LOGGER.warning("Error reading request body: " + e.getMessage());
       }
 

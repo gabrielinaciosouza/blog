@@ -66,15 +66,13 @@ class FirestorePostRepositoryTest {
     void shouldSavePostCorrectly() throws ExecutionException, InterruptedException {
       final var id = IdFixture.withId("any").getValue();
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.document(id))
-          .thenReturn(documentReference);
-      when(documentReference.set(any(PostModel.class))).thenReturn(apiFuture);
+      when(collectionReference.add(any(PostModel.class)))
+          .thenReturn(apiFuture);
 
       firestorePostRepository.save(POST);
 
       verify(firestore).collection("posts");
-      verify(documentReference).set(any(PostModel.class));
-      verify(collectionReference).document(id);
+      verify(collectionReference).add(any(PostModel.class));
       verify(apiFuture).get();
     }
 
@@ -83,9 +81,8 @@ class FirestorePostRepositoryTest {
         throws ExecutionException, InterruptedException {
       final var id = IdFixture.withId("any").getValue();
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.document(id))
-          .thenReturn(documentReference);
-      when(documentReference.set(any(PostModel.class))).thenReturn(apiFuture);
+      when(collectionReference.add(any(PostModel.class)))
+          .thenReturn(apiFuture);
       when(apiFuture.get()).thenThrow(InterruptedException.class);
 
       assertThrows(RepositoryException.class, () -> firestorePostRepository.save(POST));
@@ -108,7 +105,6 @@ class FirestorePostRepositoryTest {
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
-      when(documentSnapshot.getId()).thenReturn("any");
 
       final var result = firestorePostRepository.findBySlug(POST.getSlug());
 
@@ -118,7 +114,6 @@ class FirestorePostRepositoryTest {
       verify(apiFuture).get();
       verify(querySnapshot).getDocuments();
       verify(documentSnapshot).toObject(PostModel.class);
-      verify(documentSnapshot).getId();
       assertEquals(POST, result.get());
     }
   }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createPost } from "@/services/postService";
 import CreatePostRequest from "@/models/create-post-request";
-import CreatePostResponse from "@/models/create-post-response";
+import Post from "@/models/post";
 
 export const usePublishPost = () => {
   const [title, setTitle] = useState("");
@@ -10,7 +10,7 @@ export const usePublishPost = () => {
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [postResponse, setPostResponse] = useState<CreatePostResponse | null>(null);
+  const [postResponse, setPostResponse] = useState<Post | null>(null);
   const router = useRouter();
 
   useEffect(() => {

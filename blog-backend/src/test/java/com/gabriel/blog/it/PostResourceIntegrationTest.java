@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.Firestore;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.filter.log.LogDetail;
@@ -122,7 +123,7 @@ class PostResourceIntegrationTest {
         "title", "title",
         "content", "content",
         "slug", "slug",
-        "creationDate", LocalDate.now().toString()
+        "creationDate", Timestamp.now()
     ));
 
     Thread.sleep(1000);

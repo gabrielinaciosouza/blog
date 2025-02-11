@@ -8,7 +8,10 @@ import static org.mockito.Mockito.when;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.UriInfo;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,5 +60,22 @@ class LoggingFilterTest {
     verify(responseContext).getStatus();
     verify(responseContext).getHeaders();
     verify(responseContext).getEntity();
+  }
+
+  @Test
+  void shouldLogWarningWhenErrorReadingRequestBody() throws Exception {
+    when(requestContext.getMethod()).thenReturn("POST");
+    when(requestContext.getUriInfo()).thenReturn(mock(UriInfo.class));
+    when(requestContext.getUriInfo().getRequestUri()).thenReturn(new java.net.URI("http://localhost:8080/test"));
+    when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+    when(requestContext.hasEntity()).thenReturn(true);
+    when(requestContext.getEntityStream()).thenThrow(new RuntimeException("Test Exception"));
+
+    loggingFilter.filter(requestContext);
+
+    verify(requestContext).getMethod();
+    verify(requestContext, times(2)).getUriInfo();
+    verify(requestContext).getHeaders();
+    verify(requestContext).hasEntity();
   }
 }
