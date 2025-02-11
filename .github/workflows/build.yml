@@ -28,7 +28,7 @@ jobs:
         run: npm install
 
       - name: Run lint
-        run: npm run lint -- --output-file lint-report.json --format json || true
+        run: npm run lint -- --output-file lint-report.json --format json
 
       - name: Run tests with coverage
         run: npm test -- --coverage --json --outputFile=test-report.json
