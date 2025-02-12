@@ -20,7 +20,7 @@
 }
 
 .image {
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .links {
@@ -73,5 +73,13 @@
 
     .links {
         justify-content: flex-end;
+    }
+
+    .textLogo {
+        font-size: 14px;
+    }
+
+    .logo {
+        flex: 1.2;
     }
 }
