@@ -7,20 +7,15 @@ import AuthLinks from "@/components/authLinks/AuthLinks";
 const Navbar = () => {
     return (
         <div className={styles.container}>
-            <div className={styles.social}>
-                <Image src="/facebook.png" alt="facebook" width={24} height={24}/>
-                <Image src="/instagram.png" alt="instagram" width={24} height={24}/>
-                <Image src="/tiktok.png" alt="tiktok" width={24} height={24}/>
-                <Image src="/youtube.png" alt="youtube" width={24} height={24}/>
-            </div>
             <div className={styles.logo}>
-                <Image src="/logo1.png" alt="logo1" fill className={styles.image}/>
+                <Image src="/logo2.png" alt="logo2" width={48} height={48} className={styles.image}/>
+                <div className={styles.textLogo}>GABRIEL INACIO</div>
             </div>
             <div className={styles.links}>
                 <Link href="/" className={styles.link}>Homepage</Link>
                 <Link href="/" className={styles.link}>Contact</Link>
                 <Link href="/" className={styles.link}>About</Link>
-                <AuthLinks/>
+                <AuthLinks authStatus="authenticated"/>
             </div>
         </div>
     )

@@ -6,7 +6,7 @@ const Featured = () => {
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>
-                <b>Hey! Gabriel Dev here!</b> Discover my stories and creative ideas.
+                <b>Hey, I'm Gabriel!</b> Unraveling Code, Stories & Big Ideas!🚀
             </h1>
             <div className={styles.post}>
                 <div className={styles.imgContainer}>
@@ -14,9 +14,18 @@ const Featured = () => {
                 </div>
 
                 <div className={styles.textContainer}>
-                    <h1 className={styles.postTitle}>Title goes here, After ready put some informative text about me.</h1>
-                    <p className={styles.postDescription}>And here goes description, after ready put some cool description in English, I think this will be nice for new readers</p>
-                    <button className={styles.button}>Read More</button>
+                    <h1 className={styles.postTitle}>🎯 Tech, Logic & Creativity - Why I Love Engineering</h1>
+                    <p className={styles.postDescription}>Every bug has a lesson, every project has a story. Join me as I navigate the ever-evolving world of software engineering!</p>
+                    <div className={styles.buttonContainer}>
+                        <button className={styles.button}>Blog</button>
+                        <button className={styles.button}>About Me</button>
+                        <div className={styles.social}>
+                <Image src="/facebook.png" alt="facebook" width={24} height={24}/>
+                <Image src="/instagram.png" alt="instagram" width={24} height={24}/>
+                <Image src="/tiktok.png" alt="tiktok" width={24} height={24}/>
+                <Image src="/youtube.png" alt="youtube" width={24} height={24}/>
+            </div>
+                    </div>
                 </div>
             </div>
         </div>
