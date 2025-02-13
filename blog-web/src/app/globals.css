@@ -40,6 +40,7 @@ a {
   margin: 0 auto;
   padding: 20px;
   width: 100%;
+  align-items: center;
 }
 
 .wrapper {
@@ -78,6 +79,10 @@ a {
 @media screen and (max-width: 640px) {
   .wrapper {
     max-width: 475px;
+  }
+
+  .container {
+    padding: 8px;
   }
 }
 
