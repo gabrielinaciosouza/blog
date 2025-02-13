@@ -17,7 +17,6 @@ const Featured = () => {
                     <h1 className={styles.postTitle}>🎯 Tech, Logic & Creativity - Why I Love Engineering</h1>
                     <p className={styles.postDescription}>Every bug has a lesson, every project has a story. Join me as I navigate the ever-evolving world of software engineering!</p>
                     <div className={styles.buttonContainer}>
-                        <button className={styles.button}>Blog</button>
                         <button className={styles.button}>About Me</button>
                         <div className={styles.social}>
                 <Image src="/facebook.png" alt="facebook" width={24} height={24}/>

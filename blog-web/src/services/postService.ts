@@ -36,3 +36,21 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
 
     return new Post(data.postId, data.title, data.content, data.creationDate, data.slug);
 };
+
+export const getPosts = async (page: number, size: number): Promise<Post[]> => {
+    const response = await fetch(`${API_URL}/find`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ page, size }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message);
+    }
+
+    return data.map((post: any) => new Post(post.postId, post.title, post.content, post.creationDate, post.slug));
+}
