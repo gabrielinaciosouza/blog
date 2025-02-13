@@ -48,12 +48,17 @@
 .list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    font-weight: 300;
+}
+
+.listItem {
     font-weight: 300;
 }
 
 .listTitle {
-    font-weight: bold;
+    font-weight: 500;
+    font-size: 16px;
 }
 
 .divider {
@@ -82,20 +87,21 @@
     }
 }
 
-@media screen and (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        gap: 50px;
-    }
-
-    .links {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
-
 @media screen and (max-width: 640px) {
     .links {
-        font-size: 14px;
+        font-size: 12px;
+    }
+
+    .desc {
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .year {
+        font-size: 12px;
+    }
+
+    .footerBottom {
+        font-size: 13px;
     }
 }
