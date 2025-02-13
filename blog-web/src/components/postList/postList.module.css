@@ -9,6 +9,13 @@
     margin: 0 auto;
 }
 
+@media (max-width: 1024px) {
+    .container {
+        max-width: 950px;
+        padding: 16px;
+    }
+
+}
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
