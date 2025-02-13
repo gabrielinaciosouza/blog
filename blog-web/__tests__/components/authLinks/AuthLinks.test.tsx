@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import AuthLinks from '../../src/components/authLinks/AuthLinks';
+import AuthLinks from '../../../src/components/authLinks/AuthLinks';
 
 describe('AuthLinks', () => {
     it('should render login link when status is not authenticated', () => {
