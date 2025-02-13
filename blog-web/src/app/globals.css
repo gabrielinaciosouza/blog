@@ -36,17 +36,17 @@ a {
   flex: 1;
   background-color: var(--background);
   color: var(--textColor);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  width: 100%;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
   flex: 1;
-  max-width: 1536px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 80px;
-  padding-right: 80px;
+  width: 100%;
 }
 
 @media screen and (max-width: 1536px) {
