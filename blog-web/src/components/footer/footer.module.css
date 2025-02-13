@@ -1,5 +1,5 @@
 .container {
-    margin-top: 50px;
+    margin-top: auto; /* Push the footer to the bottom */
     padding: 20px 0px;
     display: flex;
     align-items: center;
