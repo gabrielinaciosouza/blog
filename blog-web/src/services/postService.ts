@@ -15,7 +15,7 @@ export const createPost = async (request: CreatePostRequest): Promise<Post> => {
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.message || "Failed to publish post");
+        throw new Error(data.message);
     }
 
     return new Post(data.postId, data.title, data.content, data.creationDate, data.slug);
@@ -29,7 +29,7 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch post");
+        throw new Error(data.message);
     }
 
     
