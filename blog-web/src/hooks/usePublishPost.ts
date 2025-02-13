@@ -40,8 +40,8 @@ export const usePublishPost = () => {
       setResponseMessage("Post saved successfully!");
       setPostResponse(response);
       setShowModal(true);
-    } catch (error: any) {
-      setResponseMessage(error.message);
+    } catch (error) {
+      setResponseMessage((error as Error).message);
       setShowModal(true);
     } finally {
       setLoading(false);
