@@ -37,13 +37,13 @@ export default function CreatePostPage() {
                 {open && (
                     <div className={styles.add}>
                         <button className={styles.addButton}>
-                            <Image src="/image.png" alt="" width={16} height={16} />
+                            <Image src="/image.png" alt="image" width={16} height={16} />
                         </button>
                         <button className={styles.addButton}>
-                            <Image src="/external.png" alt="" width={16} height={16} />
+                            <Image src="/external.png" alt="external" width={16} height={16} />
                         </button>
                         <button className={styles.addButton}>
-                            <Image src="/video.png" alt="" width={16} height={16} />
+                            <Image src="/video.png" alt="video" width={16} height={16} />
                         </button>
                     </div>
                 )}
