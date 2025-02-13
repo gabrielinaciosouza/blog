@@ -21,4 +21,13 @@ public class RepositoryException extends RuntimeException {
   public RepositoryException(final String message, final Exception e) {
     super(message, e);
   }
+
+  /**
+   * Constructs a new {@link RepositoryException} with a detailed message.
+   *
+   * @param message the error message describing the failure; must not be {@code null}.
+   */
+  public RepositoryException(final String message) {
+    super(message);
+  }
 }

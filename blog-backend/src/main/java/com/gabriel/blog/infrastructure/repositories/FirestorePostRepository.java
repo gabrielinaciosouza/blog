@@ -6,7 +6,9 @@ import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.jboss.logging.Logger;
@@ -68,6 +70,38 @@ public class FirestorePostRepository implements PostRepository {
       Thread.currentThread().interrupt();
       logger.error("Failed to find post by slug in Firestore", e);
       throw new RepositoryException("Failed to find post by slug in Firestore", e);
+    }
+  }
+
+  @Override
+  public List<Post> findPosts(final FindPostsParams params) {
+    try {
+      Query query = firestore.collection(COLLECTION_NAME);
+      if (params == null) {
+        throw new RepositoryException("Search parameters must not be null");
+      }
+      if (params.title() != null && !params.title().isEmpty()) {
+        query = query.whereEqualTo("title", params.title());
+      }
+
+      if (params.sortBy() != null) {
+        query = query.orderBy(params.sortBy().name().toLowerCase(),
+            Query.Direction.valueOf(params.sortOrder().name()));
+      }
+
+      return query.offset(params.page() * params.size())
+          .limit(params.size())
+          .get()
+          .get()
+          .getDocuments()
+          .stream()
+          .map(doc -> doc.toObject(PostModel.class))
+          .map(PostModel::toDomain)
+          .toList();
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to find posts in Firestore", e);
+      throw new RepositoryException("Failed to find posts in Firestore", e);
     }
   }
 }
