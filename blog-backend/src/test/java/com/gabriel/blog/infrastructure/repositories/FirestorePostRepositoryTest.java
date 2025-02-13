@@ -119,8 +119,8 @@ class FirestorePostRepositoryTest {
     @Test
     void shouldFindPostsWithValidParams() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.whereEqualTo("title", "test title")).thenReturn(query);
-      when(query.orderBy("title", Query.Direction.ASCENDING)).thenReturn(query);
+      when(collectionReference.orderBy("creationDate", Query.Direction.ASCENDING)).thenReturn(
+          query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
       when(query.get()).thenReturn(apiFuture);
@@ -131,14 +131,14 @@ class FirestorePostRepositoryTest {
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
-      final var params = new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.TITLE,
-          PostRepository.SortOrder.ASCENDING, "test title");
+      final var params =
+          new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
+              PostRepository.SortOrder.ASCENDING);
 
       final var result = firestorePostRepository.findPosts(params);
 
       verify(firestore).collection("posts");
-      verify(collectionReference).whereEqualTo("title", "test title");
-      verify(query).orderBy("title", Query.Direction.ASCENDING);
+      verify(collectionReference).orderBy("creationDate", Query.Direction.ASCENDING);
       verify(query).offset(0);
       verify(query).limit(10);
       verify(query).get();
@@ -153,15 +153,14 @@ class FirestorePostRepositoryTest {
         throws ExecutionException, InterruptedException {
 
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.whereEqualTo("title", "test title")).thenReturn(query);
-      when(query.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
+      when(collectionReference.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
       when(query.get()).thenReturn(apiFuture);
       when(apiFuture.get()).thenThrow(InterruptedException.class);
       final var params =
-          new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.TITLE,
-              PostRepository.SortOrder.DESCENDING, "test title");
+          new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+              PostRepository.SortOrder.DESCENDING);
       assertThrows(RepositoryException.class, () -> firestorePostRepository.findPosts(params));
     }
 

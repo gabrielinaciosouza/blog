@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.Firestore;
@@ -154,6 +155,47 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(404)
         .body("message", equalTo("Post with slug not-found not found"));
+  }
+
+  @Test
+  void shouldFindPosts() throws InterruptedException {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.ASCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("size()", equalTo(0));
+
+    firestore.collection("posts").document("find").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", Timestamp.now()));
+
+    Thread.sleep(1000);
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.ASCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("[0].postId", notNullValue())
+        .body("[0].title", equalTo("title"))
+        .body("[0].content", equalTo("content"))
+        .body("[0].slug", equalTo("slug"))
+        .body("[0].creationDate", equalTo(LocalDate.now().toString()));
+
+    firestore.collection("posts").document("find").delete();
   }
 }
 

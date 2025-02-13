@@ -80,16 +80,13 @@ public class FirestorePostRepository implements PostRepository {
       if (params == null) {
         throw new RepositoryException("Search parameters must not be null");
       }
-      if (params.title() != null && !params.title().isEmpty()) {
-        query = query.whereEqualTo("title", params.title());
-      }
 
       if (params.sortBy() != null) {
-        query = query.orderBy(params.sortBy().name().toLowerCase(),
+        query = query.orderBy(params.sortBy().name(),
             Query.Direction.valueOf(params.sortOrder().name()));
       }
 
-      return query.offset(params.page() * params.size())
+      return query.offset((params.page() - 1) * params.size())
           .limit(params.size())
           .get()
           .get()

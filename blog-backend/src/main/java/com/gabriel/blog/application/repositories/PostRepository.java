@@ -67,7 +67,7 @@ public interface PostRepository {
    * the field by which the posts should be sorted.</p>
    */
   enum SortBy {
-    TITLE, DATE
+    title, creationDate
   }
 
   /**
@@ -94,6 +94,6 @@ public interface PostRepository {
    * used to filter the list of posts, making it easier to pass the search criteria
    * to the repository method that retrieves the list of posts.</p>
    */
-  record FindPostsParams(int page, int size, SortBy sortBy, SortOrder sortOrder, String title) {
+  record FindPostsParams(int page, int size, SortBy sortBy, SortOrder sortOrder) {
   }
 }

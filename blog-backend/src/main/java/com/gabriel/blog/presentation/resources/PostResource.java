@@ -1,5 +1,6 @@
 package com.gabriel.blog.presentation.resources;
 
+import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.util.List;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.RestPath;
 
@@ -24,16 +26,21 @@ public class PostResource {
 
   private final CreatePostUseCase createPostUseCase;
   private final GetPostBySlug getPostBySlug;
+  private final PostRepository postRepository;
 
   /**
-   * Constructs a new PostController with the specified use case.
+   * Default constructor for the {@link PostResource} class.
    *
-   * @param createPostUseCase The use case for creating a blog post.
+   * @param createPostUseCase The use case for creating a new post.
+   * @param getPostBySlug     The use case for retrieving a post by its slug.
+   * @param postRepository    The repository for managing post data.
    */
   public PostResource(final CreatePostUseCase createPostUseCase,
-                      final GetPostBySlug getPostBySlug) {
+                      final GetPostBySlug getPostBySlug,
+                      final PostRepository postRepository) {
     this.createPostUseCase = createPostUseCase;
     this.getPostBySlug = getPostBySlug;
+    this.postRepository = postRepository;
   }
 
   /**
@@ -62,5 +69,27 @@ public class PostResource {
   @Path("/{slug}")
   public PostResponse getPostBySlug(@RestPath final String slug) {
     return getPostBySlug.getPostBySlug(slug);
+  }
+
+  /**
+   * Endpoint to find blog posts based on search criteria.
+   * This method receives a request to find posts based on search criteria and delegates the
+   * action to the corresponding repository, returning the result.
+   *
+   * @param params The search criteria for finding posts.
+   * @return The list of posts matching the search criteria.
+   */
+  @POST
+  @Path("/find")
+  public List<PostResponse> findPosts(final PostRepository.FindPostsParams params) {
+    final var posts = postRepository.findPosts(params);
+
+    return posts.stream()
+        .map(post -> new PostResponse(
+            post.getId().getValue(),
+            post.getTitle().getValue(),
+            post.getContent().getValue(),
+            post.getCreationDate().toString(), post.getSlug().getValue()))
+        .toList();
   }
 }
