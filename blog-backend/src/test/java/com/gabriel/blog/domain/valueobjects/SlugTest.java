@@ -43,4 +43,10 @@ class SlugTest {
     final var thrown = assertThrows(DomainException.class, () -> new Slug(null));
     assertEquals("Tried to create a Slug with a null value", thrown.getMessage());
   }
+
+  @Test
+  void shouldCreateSlugFromString() {
+    final Slug slug = Slug.fromString("any-slug");
+    assertEquals("any-slug", slug.getValue());
+  }
 }

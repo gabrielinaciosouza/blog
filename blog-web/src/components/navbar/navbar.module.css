@@ -5,21 +5,22 @@
     height: 100px;
 }
 
-.social {
-    display: flex;
-    gap: 10px;
-    flex: 1;
-}
-
 .logo {
     flex: 1;
-    height: 100px;
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.textLogo {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
 }
 
 .image {
-    object-fit: cover;
-    max-width: 320px;
+    object-fit: contain;
 }
 
 .links {
@@ -28,6 +29,7 @@
     flex: 1;
     font-size: 20px;
     align-items: center;
+    justify-content: flex-end;
 }
 
 @media screen and (max-width: 1280px) {
@@ -43,18 +45,23 @@
 }
 
 @media screen and (max-width: 1024px) {
-    .social {
-        display: none;
-    }
-
     .logo {
         text-align: left;
     }
 }
 
 @media screen and (max-width: 768px) {
-    .logo {
-        font-size: 24px;
+    .textLogo {
+        font-size: 16px;
+    }
+
+    .image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .link {
+        font-size: 16px;
     }
 
 }
@@ -66,5 +73,13 @@
 
     .links {
         justify-content: flex-end;
+    }
+
+    .textLogo {
+        font-size: 14px;
+    }
+
+    .logo {
+        flex: 1.2;
     }
 }

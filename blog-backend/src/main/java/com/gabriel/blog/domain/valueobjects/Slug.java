@@ -26,6 +26,10 @@ public class Slug extends AbstractValueObject {
     this.value = toSlug(title);
   }
 
+  private Slug(final String value) {
+    this.value = nonNull(value, "Tried to create a Slug with a null value");
+  }
+
   private String toSlug(final Title title) {
 
     final String normalized = Normalizer.normalize(title.getValue(), Normalizer.Form.NFD);
@@ -35,6 +39,16 @@ public class Slug extends AbstractValueObject {
         .replaceAll("\\s+", "-")
         .replaceAll("-{2,}", "-")
         .toLowerCase(Locale.ROOT);
+  }
+
+  /**
+   * Creates a {@code Slug} instance from the given string value.
+   *
+   * @param value the string value to create the slug from
+   * @return a new {@code Slug} instance
+   */
+  public static Slug fromString(final String value) {
+    return new Slug(value);
   }
 
   public String getValue() {

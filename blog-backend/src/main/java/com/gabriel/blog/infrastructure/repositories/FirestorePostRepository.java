@@ -2,10 +2,12 @@ package com.gabriel.blog.infrastructure.repositories;
 
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.domain.entities.Post;
+import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.firestore.Firestore;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.jboss.logging.Logger;
 
@@ -40,13 +42,32 @@ public class FirestorePostRepository implements PostRepository {
   public void save(final Post post) {
     try {
       firestore.collection(COLLECTION_NAME)
-          .document(post.getId().getValue()).set(PostModel.from(post))
+          .add(PostModel.from(post))
           .get();
       logger.info("Post with id " + post.getId().getValue() + " saved successfully");
     } catch (final InterruptedException | ExecutionException e) {
       Thread.currentThread().interrupt();
       logger.error("Failed to save post to Firestore", e);
       throw new RepositoryException("Failed to save post to Firestore", e);
+    }
+  }
+
+  @Override
+  public Optional<Post> findBySlug(final Slug slug) {
+    try {
+      return firestore.collection(COLLECTION_NAME)
+          .whereEqualTo("slug", slug.getValue())
+          .get()
+          .get()
+          .getDocuments()
+          .stream()
+          .findFirst()
+          .map(doc -> doc.toObject(PostModel.class))
+          .map(PostModel::toDomain);
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to find post by slug in Firestore", e);
+      throw new RepositoryException("Failed to find post by slug in Firestore", e);
     }
   }
 }

@@ -79,4 +79,24 @@ describe('CreatePostPage', () => {
 
     expect(mockUsePublishPost().handleCloseModal).toHaveBeenCalled();
   });
+
+  it('should update title state when input value changes', () => {
+    render(<CreatePostPage />);
+
+    const titleInput = screen.getByPlaceholderText('Title');
+    fireEvent.change(titleInput, { target: { value: 'New Post Title' } });
+
+    expect(mockUsePublishPost().setTitle).toHaveBeenCalledWith('New Post Title');
+});
+
+it('should toggle the open state when the plus button is clicked', () => {
+    render(<CreatePostPage />);
+
+    const plusButton = screen.getByAltText('');
+    fireEvent.click(plusButton);
+
+    expect(screen.getByAltText('image')).toBeInTheDocument();
+    fireEvent.click(plusButton);
+    expect(screen.queryByAltText('image')).not.toBeInTheDocument();
+});
 });

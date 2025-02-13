@@ -1,4 +1,4 @@
-class CreatePostResponse {
+class Post {
     postId: string;
     title: string;
     content: string;
@@ -14,4 +14,4 @@ class CreatePostResponse {
     }
 }
 
-export default CreatePostResponse;
+export default Post;

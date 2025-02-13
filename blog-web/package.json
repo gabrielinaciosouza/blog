@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "react": "^19.0.0",

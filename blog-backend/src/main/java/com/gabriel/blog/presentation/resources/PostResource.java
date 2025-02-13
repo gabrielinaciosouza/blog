@@ -1,14 +1,17 @@
 package com.gabriel.blog.presentation.resources;
 
 import com.gabriel.blog.application.requests.CreatePostRequest;
-import com.gabriel.blog.application.responses.CreatePostResponse;
+import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
+import com.gabriel.blog.application.usecases.GetPostBySlug;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.jboss.resteasy.reactive.ResponseStatus;
+import org.jboss.resteasy.reactive.RestPath;
 
 /**
  * Controller class for handling post-related operations.
@@ -20,14 +23,17 @@ import org.jboss.resteasy.reactive.ResponseStatus;
 public class PostResource {
 
   private final CreatePostUseCase createPostUseCase;
+  private final GetPostBySlug getPostBySlug;
 
   /**
    * Constructs a new PostController with the specified use case.
    *
    * @param createPostUseCase The use case for creating a blog post.
    */
-  public PostResource(final CreatePostUseCase createPostUseCase) {
+  public PostResource(final CreatePostUseCase createPostUseCase,
+                      final GetPostBySlug getPostBySlug) {
     this.createPostUseCase = createPostUseCase;
+    this.getPostBySlug = getPostBySlug;
   }
 
   /**
@@ -40,7 +46,21 @@ public class PostResource {
    */
   @POST
   @ResponseStatus(201)
-  public CreatePostResponse create(final CreatePostRequest request) {
+  public PostResponse create(final CreatePostRequest request) {
     return createPostUseCase.create(request);
+  }
+
+  /**
+   * Endpoint to retrieve a blog post by its slug.
+   * This method receives a request to retrieve a post by its slug and delegates the
+   * action to the corresponding use case, returning the result.
+   *
+   * @param slug The slug of the post to retrieve.
+   * @return The response containing the post details.
+   */
+  @GET
+  @Path("/{slug}")
+  public PostResponse getPostBySlug(@RestPath final String slug) {
+    return getPostBySlug.getPostBySlug(slug);
   }
 }

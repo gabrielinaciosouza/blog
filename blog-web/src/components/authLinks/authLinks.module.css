@@ -32,6 +32,11 @@
     font-size: 36px;
 }
 
+@media screen and (max-width: 768px) {
+    .link {
+        font-size: 16px;
+    }
+}
 @media screen and (max-width: 640px) {
     .burger {
         display: flex;

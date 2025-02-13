@@ -1,6 +1,8 @@
 package com.gabriel.blog.application.repositories;
 
 import com.gabriel.blog.domain.entities.Post;
+import com.gabriel.blog.domain.valueobjects.Slug;
+import java.util.Optional;
 
 /**
  * Interface for repository operations related to {@link Post} entities.
@@ -26,4 +28,18 @@ public interface PostRepository {
    * @throws IllegalArgumentException if the {@code post} is {@code null}.
    */
   void save(Post post);
+
+  /**
+   * Retrieves a {@link Post} entity by its unique slug.
+   * This method is responsible for fetching a {@link Post} entity from the database
+   * based on its unique slug value.
+   *
+   * <p>The implementation should query the database for a post with the given slug,
+   * and return an {@link Optional} containing the post if it exists, or an empty
+   * {@link Optional} if no post with the given slug was found.</p>
+   *
+   * @param slug the unique slug value of the post to retrieve.
+   * @return an {@link Optional} with the post, or an empty {@link Optional}.
+   */
+  Optional<Post> findBySlug(Slug slug);
 }
