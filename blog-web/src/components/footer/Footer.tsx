@@ -4,44 +4,49 @@ import Image from "next/image";
 import Link from "next/link";
 
 const Footer = () => {
+
+    const currentYear = new Date().getFullYear();
+
     return (
         <div className={styles.container}>
-            <div className={styles.info}>
-                <div className={styles.logo}>
-                    <Image src="/logo2.png" alt="Gabriel's blog" width={50} height={50} />
-                    <h1 className={styles.logoText}>GABRIEL INACIO</h1>
+            <div className={styles.topSection}>
+                <div className={styles.info}>
+                    <div className={styles.logo}>
+                        <Image src="/logo2.png" alt="Gabriel's blog" width={50} height={50} />
+                    </div>
+                    
+                    <p className={styles.desc}>
+                        Powered by coffee ☕, late-night coding,<br />
+                        and an endless love for problem-solving!
+                    </p>
+                    <p className={styles.year}>Gabriel, {currentYear}</p>
                 </div>
-                <p className={styles.desc}>
-                    Powered by coffe, late-night coding and an endless love for problem-solving!
-                </p>
-                <div className={styles.icons}>
-                    <Image src="/facebook.png" alt="" width={18} height={18} />
-                    <Image src="/instagram.png" alt="" width={18} height={18} />
-                    <Image src="/tiktok.png" alt="" width={18} height={18} />
-                    <Image src="/youtube.png" alt="" width={18} height={18} />
+                <div className={styles.links}>
+                    <div className={styles.list}>
+                        <span className={styles.listTitle}>Links</span>
+                        <Link href="/">Homepage</Link>
+                        <Link href="/">Blog</Link>
+                        <Link href="/">About</Link>
+                        <Link href="/">Contact</Link>
+                    </div>
                 </div>
             </div>
-            <div className={styles.links}>
-                <div className={styles.list}>
-                    <span className={styles.listTitle}>Links</span>
-                    <Link href="/">Homepage</Link>
-                    <Link href="/">Blog</Link>
-                    <Link href="/">About</Link>
-                    <Link href="/">Contact</Link>
-                </div>
-                <div className={styles.list}>
-                    <span className={styles.listTitle}>Tags</span>
-                    <Link href="/">Style</Link>
-                    <Link href="/">Fashion</Link>
-                    <Link href="/">Coding</Link>
-                    <Link href="/">Travel</Link>
-                </div>
-                <div className={styles.list}>
-                    <span className={styles.listTitle}>Social</span>
-                    <Link href="/">Facebook</Link>
-                    <Link href="/">Instagram</Link>
-                    <Link href="/">Tiktok</Link>
-                    <Link href="/">Youtube</Link>
+            <div className={styles.divider}></div>
+            <div className={styles.footerBottom}>
+                <span>© {currentYear} Gabriel Inacio. All rights reserved.</span>
+                <div className={styles.socialIcons}>
+                    <Link href="/">
+                        <Image src="/facebook.png" alt="Facebook" width={18} height={18} />
+                    </Link>
+                    <Link href="/">
+                        <Image src="/instagram.png" alt="Instagram" width={18} height={18} />
+                    </Link>
+                    <Link href="/">
+                        <Image src="/tiktok.png" alt="Tiktok" width={18} height={18} />
+                    </Link>
+                    <Link href="/">
+                        <Image src="/youtube.png" alt="Youtube" width={18} height={18} />
+                    </Link>
                 </div>
             </div>
         </div>
