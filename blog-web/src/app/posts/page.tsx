@@ -1,0 +1,63 @@
+import React from "react";
+import styles from "./posts.module.css"
+import PostCard from "@/components/postCard/PostCard"
+import Post from "@/models/post";
+import Pagination from "@/components/pagination/Pagination";
+
+const POST_PER_PAGE = 9;
+const getData = async (page: number): Promise<{ posts: Post[], count: number }> => {
+    const res = await fetch(
+        `http://localhost:3000/api/posts?page=${page}&size=${POST_PER_PAGE}`,
+        {
+            cache: "no-store",
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed");
+    }
+
+    return res.json();
+};
+
+const PostList = async (page: number) => {
+    try {
+        console.log(page)
+        const { posts, count } = await getData(page);
+
+        console.log(posts);
+
+
+        const hasPrev = page > 1;
+        const hasNext = count == POST_PER_PAGE;
+
+        return (
+            <div className={styles.container}>
+                {
+                    posts.length > POST_PER_PAGE && (
+                        <div className={styles.headerContainer}>
+                            <div className={styles.headerText}>Recent Stories</div>
+                        </div>
+                    )
+                }
+                <div className={styles.grid}>
+                    {posts.map((post) => (
+                        <div key={post.postId}>
+                            <PostCard {...post} />
+                        </div>
+                    ))}
+
+                </div>
+                <div>
+                    <Pagination page={page} hasNext={hasNext} hasPrev={hasPrev} />
+                </div>
+            </div>
+        )
+    } catch(err) {
+        console.log(err);
+        return <></>
+    }
+
+}
+
+export default PostList;
