@@ -64,3 +64,31 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
+
+@media screen and (max-width: 640px) {
+    .container {
+        max-width: 240px;
+        min-height: 300px;
+        max-height: 300px;
+    }
+
+    .image {
+        height: 120px;
+    }
+
+    .contentWrapper {
+        padding: 12px;
+    }
+
+    .date {
+        font-size: 0.8em;
+    }
+
+    .title {
+        font-size: 1.1em;
+    }
+
+    .content {
+        font-size: 0.9em;
+    }
+}

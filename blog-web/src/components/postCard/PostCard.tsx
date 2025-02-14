@@ -9,7 +9,7 @@ const PostCard = (post: Post) => {
             <div className={styles.contentWrapper}>
                 <div className={styles.date}>{post.creationDate}</div>
                 <h2 className={styles.title}>{post.title}</h2>
-                <p className={styles.content}>{post.content}</p>
+                <p className={styles.content} dangerouslySetInnerHTML={{ __html: post.content }}></p>
             </div>
        </div>
     );
