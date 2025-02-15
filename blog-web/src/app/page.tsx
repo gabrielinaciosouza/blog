@@ -2,7 +2,7 @@ import PostList from "@/components/postList/PostList";
 import styles from "./homepage.module.css"
 import Featured from "@/components/featured/Featured";
 
-export default function Home() {
+const Home = () => {
     return (
         <div className={styles.container} role="main">
             <Featured/>
@@ -12,3 +12,5 @@ export default function Home() {
         </div>
     )
 }
+
+export default Home;
