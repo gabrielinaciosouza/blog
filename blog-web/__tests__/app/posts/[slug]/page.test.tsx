@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import SinglePage from '@/app/posts/[slug]/page';
 import { getPostBySlug } from '@/services/postService';
 
