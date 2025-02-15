@@ -1,10 +1,12 @@
 import CreatePostRequest from "@/models/create-post-request";
 import Post from "@/models/post";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080/posts";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3000";
+export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080";
+const POSTS_PATH  = `${SERVER_URL}/posts`;
 
 export const createPost = async (request: CreatePostRequest): Promise<Post> => {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}/${POSTS_PATH}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -22,7 +24,7 @@ export const createPost = async (request: CreatePostRequest): Promise<Post> => {
 };
 
 export const getPostBySlug = async (slug: string): Promise<Post> => {
-    const response = await fetch(`${API_URL}/${slug}`, {
+    const response = await fetch(`${POSTS_PATH}/${slug}`, {
         cache: "force-cache",
     });
 
@@ -38,7 +40,7 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
 };
 
 export const getPosts = async (page: number, size: number): Promise<Post[]> => {
-    const response = await fetch(`${API_URL}/find`, {
+    const response = await fetch(`${POSTS_PATH}/find`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

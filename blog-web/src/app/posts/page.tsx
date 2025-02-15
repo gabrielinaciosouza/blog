@@ -3,11 +3,12 @@ import styles from "./posts.module.css"
 import PostCard from "@/components/postCard/PostCard"
 import Post from "@/models/post";
 import Pagination from "@/components/pagination/Pagination";
+import { API_URL } from "@/services/postService";
 
 const POST_PER_PAGE = 9;
 const getData = async (page: number): Promise<{ posts: Post[], count: number }> => {
     const res = await fetch(
-        `http://localhost:3000/api/posts?page=${page}&size=${POST_PER_PAGE}`,
+        `${API_URL}/api/posts?page=${page}&size=${POST_PER_PAGE}`,
         {
             cache: "no-store",
         }
@@ -20,14 +21,10 @@ const getData = async (page: number): Promise<{ posts: Post[], count: number }> 
     return res.json();
 };
 
-const PostList = async (page: number) => {
+const Posts = async ({ searchParams } : { searchParams: { page: number }}) => {
     try {
-        console.log(page)
+        const page = (await searchParams).page || 1;
         const { posts, count } = await getData(page);
-
-        console.log(posts);
-
-
         const hasPrev = page > 1;
         const hasNext = count == POST_PER_PAGE;
 
@@ -60,4 +57,4 @@ const PostList = async (page: number) => {
 
 }
 
-export default PostList;
+export default Posts;

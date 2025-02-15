@@ -1,5 +1,4 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
-import { useRouter } from 'next/router';
+import { renderHook, act } from '@testing-library/react';
 import { usePublishPost } from '@/hooks/usePublishPost';
 
 const localStorageMock = (() => {
