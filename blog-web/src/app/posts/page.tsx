@@ -7,18 +7,20 @@ import { API_URL } from "@/services/postService";
 
 const POST_PER_PAGE = 9;
 const getData = async (page: number): Promise<{ posts: Post[], count: number }> => {
-    const res = await fetch(
+    const response = await fetch(
         `${API_URL}/api/posts?page=${page}&size=${POST_PER_PAGE}`,
         {
             cache: "no-store",
         }
     );
 
-    if (!res.ok) {
-        throw new Error("Failed");
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message);
     }
 
-    return res.json();
+    return data;
 };
 
 const Posts = async ({ searchParams } : { searchParams: { page: number }}) => {
