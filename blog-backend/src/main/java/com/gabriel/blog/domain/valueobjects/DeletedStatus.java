@@ -6,7 +6,8 @@ import java.time.Instant;
 
 /**
  * Represents the deletion status of an entity as a value object.
- * This class ensures that the status is not null and provides methods to mark as deleted or not deleted.
+ * This class ensures that the status is not null
+ * and provides methods to mark as deleted or not deleted.
  *
  * <p>Created by Gabriel Inacio de Souza on February 1, 2025.</p>
  */
@@ -24,7 +25,7 @@ public class DeletedStatus extends AbstractValueObject {
    */
   public DeletedStatus(final boolean value, final Instant deletionDate) {
     this.value = value;
-    this.deletionDate = deletionDate;
+    this.deletionDate = nonNull(deletionDate, "Deletion date must not be null");
   }
 
   /**

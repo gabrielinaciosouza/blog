@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.gabriel.blog.domain.exceptions.DomainException;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
@@ -31,5 +33,11 @@ class DeletedStatusTest {
     final var status = new DeletedStatus(true, customDate);
     assertTrue(status.isDeleted());
     assertEquals(customDate, status.getDeletionDate());
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletionDateIsNull() {
+    final var exception = assertThrows(DomainException.class, () -> new DeletedStatus(true, null));
+    assertEquals("Deletion date must not be null", exception.getMessage());
   }
 }
