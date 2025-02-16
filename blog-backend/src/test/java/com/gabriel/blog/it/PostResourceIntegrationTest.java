@@ -64,6 +64,7 @@ class PostResourceIntegrationTest {
         .body("message", equalTo("Post with slug title already exists"));
 
     firestore.collection("posts").document("title").delete();
+    Thread.sleep(1000);
   }
 
   @Test
@@ -143,6 +144,7 @@ class PostResourceIntegrationTest {
         .body("creationDate", equalTo(LocalDate.now().toString()));
 
     firestore.collection("posts").document("slug").delete();
+    Thread.sleep(1000);
   }
 
   @Test
@@ -177,6 +179,12 @@ class PostResourceIntegrationTest {
         "slug", "slug",
         "creationDate", Timestamp.now()));
 
+    firestore.collection("posts").document("find2").set(Map.of(
+        "title", "title2",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", Timestamp.now()));
+
     Thread.sleep(1000);
 
     given()
@@ -193,9 +201,64 @@ class PostResourceIntegrationTest {
         .body("[0].title", equalTo("title"))
         .body("[0].content", equalTo("content"))
         .body("[0].slug", equalTo("slug"))
-        .body("[0].creationDate", equalTo(LocalDate.now().toString()));
+        .body("[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("[1].postId", notNullValue())
+        .body("[1].title", equalTo("title2"))
+        .body("[1].content", equalTo("content"))
+        .body("[1].slug", equalTo("slug"))
+        .body("[1].creationDate", equalTo(LocalDate.now().toString()));
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("[0].postId", notNullValue())
+        .body("[0].title", equalTo("title2"))
+        .body("[0].content", equalTo("content"))
+        .body("[0].slug", equalTo("slug"))
+        .body("[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("[1].postId", notNullValue())
+        .body("[1].title", equalTo("title"))
+        .body("[1].content", equalTo("content"))
+        .body("[1].slug", equalTo("slug"))
+        .body("[1].creationDate", equalTo(LocalDate.now().toString()));
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .when()
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(500)
+        .body("message", equalTo("Page must be greater than 0"));
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .when()
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("size()", equalTo(2));
+
+
 
     firestore.collection("posts").document("find").delete();
+    Thread.sleep(1000);
   }
 }
 

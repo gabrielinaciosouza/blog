@@ -168,5 +168,43 @@ class FirestorePostRepositoryTest {
     void shouldThrowRepositoryExceptionWhenParamsAreNull() {
       assertThrows(RepositoryException.class, () -> firestorePostRepository.findPosts(null));
     }
+
+    @Test
+    void shouldThrowRepositoryExceptionWhenPageIsLessThan1() {
+      assertThrows(RepositoryException.class, () -> firestorePostRepository.findPosts(
+          new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.title,
+              PostRepository.SortOrder.ASCENDING)));
+    }
+
+    @Test
+    void shouldSetDefaultSizeWhenSizeIsLessThan1() throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.orderBy("title", Query.Direction.ASCENDING)).thenReturn(query);
+      when(query.offset(0)).thenReturn(query);
+      when(query.limit(10)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
+
+      final var querySnapshot = mock(QuerySnapshot.class);
+      final var documentSnapshot = mock(QueryDocumentSnapshot.class);
+
+      when(apiFuture.get()).thenReturn(querySnapshot);
+      when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
+      final var params =
+          new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title,
+              PostRepository.SortOrder.ASCENDING);
+
+      final var result = firestorePostRepository.findPosts(params);
+
+      verify(firestore).collection("posts");
+      verify(collectionReference).orderBy("title", Query.Direction.ASCENDING);
+      verify(query).offset(0);
+      verify(query).limit(10);
+      verify(query).get();
+      verify(apiFuture).get();
+      verify(querySnapshot).getDocuments();
+      verify(documentSnapshot).toObject(PostModel.class);
+      assertEquals(List.of(POST), result);
+    }
   }
 }

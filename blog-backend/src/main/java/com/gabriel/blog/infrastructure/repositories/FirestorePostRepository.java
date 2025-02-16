@@ -76,18 +76,27 @@ public class FirestorePostRepository implements PostRepository {
   @Override
   public List<Post> findPosts(final FindPostsParams params) {
     try {
-      Query query = firestore.collection(COLLECTION_NAME);
       if (params == null) {
         throw new RepositoryException("Search parameters must not be null");
       }
 
+      if (params.page() < 1) {
+        throw new RepositoryException("Page must be greater than 0");
+      }
+
+      int size = params.size();
+      if (params.size() < 1) {
+        size = 10;
+      }
+
+      Query query = firestore.collection(COLLECTION_NAME);
       if (params.sortBy() != null) {
         query = query.orderBy(params.sortBy().name(),
             Query.Direction.valueOf(params.sortOrder().name()));
       }
 
-      return query.offset((params.page() - 1) * params.size())
-          .limit(params.size())
+      return query.offset((params.page() - 1) * size)
+          .limit(size)
           .get()
           .get()
           .getDocuments()
