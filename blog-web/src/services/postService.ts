@@ -3,7 +3,7 @@ import Post from "@/models/post";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3000";
 export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080";
-const POSTS_PATH  = `${SERVER_URL}/posts`;
+export const POSTS_PATH  = `${SERVER_URL}/posts`;
 
 export const createPost = async (request: CreatePostRequest): Promise<Post> => {
     const response = await fetch(`${POSTS_PATH}`, {
