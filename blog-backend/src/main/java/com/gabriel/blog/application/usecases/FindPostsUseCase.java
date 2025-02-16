@@ -40,9 +40,9 @@ public class FindPostsUseCase {
     }
 
     var sortBy = PostRepository.SortBy.creationDate;
-    if (request.sortBy() != null && (request.sortBy().equalsIgnoreCase("title") || request.sortBy()
-        .equalsIgnoreCase("creationDate"))) {
-      sortBy = PostRepository.SortBy.valueOf(request.sortBy().toLowerCase());
+    if (request.sortBy() != null && (request.sortBy().equals("title") || request.sortBy()
+        .equals("creationDate"))) {
+      sortBy = PostRepository.SortBy.valueOf(request.sortBy());
     }
 
     var sortOrder = PostRepository.SortOrder.DESCENDING;
@@ -66,4 +66,5 @@ public class FindPostsUseCase {
         post.getCreationDate().toString(),
         post.getSlug().getValue())).toList(), total);
   }
+
 }
