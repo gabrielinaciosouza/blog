@@ -34,7 +34,7 @@ public class DeletedStatus extends AbstractValueObject {
    * @return a new {@code DeletedStatus} set to false with no deletion date
    */
   public static DeletedStatus notDeleted() {
-    return new DeletedStatus(false, null);
+    return new DeletedStatus(false, Instant.MIN);
   }
 
   /**
