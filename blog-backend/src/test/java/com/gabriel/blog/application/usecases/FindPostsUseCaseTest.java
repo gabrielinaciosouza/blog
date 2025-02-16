@@ -141,4 +141,19 @@ class FindPostsUseCaseTest {
     assertEquals(1, response.posts().size());
     assertEquals("any title", response.posts().getFirst().title());
   }
+
+  @Test
+  void shouldNotReturnDeletedPosts() {
+    final var request = new FindPostsRequest(1, 10, "title", "ASCENDING");
+    final var post = PostFixture.deletedPost();
+    when(postRepository.findPosts(
+        new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.ASCENDING))).thenReturn(List.of(post));
+    when(postRepository.totalCount()).thenReturn(1);
+
+    final var response = findPostsUseCase.findPosts(request);
+
+    assertEquals(0, response.totalCount());
+    assertEquals(0, response.posts().size());
+  }
 }
