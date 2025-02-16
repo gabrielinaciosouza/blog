@@ -99,8 +99,10 @@ public class FirestorePostRepository implements PostRepository {
 
   private Query buildQuery(final FindPostsParams params) {
     final var size = params.size() < 1 ? 10 : params.size();
-    final var sortBy = params.sortBy() == null ? PostRepository.SortBy.creationDate : params.sortBy();
-    final var sortOrder = params.sortOrder() == null ? PostRepository.SortOrder.DESCENDING : params.sortOrder();
+    final var sortBy =
+        params.sortBy() == null ? PostRepository.SortBy.creationDate : params.sortBy();
+    final var sortOrder =
+        params.sortOrder() == null ? PostRepository.SortOrder.DESCENDING : params.sortOrder();
 
     return firestore.collection(COLLECTION_NAME)
         .orderBy(sortBy.name(), Query.Direction.valueOf(sortOrder.name()))
@@ -108,7 +110,8 @@ public class FirestorePostRepository implements PostRepository {
         .limit(size);
   }
 
-  private List<Post> executeQuery(final Query query) throws InterruptedException, ExecutionException {
+  private List<Post> executeQuery(final Query query)
+      throws InterruptedException, ExecutionException {
     return query.get()
         .get()
         .getDocuments()
@@ -116,5 +119,19 @@ public class FirestorePostRepository implements PostRepository {
         .map(doc -> doc.toObject(PostModel.class))
         .map(PostModel::toDomain)
         .toList();
+  }
+
+  @Override
+  public int totalCount() {
+    try {
+      return firestore.collection(COLLECTION_NAME)
+          .get()
+          .get()
+          .size();
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to get total count of posts in Firestore", e);
+      throw new RepositoryException("Failed to get total count of posts in Firestore", e);
+    }
   }
 }

@@ -173,7 +173,8 @@ class PostResourceIntegrationTest {
         .log()
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
-        .body("size()", equalTo(0));
+        .body("totalCount", equalTo(0))
+        .body("posts.size()", equalTo(0));
   }
 
   @Test
@@ -190,16 +191,17 @@ class PostResourceIntegrationTest {
         .log()
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
-        .body("[0].postId", notNullValue())
-        .body("[0].title", equalTo("title"))
-        .body("[0].content", equalTo("content"))
-        .body("[0].slug", equalTo("slug"))
-        .body("[0].creationDate", equalTo(LocalDate.now().toString()))
-        .body("[1].postId", notNullValue())
-        .body("[1].title", equalTo("title2"))
-        .body("[1].content", equalTo("content"))
-        .body("[1].slug", equalTo("slug"))
-        .body("[1].creationDate", equalTo(LocalDate.now().toString()));
+        .body("totalCount", equalTo(2))
+        .body("posts[0].postId", notNullValue())
+        .body("posts[0].title", equalTo("title"))
+        .body("posts[0].content", equalTo("content"))
+        .body("posts[0].slug", equalTo("slug"))
+        .body("posts[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("posts[1].postId", notNullValue())
+        .body("posts[1].title", equalTo("title2"))
+        .body("posts[1].content", equalTo("content"))
+        .body("posts[1].slug", equalTo("slug"))
+        .body("posts[1].creationDate", equalTo(LocalDate.now().toString()));
 
     deleteTestPosts();
   }
@@ -218,16 +220,17 @@ class PostResourceIntegrationTest {
         .log()
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
-        .body("[0].postId", notNullValue())
-        .body("[0].title", equalTo("title2"))
-        .body("[0].content", equalTo("content"))
-        .body("[0].slug", equalTo("slug"))
-        .body("[0].creationDate", equalTo(LocalDate.now().toString()))
-        .body("[1].postId", notNullValue())
-        .body("[1].title", equalTo("title"))
-        .body("[1].content", equalTo("content"))
-        .body("[1].slug", equalTo("slug"))
-        .body("[1].creationDate", equalTo(LocalDate.now().toString()));
+        .body("totalCount", equalTo(2))
+        .body("posts[0].postId", notNullValue())
+        .body("posts[0].title", equalTo("title2"))
+        .body("posts[0].content", equalTo("content"))
+        .body("posts[0].slug", equalTo("slug"))
+        .body("posts[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("posts[1].postId", notNullValue())
+        .body("posts[1].title", equalTo("title"))
+        .body("posts[1].content", equalTo("content"))
+        .body("posts[1].slug", equalTo("slug"))
+        .body("posts[1].creationDate", equalTo(LocalDate.now().toString()));
 
     deleteTestPosts();
   }
@@ -243,7 +246,7 @@ class PostResourceIntegrationTest {
         .then()
         .log()
         .ifValidationFails(LogDetail.BODY)
-        .statusCode(500)
+        .statusCode(400)
         .body("message", equalTo("Page must be greater than 0"));
   }
 
@@ -261,7 +264,8 @@ class PostResourceIntegrationTest {
         .log()
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
-        .body("size()", equalTo(2));
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(2));
 
     deleteTestPosts();
   }
@@ -279,7 +283,8 @@ class PostResourceIntegrationTest {
         .log()
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
-        .body("size()", equalTo(2));
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(2));
 
     deleteTestPosts();
   }
@@ -287,6 +292,7 @@ class PostResourceIntegrationTest {
   @Test
   void shouldFindPostsWithDefaultSortBy() throws InterruptedException {
     createTestPosts();
+
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
@@ -296,7 +302,8 @@ class PostResourceIntegrationTest {
         .log()
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
-        .body("size()", equalTo(2));
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(2));
 
     deleteTestPosts();
   }

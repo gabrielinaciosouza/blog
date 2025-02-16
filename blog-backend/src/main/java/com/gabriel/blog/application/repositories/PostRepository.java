@@ -96,4 +96,15 @@ public interface PostRepository {
    */
   record FindPostsParams(int page, int size, SortBy sortBy, SortOrder sortOrder) {
   }
+
+  /**
+   * Retrieves the total count of posts in the database.
+   * This method is responsible for fetching the total count of posts in the database.
+   *
+   * <p>The implementation should query the database for the total count of posts,
+   * and return the number of posts that are currently stored in the database.</p>
+   *
+   * @return the total count of posts in the database.
+   */
+  int totalCount();
 }

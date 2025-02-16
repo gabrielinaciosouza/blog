@@ -207,4 +207,31 @@ class FirestorePostRepositoryTest {
       assertEquals(List.of(POST), result);
     }
   }
+
+  @Nested
+  class TotalCountTests {
+
+    @Test
+    void shouldReturnTotalCount() throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.get()).thenReturn(apiFuture);
+      when(apiFuture.get()).thenReturn(mock(QuerySnapshot.class));
+
+      firestorePostRepository.totalCount();
+
+      verify(firestore).collection("posts");
+      verify(collectionReference).get();
+      verify(apiFuture).get();
+    }
+
+    @Test
+    void shouldThrowRepositoryExceptionOnThreadFailure()
+        throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.get()).thenReturn(apiFuture);
+      when(apiFuture.get()).thenThrow(InterruptedException.class);
+
+      assertThrows(RepositoryException.class, () -> firestorePostRepository.totalCount());
+    }
+  }
 }

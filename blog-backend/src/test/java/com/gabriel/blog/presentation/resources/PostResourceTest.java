@@ -5,13 +5,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.gabriel.blog.application.requests.FindPostsRequest;
+import com.gabriel.blog.application.responses.FindPostsResponse;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
+import com.gabriel.blog.application.usecases.FindPostsUseCase;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
-import com.gabriel.blog.fixtures.CreationDateFixture;
-import com.gabriel.blog.fixtures.PostFixture;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,14 +21,14 @@ class PostResourceTest {
   private CreatePostUseCase createPostUseCase;
   private GetPostBySlug getPostBySlug;
   private PostResource postResource;
-  private PostRepository postRepository;
+  private FindPostsUseCase findPostsUseCase;
 
   @BeforeEach
   void setup() {
     createPostUseCase = mock(CreatePostUseCase.class);
     getPostBySlug = mock(GetPostBySlug.class);
-    postRepository = mock(PostRepository.class);
-    postResource = new PostResource(createPostUseCase, getPostBySlug, postRepository);
+    findPostsUseCase = mock(FindPostsUseCase.class);
+    postResource = new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase);
   }
 
   @Test
@@ -57,18 +57,17 @@ class PostResourceTest {
 
   @Test
   void shouldFindPostsSuccessfully() {
-    final var params = new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.title,
-        PostRepository.SortOrder.ASCENDING);
-    final var post = PostFixture.post();
-    final var expectedResponse = List.of(
-        new PostResponse("any", "any title", "any content", CreationDateFixture.creationDate()
-            .toString(),
-            "any-title"));
-    when(postRepository.findPosts(params)).thenReturn(List.of(post));
+    final var request = new FindPostsRequest(1, 10, "title", "ASCENDING");
+    final var expectedResponse = new PostResponse("id", "title", "content", "date", "slug");
+    final var expectedPosts = List.of(expectedResponse);
+    final var expectedTotal = 1;
+    when(findPostsUseCase.findPosts(request)).thenReturn(
+        new FindPostsResponse(expectedPosts, expectedTotal));
 
-    final var response = postResource.findPosts(params);
+    final var response = postResource.findPosts(request);
 
-    assertEquals(expectedResponse, response);
-    verify(postRepository).findPosts(params);
+    assertEquals(expectedPosts, response.posts());
+    assertEquals(expectedTotal, response.totalCount());
+    verify(findPostsUseCase).findPosts(request);
   }
 }
