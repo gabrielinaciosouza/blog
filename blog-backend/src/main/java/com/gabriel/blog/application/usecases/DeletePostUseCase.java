@@ -47,7 +47,7 @@ public class DeletePostUseCase {
     final var post = postOptional.get();
 
     post.markAsDeleted();
-    postRepository.save(post);
+    postRepository.update(post);
   }
 
 }

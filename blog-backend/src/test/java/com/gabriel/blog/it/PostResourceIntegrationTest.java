@@ -3,10 +3,12 @@ package com.gabriel.blog.it;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.fixtures.CreationDateFixture;
+import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
@@ -16,6 +18,8 @@ import io.restassured.http.Header;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -330,6 +334,50 @@ class PostResourceIntegrationTest {
         .statusCode(200)
         .body("totalCount", equalTo(2))
         .body("posts.size()", equalTo(1));
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldDeletePost() throws InterruptedException, ExecutionException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
+    firestore.collection("posts").document("delete").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", timestamp
+    ));
+
+    Thread.sleep(1000);
+
+    given()
+        .when()
+        .delete("/posts/slug")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(204);
+
+    Thread.sleep(1000);
+
+    assertTrue(
+        Objects.requireNonNull(
+            firestore
+                .collection("posts")
+                .document("delete")
+                .get()
+                .get()
+                .toObject(PostModel.class)).isDeleted());
+
+    given()
+        .when()
+        .delete("/posts/slug")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(204);
 
     deleteTestPosts();
   }

@@ -35,7 +35,7 @@ class DeletePostUseCaseTest {
     deletePostUseCase.deletePost(slug.getValue());
 
     verify(postRepository).findBySlug(slug);
-    verify(postRepository).save(post);
+    verify(postRepository).update(post);
     assertTrue(post.isDeleted());
   }
 
@@ -47,6 +47,6 @@ class DeletePostUseCaseTest {
     deletePostUseCase.deletePost(slug.getValue());
 
     verify(postRepository).findBySlug(slug);
-    verify(postRepository, never()).save(any(Post.class));
+    verify(postRepository, never()).update(any(Post.class));
   }
 }
