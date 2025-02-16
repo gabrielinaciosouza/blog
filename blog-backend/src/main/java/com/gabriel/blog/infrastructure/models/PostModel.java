@@ -8,7 +8,6 @@ import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.DocumentId;
-import java.time.ZoneId;
 
 /**
  * Represents a Firestore-compatible model for storing blog posts.
@@ -53,8 +52,8 @@ public class PostModel {
         post.getTitle().getValue(),
         post.getContent().getValue(),
         Timestamp.ofTimeSecondsAndNanos(
-            post.getCreationDate().getValue().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-            0),
+            post.getCreationDate().getValue().getEpochSecond(),
+            post.getCreationDate().getValue().getNano()),
         post.getSlug().getValue());
   }
 
@@ -68,8 +67,7 @@ public class PostModel {
         new Id(postId),
         new Title(title),
         new Content(content),
-        new CreationDate(
-            creationDate.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()),
+        new CreationDate(creationDate.toDate().toInstant()),
         Slug.fromString(slug));
   }
 

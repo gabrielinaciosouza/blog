@@ -18,8 +18,8 @@ class PostModelTest {
     assertEquals(post.getTitle().getValue(), postModel.getTitle());
     assertEquals(post.getContent().getValue(), postModel.getContent());
     assertEquals(Timestamp.ofTimeSecondsAndNanos(
-        post.getCreationDate().getValue().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-        0), postModel.getCreationDate());
+        post.getCreationDate().getValue().atZone(ZoneId.systemDefault()).toEpochSecond(),
+        post.getCreationDate().getValue().getNano()), postModel.getCreationDate());
     assertEquals(post.getSlug().getValue(), postModel.getSlug());
     assertEquals(post.getId().getValue(), postModel.getPostId());
   }

@@ -58,7 +58,7 @@ class PostTest {
     final var post = new Post(id, title, content, creationDate, slug);
     assertEquals(
         "Post {\"content\":\"Content {\\\"value\\\":\\\"any content\\\"}\","
-            + "\"creationDate\":\"2024-12-12\","
+            + "\"creationDate\":\"2024-12-12 01:00\","
             + "\"slug\":\"Slug {\\\"value\\\":\\\"any-title\\\"}\","
             + "\"title\":\"Title {\\\"value\\\":\\\"any title\\\"}\","
             + "\"id\":\"Id {\\\"value\\\":\\\"any\\\"}\"}",

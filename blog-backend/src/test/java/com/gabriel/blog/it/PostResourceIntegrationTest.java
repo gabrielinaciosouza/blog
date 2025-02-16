@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.gabriel.blog.fixtures.CreationDateFixture;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
@@ -14,7 +15,6 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
-import java.time.LocalDate;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -39,18 +39,21 @@ class PostResourceIntegrationTest {
         .body("title", equalTo("title"))
         .body("content", equalTo("content"))
         .body("slug", equalTo("title"))
-        .body("creationDate", equalTo(LocalDate.now().toString()));
+        .body("creationDate", notNullValue());
 
     deleteTestPosts();
   }
 
   @Test
   void shouldNotCreatePostIfAlreadyExists() throws InterruptedException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
     firestore.collection("posts").document("title").set(Map.of(
         "title", "title",
         "content", "content",
         "slug", "title",
-        "creationDate", Timestamp.now()
+        "creationDate", timestamp
     ));
 
     Thread.sleep(1000);
@@ -123,11 +126,14 @@ class PostResourceIntegrationTest {
 
   @Test
   void shouldGetPostBySlug() throws InterruptedException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
     firestore.collection("posts").document("slug").set(Map.of(
         "title", "title",
         "content", "content",
         "slug", "slug",
-        "creationDate", Timestamp.now()
+        "creationDate", timestamp
     ));
 
     Thread.sleep(1000);
@@ -143,7 +149,7 @@ class PostResourceIntegrationTest {
         .body("title", equalTo("title"))
         .body("content", equalTo("content"))
         .body("slug", equalTo("slug"))
-        .body("creationDate", equalTo(LocalDate.now().toString()));
+        .body("creationDate", equalTo("2024-12-12 01:00"));
 
     firestore.collection("posts").document("slug").delete();
     Thread.sleep(1000);
@@ -196,12 +202,12 @@ class PostResourceIntegrationTest {
         .body("posts[0].title", equalTo("title"))
         .body("posts[0].content", equalTo("content"))
         .body("posts[0].slug", equalTo("slug"))
-        .body("posts[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("posts[0].creationDate", equalTo("2024-12-12 01:00"))
         .body("posts[1].postId", notNullValue())
         .body("posts[1].title", equalTo("title2"))
         .body("posts[1].content", equalTo("content"))
         .body("posts[1].slug", equalTo("slug"))
-        .body("posts[1].creationDate", equalTo(LocalDate.now().toString()));
+        .body("posts[1].creationDate", equalTo("2024-12-12 01:00"));
 
     deleteTestPosts();
   }
@@ -225,12 +231,12 @@ class PostResourceIntegrationTest {
         .body("posts[0].title", equalTo("title2"))
         .body("posts[0].content", equalTo("content"))
         .body("posts[0].slug", equalTo("slug"))
-        .body("posts[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("posts[0].creationDate", equalTo("2024-12-12 01:00"))
         .body("posts[1].postId", notNullValue())
         .body("posts[1].title", equalTo("title"))
         .body("posts[1].content", equalTo("content"))
         .body("posts[1].slug", equalTo("slug"))
-        .body("posts[1].creationDate", equalTo(LocalDate.now().toString()));
+        .body("posts[1].creationDate", equalTo("2024-12-12 01:00"));
 
     deleteTestPosts();
   }
@@ -329,17 +335,20 @@ class PostResourceIntegrationTest {
   }
 
   private void createTestPosts() throws InterruptedException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
     firestore.collection("posts").document("find").set(Map.of(
         "title", "title",
         "content", "content",
         "slug", "slug",
-        "creationDate", Timestamp.now()));
+        "creationDate", timestamp));
 
     firestore.collection("posts").document("find2").set(Map.of(
         "title", "title2",
         "content", "content",
         "slug", "slug",
-        "creationDate", Timestamp.now()));
+        "creationDate", timestamp));
     Thread.sleep(1000);
   }
 

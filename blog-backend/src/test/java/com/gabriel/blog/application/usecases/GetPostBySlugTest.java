@@ -37,7 +37,7 @@ class GetPostBySlugTest {
 
     verify(postRepository).findBySlug(Slug.fromString("test-slug"));
     assertEquals(
-        new PostResponse("any", "any title", "any content", "2024-12-12", "any-title"),
+        new PostResponse("any", "any title", "any content", "2024-12-12 01:00", "any-title"),
         result);
   }
 
