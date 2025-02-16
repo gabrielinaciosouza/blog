@@ -41,12 +41,29 @@ public class Post extends AbstractEntity {
       final Content content,
       final CreationDate creationDate,
       final Slug slug) {
+    this(id, title, content, creationDate, slug, DeletedStatus.notDeleted());
+  }
+
+  /**
+   * Constructs a {@code Post} instance with the given
+   * title, content, creation date, slug, and deleted status.
+   *
+   * @param id            the post id, must not be null
+   * @param title         the post title, must not be null
+   * @param content       the post content, must not be null
+   * @param creationDate  the post creation date, must not be null
+   * @param slug          the post slug, must not be null
+   * @param deletedStatus the post deleted status, must not be null
+   * @throws DomainException if any of the provided parameters is null
+   */
+  public Post(final Id id, final Title title, final Content content,
+              final CreationDate creationDate, final Slug slug, final DeletedStatus deletedStatus) {
     super(id);
     this.title = nonNull(title, "Tried to create a Post with a null title");
     this.content = nonNull(content, "Tried to create a Post with a null content");
     this.creationDate = nonNull(creationDate, "Tried to create a Post with a null creationDate");
     this.slug = nonNull(slug, "Tried to create a Post with a null slug");
-    this.deletedStatus = DeletedStatus.notDeleted();
+    this.deletedStatus = nonNull(deletedStatus, "Tried to create a Post with a null deletedStatus");
   }
 
   public Title getTitle() {

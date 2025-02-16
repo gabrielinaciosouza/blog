@@ -25,7 +25,7 @@ public class DeletedStatus extends AbstractValueObject {
    */
   public DeletedStatus(final boolean value, final Instant deletionDate) {
     this.value = value;
-    this.deletionDate = nonNull(deletionDate, "Deletion date must not be null");
+    this.deletionDate = deletionDate;
   }
 
   /**
@@ -34,7 +34,7 @@ public class DeletedStatus extends AbstractValueObject {
    * @return a new {@code DeletedStatus} set to false with no deletion date
    */
   public static DeletedStatus notDeleted() {
-    return new DeletedStatus(false, Instant.MIN);
+    return new DeletedStatus(false, null);
   }
 
   /**

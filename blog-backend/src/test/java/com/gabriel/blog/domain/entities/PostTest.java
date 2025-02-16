@@ -65,7 +65,7 @@ class PostTest {
             + "{\\\"value\\\":\\\"any content\\\"}\","
             + "\"creationDate\":\"2024-12-12 01:00\","
             + "\"deletedStatus\":\"DeletedStatus {"
-            + "\\\"deletionDate\\\":\\\"-1000000000-01-01T00:00:00Z\\\","
+            + "\\\"deletionDate\\\":null,"
             + "\\\"value\\\":false}\","
             + "\"slug\":\"Slug {\\\"value\\\":\\\"any-title\\\"}\","
             + "\"title\":\"Title {\\\"value\\\":\\\"any title\\\"}\","
