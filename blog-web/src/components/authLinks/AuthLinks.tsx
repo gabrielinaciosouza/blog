@@ -13,7 +13,7 @@ const AuthLinks = ({ authStatus }: {authStatus: string}) => {
                 <Link href="/login" className={styles.link}>Login</Link>
             ) : (
                 <>
-                    <Link href="/create-post" className={styles.link}>Write</Link>
+                    <Link href="/admin" className={styles.link}>Admin</Link>
                     <span className={styles.link}>Logout</span>
                 </>
             )}

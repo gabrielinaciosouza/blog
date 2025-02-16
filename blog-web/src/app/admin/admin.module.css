@@ -1,0 +1,160 @@
+.adminContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.createButton {
+    background: linear-gradient(to right, #374a9b, #02c0fc);
+    border-radius: 8px;
+    border: none;
+    color: #fcf9f9;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.createButton:hover {
+    transform: scale(1.05);
+    background-color: #02a0e0;
+}
+
+.adminTable {
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.adminTable th, .adminTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.adminTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.adminTable td {
+    max-width: 200px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actionsColumn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.tableRow {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+    background-color: #f9f9f9;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.iconButton:hover {
+    color: #0056b3;
+}
+
+.deletedPostsHeader {
+    margin-top: 40px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.activePosts {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+@media (max-width: 768px) {
+    .adminTable th, .adminTable td {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .createButton {
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+
+    .iconButton {
+        font-size: 14px;
+        margin-right: 4px;
+    }
+
+    .deletedPostsHeader {
+        font-size: 18px;
+    }
+
+    .activePosts {
+        font-size: 18px;
+    }
+
+    .actionsColumn {
+        gap: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .adminTable th, .adminTable td {
+        padding: 4px;
+        font-size: 10px;
+    }
+
+    .createButton {
+        padding: 8px 16px;
+        font-size: 10px;
+    }
+
+    .iconButton {
+        font-size: 12px;
+        margin-right: 2px;
+    }
+
+    .buttonContainer {
+        justify-content: center;
+    }
+
+    .adminTable .slugColumn {
+        display: none;
+    }
+
+    .deletedPostsHeader {
+        font-size: 16px;
+    }
+
+    .activePosts {
+        font-size: 16px;
+    }
+}
