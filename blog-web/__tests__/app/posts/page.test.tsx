@@ -34,7 +34,24 @@ describe("Posts Component", () => {
     it("should handle API error gracefully", async () => {
         (fetch as jest.Mock).mockRejectedValueOnce(new Error("API Error"));
 
-        render(await Posts({ searchParams: { page: 1 } }));
+        render(await Posts({ searchParams: { page: null } }));
+
+
+        expect(screen.queryByText("PostCard")).not.toBeInTheDocument();
+        expect(screen.queryByText("Pagination")).not.toBeInTheDocument();
+    });
+
+    it("should handle status code not ok gracefully", async () => {
+        const response = JSON.stringify({
+            posts: [],
+            count: 0,
+        });
+        (fetch as jest.Mock).mockResolvedValue({
+            ok: false,
+            json: jest.fn().mockResolvedValue(JSON.parse(response)),
+        });
+
+        render(await Posts({ searchParams: { page: null } }));
 
 
         expect(screen.queryByText("PostCard")).not.toBeInTheDocument();
