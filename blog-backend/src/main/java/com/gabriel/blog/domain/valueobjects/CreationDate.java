@@ -2,7 +2,9 @@ package com.gabriel.blog.domain.valueobjects;
 
 import com.gabriel.blog.domain.abstractions.AbstractValueObject;
 import com.gabriel.blog.domain.exceptions.DomainException;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Represents the creation date of an entity as a value object.
@@ -12,7 +14,9 @@ import java.time.LocalDate;
  */
 public class CreationDate extends AbstractValueObject {
 
-  private final LocalDate value;
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+      .withZone(ZoneId.systemDefault());
+  private final Instant value;
 
   /**
    * Constructs a {@code CreationDate} instance with the given date.
@@ -20,7 +24,7 @@ public class CreationDate extends AbstractValueObject {
    * @param value the creation date, must not be null
    * @throws DomainException if the provided date is null
    */
-  public CreationDate(final LocalDate value) {
+  public CreationDate(final Instant value) {
     this.value = nonNull(value, "Tried to create a CreationDate with a null value");
   }
 
@@ -30,17 +34,15 @@ public class CreationDate extends AbstractValueObject {
    * @return a new {@code CreationDate} set to the current date
    */
   public static CreationDate now() {
-    return new CreationDate(LocalDate.now());
+    return new CreationDate(Instant.now());
   }
 
-
-  public LocalDate getValue() {
+  public Instant getValue() {
     return value;
   }
 
   @Override
   public String toString() {
-    return value.toString();
+    return FORMATTER.format(value);
   }
 }
-

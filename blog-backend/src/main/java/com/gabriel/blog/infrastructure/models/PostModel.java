@@ -3,12 +3,12 @@ package com.gabriel.blog.infrastructure.models;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
+import com.gabriel.blog.domain.valueobjects.DeletedStatus;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.DocumentId;
-import java.time.ZoneId;
 
 /**
  * Represents a Firestore-compatible model for storing blog posts.
@@ -23,6 +23,8 @@ public class PostModel {
   private String content;
   private Timestamp creationDate;
   private String slug;
+  private boolean isDeleted;
+  private Timestamp deletionDate;
 
   /**
    * Constructs a new {@link PostModel} instance.
@@ -34,12 +36,15 @@ public class PostModel {
    * Constructs a {@link PostModel} from a given input fields.
    */
   public PostModel(final String postId, final String title, final String content,
-                   final Timestamp creationDate, final String slug) {
+                   final Timestamp creationDate, final String slug, final boolean isDeleted,
+                   final Timestamp deletionDate) {
     this.postId = postId;
     this.title = title;
     this.content = content;
     this.creationDate = creationDate;
     this.slug = slug;
+    this.isDeleted = isDeleted;
+    this.deletionDate = deletionDate;
   }
 
   /**
@@ -53,9 +58,13 @@ public class PostModel {
         post.getTitle().getValue(),
         post.getContent().getValue(),
         Timestamp.ofTimeSecondsAndNanos(
-            post.getCreationDate().getValue().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-            0),
-        post.getSlug().getValue());
+            post.getCreationDate().getValue().getEpochSecond(),
+            post.getCreationDate().getValue().getNano()),
+        post.getSlug().getValue(),
+        post.isDeleted(),
+        post.isDeleted() ? Timestamp.ofTimeSecondsAndNanos(
+            post.getDeletionDate().getEpochSecond(),
+            post.getDeletionDate().getNano()) : null);
   }
 
   /**
@@ -68,9 +77,9 @@ public class PostModel {
         new Id(postId),
         new Title(title),
         new Content(content),
-        new CreationDate(
-            creationDate.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()),
-        Slug.fromString(slug));
+        new CreationDate(creationDate.toDate().toInstant()),
+        Slug.fromString(slug),
+        new DeletedStatus(isDeleted, isDeleted ? deletionDate.toDate().toInstant() : null));
   }
 
   public String getPostId() {
@@ -111,5 +120,21 @@ public class PostModel {
 
   public void setSlug(final String slug) {
     this.slug = slug;
+  }
+
+  public boolean isDeleted() {
+    return isDeleted;
+  }
+
+  public void setDeleted(final boolean deleted) {
+    isDeleted = deleted;
+  }
+
+  public Timestamp getDeletionDate() {
+    return deletionDate;
+  }
+
+  public void setDeletionDate(final Timestamp deletionDate) {
+    this.deletionDate = deletionDate;
   }
 }

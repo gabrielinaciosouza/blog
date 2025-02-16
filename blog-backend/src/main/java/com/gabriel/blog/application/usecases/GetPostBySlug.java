@@ -39,6 +39,11 @@ public class GetPostBySlug {
     }
 
     final var post = postOptional.get();
+
+    if (post.isDeleted()) {
+      throw new NotFoundException("Post with slug " + slug + " not found");
+    }
+
     return new PostResponse(
         post.getId().getValue(),
         post.getTitle().getValue(),

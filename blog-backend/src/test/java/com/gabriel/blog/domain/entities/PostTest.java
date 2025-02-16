@@ -2,7 +2,9 @@ package com.gabriel.blog.domain.entities;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Content;
@@ -15,6 +17,7 @@ import com.gabriel.blog.fixtures.CreationDateFixture;
 import com.gabriel.blog.fixtures.IdFixture;
 import com.gabriel.blog.fixtures.SlugFixture;
 import com.gabriel.blog.fixtures.TitleFixture;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 class PostTest {
@@ -57,11 +60,33 @@ class PostTest {
   void shouldCreateCorrectToString() {
     final var post = new Post(id, title, content, creationDate, slug);
     assertEquals(
-        "Post {\"content\":\"Content {\\\"value\\\":\\\"any content\\\"}\","
-            + "\"creationDate\":\"2024-12-12\","
+        "Post {"
+            + "\"content\":\"Content "
+            + "{\\\"value\\\":\\\"any content\\\"}\","
+            + "\"creationDate\":\"2024-12-12 01:00\","
+            + "\"deletedStatus\":\"DeletedStatus {"
+            + "\\\"deletionDate\\\":null,"
+            + "\\\"value\\\":false}\","
             + "\"slug\":\"Slug {\\\"value\\\":\\\"any-title\\\"}\","
             + "\"title\":\"Title {\\\"value\\\":\\\"any title\\\"}\","
             + "\"id\":\"Id {\\\"value\\\":\\\"any\\\"}\"}",
         post.toString());
+  }
+
+  @Test
+  void shouldMarkPostAsDeleted() {
+    final var post = new Post(id, title, content, creationDate, slug);
+    post.markAsDeleted();
+    assertTrue(post.isDeleted());
+    assertTrue(post.getDeletionDate().isBefore(Instant.now()) || post.getDeletionDate()
+        .equals(Instant.now()));
+  }
+
+  @Test
+  void shouldMarkPostAsNotDeleted() {
+    final var post = new Post(id, title, content, creationDate, slug);
+    post.markAsDeleted();
+    post.markAsNotDeleted();
+    assertFalse(post.isDeleted());
   }
 }

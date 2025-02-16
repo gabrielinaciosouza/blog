@@ -10,6 +10,7 @@ import com.gabriel.blog.application.requests.FindPostsRequest;
 import com.gabriel.blog.application.responses.FindPostsResponse;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
+import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
 import java.util.List;
@@ -20,15 +21,18 @@ class PostResourceTest {
 
   private CreatePostUseCase createPostUseCase;
   private GetPostBySlug getPostBySlug;
-  private PostResource postResource;
   private FindPostsUseCase findPostsUseCase;
+  private DeletePostUseCase deletePostUseCase;
+  private PostResource postResource;
 
   @BeforeEach
   void setup() {
     createPostUseCase = mock(CreatePostUseCase.class);
     getPostBySlug = mock(GetPostBySlug.class);
     findPostsUseCase = mock(FindPostsUseCase.class);
-    postResource = new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase);
+    deletePostUseCase = mock(DeletePostUseCase.class);
+    postResource =
+        new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase, deletePostUseCase);
   }
 
   @Test
@@ -69,5 +73,12 @@ class PostResourceTest {
     assertEquals(expectedPosts, response.posts());
     assertEquals(expectedTotal, response.totalCount());
     verify(findPostsUseCase).findPosts(request);
+  }
+
+  @Test
+  void shouldDeletePostSuccessfully() {
+    final var slug = "slug";
+    postResource.deletePost(slug);
+    verify(deletePostUseCase).deletePost(slug);
   }
 }
