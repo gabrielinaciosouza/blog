@@ -308,6 +308,26 @@ class PostResourceIntegrationTest {
     deleteTestPosts();
   }
 
+  @Test
+  void shouldReturnCorrectPageSize() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 1, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(1));
+
+    deleteTestPosts();
+  }
+
   private void createTestPosts() throws InterruptedException {
     firestore.collection("posts").document("find").set(Map.of(
         "title", "title",

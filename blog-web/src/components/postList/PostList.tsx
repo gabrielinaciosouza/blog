@@ -6,17 +6,17 @@ import { getPosts } from "@/services/postService";
 
 const PostList = async () => {
     try {
-        const posts = await getPosts(1, 10);
+        const { posts, totalCount } = await getPosts(1, 10);
         return (
             <div className={styles.container}>
 
 
                 <div className={styles.headerContainer}>
                     {
-                        posts.length > 0 && (<div className={styles.headerText}>Recent Stories</div>)
+                        totalCount > 0 && (<div className={styles.headerText}>Recent Stories</div>)
                     }
                     {
-                        posts.length > 6 && (<Link className={styles.button} href="/posts">See more</Link>)
+                        totalCount > 6 && (<Link className={styles.button} href="/posts">See more</Link>)
                     }
 
                 </div>

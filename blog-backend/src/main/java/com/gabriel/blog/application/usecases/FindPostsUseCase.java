@@ -52,7 +52,7 @@ public class FindPostsUseCase {
       sortOrder = PostRepository.SortOrder.valueOf(request.sortOrder().toUpperCase());
     }
 
-    final var pageSize = request.pageSize() < 1 ? 10 : request.pageSize();
+    final var pageSize = request.size() < 1 ? 10 : request.size();
     final var params =
         new PostRepository.FindPostsParams(request.page(), pageSize, sortBy, sortOrder);
 

@@ -10,6 +10,7 @@ const PostCard = (post: Post) => {
             <Image className={styles.image} src="/logo2.png" alt="Post Image" width={0}
                 height={0}
                 sizes="100vw"
+                role="img"
             />
 
 

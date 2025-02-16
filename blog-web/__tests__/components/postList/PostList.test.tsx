@@ -18,7 +18,7 @@ describe("PostList Component", () => {
     ];
 
     beforeEach(() => {
-        (getPosts as jest.Mock).mockResolvedValue(posts);
+        (getPosts as jest.Mock).mockResolvedValue({posts, totalCount: posts.length});
     });
 
     it("should render the header and 'See more' link if there are more than 6 posts", async () => {
@@ -53,7 +53,7 @@ describe("PostList Component", () => {
     });
 
     it("should not render the 'See more' link if there are 6 or fewer posts", async () => {
-        (getPosts as jest.Mock).mockResolvedValue(posts.slice(0, 6));
+        (getPosts as jest.Mock).mockResolvedValue({posts, totalCount: 6});
         await act(async () => {
             render(
                 <Suspense fallback={<div>Loading...</div>}>

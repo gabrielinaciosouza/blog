@@ -39,7 +39,7 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
     return new Post(data.postId, data.title, data.content, data.creationDate, data.slug);
 };
 
-export const getPosts = async (page: number, size: number): Promise<Post[]> => {
+export const getPosts = async (page: number, size: number): Promise<{posts: Post[], totalCount: number}> => {
     const response = await fetch(`${POSTS_PATH}/find`, {
         method: "POST",
         headers: {
@@ -54,5 +54,5 @@ export const getPosts = async (page: number, size: number): Promise<Post[]> => {
         throw new Error(data.message);
     }
 
-    return data.map((post: Post) => new Post(post.postId, post.title, post.content, post.creationDate, post.slug));
+    return data;
 }

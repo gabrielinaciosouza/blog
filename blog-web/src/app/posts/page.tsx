@@ -6,7 +6,7 @@ import Pagination from "@/components/pagination/Pagination";
 import { API_URL } from "@/services/postService";
 
 const POST_PER_PAGE = 9;
-const getData = async (page: number): Promise<{ posts: Post[], count: number }> => {
+const getData = async (page: number): Promise<{ posts: Post[], totalCount: number }> => {
     const response = await fetch(
         `${API_URL}/api/posts?page=${page}&size=${POST_PER_PAGE}`,
         {
@@ -26,9 +26,9 @@ const getData = async (page: number): Promise<{ posts: Post[], count: number }> 
 const Posts = async ({ searchParams } : { searchParams: { page: number | null }}) => {
     try {
         const page = (await searchParams).page || 1;
-        const { posts, count } = await getData(page);
+        const { posts, totalCount } = await getData(page);
         const hasPrev = page > 1;
-        const hasNext = count == POST_PER_PAGE;
+        const hasNext = page * POST_PER_PAGE < totalCount;
 
         return (
             <div className={styles.container}>

@@ -29,6 +29,8 @@ describe("PostCard Component", () => {
 
     it("should render the post image", () => {
         render(<PostCard {...post} />);
-        expect(screen.getByRole("img")).toHaveAttribute("src", "/logo2.png");
+        const imgSrc = screen.getByRole("img").getAttribute("src");
+        const decodedImgSrc = decodeURIComponent(imgSrc as string);
+        expect(decodedImgSrc).toContain("/logo2.png");
     });
 });
