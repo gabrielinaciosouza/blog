@@ -6,12 +6,12 @@ import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.domain.entities.Post;
-import com.gabriel.blog.domain.services.IdGenerator;
 import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
+import com.gabriel.blog.infrastructure.services.IdGenerator;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-import { createPost, getPostBySlug } from '../../src/services/postService';
+import { createPost, getPostBySlug, getPosts, POSTS_PATH } from '@/services/postService';
 import CreatePostRequest from '@/models/create-post-request';
 import Post from '@/models/post';
 
@@ -99,5 +99,44 @@ describe('postService', () => {
       await expect(getPostBySlug('non-existent-post')).rejects.toThrow(errorMessage);
     });
   });
+
+  describe("getPosts", () => {
+    const mockPosts = [
+        { postId: "1", title: "Post 1", content: "<p>Content 1</p>", creationDate: "2025-01-01", slug: "post-1" },
+        { postId: "2", title: "Post 2", content: "<p>Content 2</p>", creationDate: "2025-01-02", slug: "post-2" },
+    ];
+
+    beforeEach(() => {
+        (fetch as jest.Mock).mockClear();
+    });
+
+    it("should fetch posts and return them as Post instances", async () => {
+        (fetch as jest.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockPosts,
+        });
+
+        const result = await getPosts(1, 10);
+
+        expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/find`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ page: 1, size: 10 }),
+        });
+
+        expect(result).toEqual(mockPosts.map(post => new Post(post.postId, post.title, post.content, post.creationDate, post.slug)));
+    });
+
+    it("should throw an error if the response is not ok", async () => {
+        (fetch as jest.Mock).mockResolvedValueOnce({
+            ok: false,
+            json: async () => ({ message: "Error fetching posts" }),
+        });
+
+        await expect(getPosts(1, 10)).rejects.toThrow("Error fetching posts");
+    });
+});
 
 });

@@ -6,7 +6,9 @@ import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.jboss.logging.Logger;
@@ -68,6 +70,68 @@ public class FirestorePostRepository implements PostRepository {
       Thread.currentThread().interrupt();
       logger.error("Failed to find post by slug in Firestore", e);
       throw new RepositoryException("Failed to find post by slug in Firestore", e);
+    }
+  }
+
+  @Override
+  public List<Post> findPosts(final FindPostsParams params) {
+    validateParams(params);
+
+    try {
+      final var query = buildQuery(params);
+      return executeQuery(query);
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to find posts in Firestore", e);
+      throw new RepositoryException("Failed to find posts in Firestore", e);
+    }
+  }
+
+  private void validateParams(final FindPostsParams params) {
+    if (params == null) {
+      throw new RepositoryException("Search parameters must not be null");
+    }
+
+    if (params.page() < 1) {
+      throw new RepositoryException("Page must be greater than 0");
+    }
+  }
+
+  private Query buildQuery(final FindPostsParams params) {
+    final var size = params.size() < 1 ? 10 : params.size();
+    final var sortBy =
+        params.sortBy() == null ? PostRepository.SortBy.creationDate : params.sortBy();
+    final var sortOrder =
+        params.sortOrder() == null ? PostRepository.SortOrder.DESCENDING : params.sortOrder();
+
+    return firestore.collection(COLLECTION_NAME)
+        .orderBy(sortBy.name(), Query.Direction.valueOf(sortOrder.name()))
+        .offset((params.page() - 1) * size)
+        .limit(size);
+  }
+
+  private List<Post> executeQuery(final Query query)
+      throws InterruptedException, ExecutionException {
+    return query.get()
+        .get()
+        .getDocuments()
+        .stream()
+        .map(doc -> doc.toObject(PostModel.class))
+        .map(PostModel::toDomain)
+        .toList();
+  }
+
+  @Override
+  public int totalCount() {
+    try {
+      return firestore.collection(COLLECTION_NAME)
+          .get()
+          .get()
+          .size();
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to get total count of posts in Firestore", e);
+      throw new RepositoryException("Failed to get total count of posts in Firestore", e);
     }
   }
 }

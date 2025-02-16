@@ -50,6 +50,7 @@
     flex-direction: column;
     gap: 8px;
     font-weight: 300;
+    align-self: flex-end;
 }
 
 .listItem {
@@ -103,5 +104,9 @@
 
     .footerBottom {
         font-size: 13px;
+    }
+
+    .list {
+        display: none;
     }
 }

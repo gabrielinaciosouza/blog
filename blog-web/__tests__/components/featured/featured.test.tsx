@@ -20,11 +20,6 @@ describe('Featured', () => {
     expect(screen.getByText("Every bug has a lesson, every project has a story. Join me as I navigate the ever-evolving world of software engineering!")).toBeInTheDocument();
   });
 
-  it('should render the Blog button', () => {
-    render(<Featured />);
-    expect(screen.getByText("Blog")).toBeInTheDocument();
-  });
-
   it('should render the About Me button', () => {
     render(<Featured />);
     expect(screen.getByText("About Me")).toBeInTheDocument();

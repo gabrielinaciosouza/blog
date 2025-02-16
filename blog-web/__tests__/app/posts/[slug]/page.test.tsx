@@ -1,6 +1,6 @@
-import {render, screen, waitFor} from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import SinglePage from '@/app/posts/[slug]/page';
-import {getPostBySlug} from '@/services/postService';
+import { getPostBySlug } from '@/services/postService';
 
 jest.mock('@/services/postService');
 
@@ -18,19 +18,17 @@ describe('SinglePage', () => {
 
         mockedGetPostBySlug.mockResolvedValueOnce(post);
 
-        const {container} = render(await SinglePage({
+        const { container } = render(await SinglePage({
             params: {
                 slug: 'test-title',
             }
         }));
 
-        waitFor(() => {
-            expect(screen.getByText('Test Title')).toBeInTheDocument();
-            expect(screen.getByText('Gabriel Inacio')).toBeInTheDocument();
-            expect(screen.getByText('12/12/2021')).toBeInTheDocument();
-            const paragraph = container.querySelector('p');
-            expect(paragraph?.innerHTML).toBe('This is the content of the post.');
-        });
+        expect(screen.getByText('Test Title')).toBeInTheDocument();
+        expect(screen.getByText('Gabriel Inacio')).toBeInTheDocument();
+        expect(screen.getByText('2021-12-12T00:00:00Z')).toBeInTheDocument();
+        const paragraph = container.querySelector('p');
+        expect(paragraph?.innerHTML).toBe('This is the content of the post.');
     });
 
     it('should render error message when post is not found', async () => {

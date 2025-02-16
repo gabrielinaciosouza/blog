@@ -56,12 +56,22 @@
     flex-direction: row;
 }
 .button {
-    padding: 16px 20px;
+    background: linear-gradient(to right, #374a9b, #02c0fc);
+    border-radius: 8px;
     border: none;
-    border-radius: 5px;
-    width: max-content;
-    background-color: white;
+    color: #fcf9f9;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
     cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.button:hover {
+    transform: scale(1.05);
 }
 
 @media screen and (max-width: 1280px) {
@@ -92,26 +102,26 @@
 @media screen and (max-width: 640px) {
 
     .title {
-        font-size: 36px;
-    }
-
-    .postTitle {
         font-size: 32px;
     }
 
+    .postTitle {
+        font-size: 28px;
+    }
+
     .postDescription {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .button {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .buttonContainer {
-        gap: 8px;
+        gap: 4px;
     }
 
     .social {
-        gap: 8px;
+        gap: 4px;
     }
 }

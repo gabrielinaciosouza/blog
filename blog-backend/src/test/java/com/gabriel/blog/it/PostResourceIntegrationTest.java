@@ -4,8 +4,10 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.filter.log.LogDetail;
@@ -23,7 +25,7 @@ class PostResourceIntegrationTest {
   private Firestore firestore;
 
   @Test
-  void shouldCreatePost() {
+  void shouldCreatePost() throws InterruptedException {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
@@ -38,6 +40,8 @@ class PostResourceIntegrationTest {
         .body("content", equalTo("content"))
         .body("slug", equalTo("title"))
         .body("creationDate", equalTo(LocalDate.now().toString()));
+
+    deleteTestPosts();
   }
 
   @Test
@@ -46,7 +50,7 @@ class PostResourceIntegrationTest {
         "title", "title",
         "content", "content",
         "slug", "title",
-        "creationDate", LocalDate.now().toString()
+        "creationDate", Timestamp.now()
     ));
 
     Thread.sleep(1000);
@@ -62,7 +66,7 @@ class PostResourceIntegrationTest {
         .statusCode(409)
         .body("message", equalTo("Post with slug title already exists"));
 
-    firestore.collection("posts").document("title").delete();
+    deleteTestPosts();
   }
 
   @Test
@@ -142,6 +146,7 @@ class PostResourceIntegrationTest {
         .body("creationDate", equalTo(LocalDate.now().toString()));
 
     firestore.collection("posts").document("slug").delete();
+    Thread.sleep(1000);
   }
 
   @Test
@@ -154,6 +159,193 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(404)
         .body("message", equalTo("Post with slug not-found not found"));
+  }
+
+  @Test
+  void shouldFindNoPostsWhenNoneExist() {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.ASCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(0))
+        .body("posts.size()", equalTo(0));
+  }
+
+  @Test
+  void shouldFindPostsWithAscendingOrder() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.ASCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts[0].postId", notNullValue())
+        .body("posts[0].title", equalTo("title"))
+        .body("posts[0].content", equalTo("content"))
+        .body("posts[0].slug", equalTo("slug"))
+        .body("posts[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("posts[1].postId", notNullValue())
+        .body("posts[1].title", equalTo("title2"))
+        .body("posts[1].content", equalTo("content"))
+        .body("posts[1].slug", equalTo("slug"))
+        .body("posts[1].creationDate", equalTo(LocalDate.now().toString()));
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldFindPostsWithDescendingOrder() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts[0].postId", notNullValue())
+        .body("posts[0].title", equalTo("title2"))
+        .body("posts[0].content", equalTo("content"))
+        .body("posts[0].slug", equalTo("slug"))
+        .body("posts[0].creationDate", equalTo(LocalDate.now().toString()))
+        .body("posts[1].postId", notNullValue())
+        .body("posts[1].title", equalTo("title"))
+        .body("posts[1].content", equalTo("content"))
+        .body("posts[1].slug", equalTo("slug"))
+        .body("posts[1].creationDate", equalTo(LocalDate.now().toString()));
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldReturnErrorForInvalidPage() {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(400)
+        .body("message", equalTo("Page must be greater than 0"));
+  }
+
+  @Test
+  void shouldFindPostsWithDefaultSize() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(2));
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldFindPostsWithDefaultSortOrder() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title, null))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(2));
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldFindPostsWithDefaultSortBy() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 0, null, PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(2));
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldReturnCorrectPageSize() throws InterruptedException {
+    createTestPosts();
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRepository.FindPostsParams(1, 1, PostRepository.SortBy.title,
+            PostRepository.SortOrder.DESCENDING))
+        .post("/posts/find")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("totalCount", equalTo(2))
+        .body("posts.size()", equalTo(1));
+
+    deleteTestPosts();
+  }
+
+  private void createTestPosts() throws InterruptedException {
+    firestore.collection("posts").document("find").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", Timestamp.now()));
+
+    firestore.collection("posts").document("find2").set(Map.of(
+        "title", "title2",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", Timestamp.now()));
+    Thread.sleep(1000);
+  }
+
+  private void deleteTestPosts() throws InterruptedException {
+    firestore.collection("posts").listDocuments().forEach(DocumentReference::delete);
+    Thread.sleep(1000);
   }
 }
 
