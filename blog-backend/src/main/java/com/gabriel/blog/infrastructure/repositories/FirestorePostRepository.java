@@ -75,39 +75,46 @@ public class FirestorePostRepository implements PostRepository {
 
   @Override
   public List<Post> findPosts(final FindPostsParams params) {
+    validateParams(params);
+
     try {
-      if (params == null) {
-        throw new RepositoryException("Search parameters must not be null");
-      }
-
-      if (params.page() < 1) {
-        throw new RepositoryException("Page must be greater than 0");
-      }
-
-      int size = params.size();
-      if (params.size() < 1) {
-        size = 10;
-      }
-
-      Query query = firestore.collection(COLLECTION_NAME);
-      if (params.sortBy() != null) {
-        query = query.orderBy(params.sortBy().name(),
-            Query.Direction.valueOf(params.sortOrder().name()));
-      }
-
-      return query.offset((params.page() - 1) * size)
-          .limit(size)
-          .get()
-          .get()
-          .getDocuments()
-          .stream()
-          .map(doc -> doc.toObject(PostModel.class))
-          .map(PostModel::toDomain)
-          .toList();
+      final var query = buildQuery(params);
+      return executeQuery(query);
     } catch (final InterruptedException | ExecutionException e) {
       Thread.currentThread().interrupt();
       logger.error("Failed to find posts in Firestore", e);
       throw new RepositoryException("Failed to find posts in Firestore", e);
     }
+  }
+
+  private void validateParams(final FindPostsParams params) {
+    if (params == null) {
+      throw new RepositoryException("Search parameters must not be null");
+    }
+
+    if (params.page() < 1) {
+      throw new RepositoryException("Page must be greater than 0");
+    }
+  }
+
+  private Query buildQuery(final FindPostsParams params) {
+    final var size = params.size() < 1 ? 10 : params.size();
+    final var sortBy = params.sortBy() == null ? PostRepository.SortBy.creationDate : params.sortBy();
+    final var sortOrder = params.sortOrder() == null ? PostRepository.SortOrder.DESCENDING : params.sortOrder();
+
+    return firestore.collection(COLLECTION_NAME)
+        .orderBy(sortBy.name(), Query.Direction.valueOf(sortOrder.name()))
+        .offset((params.page() - 1) * size)
+        .limit(size);
+  }
+
+  private List<Post> executeQuery(final Query query) throws InterruptedException, ExecutionException {
+    return query.get()
+        .get()
+        .getDocuments()
+        .stream()
+        .map(doc -> doc.toObject(PostModel.class))
+        .map(PostModel::toDomain)
+        .toList();
   }
 }

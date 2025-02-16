@@ -54,5 +54,5 @@ export const getPosts = async (page: number, size: number): Promise<Post[]> => {
         throw new Error(data.message);
     }
 
-    return data.map((post: any) => new Post(post.postId, post.title, post.content, post.creationDate, post.slug));
+    return data.map((post: Post) => new Post(post.postId, post.title, post.content, post.creationDate, post.slug));
 }

@@ -52,7 +52,7 @@ describe("PostList Component", () => {
         });
     });
 
-    it("should not render the header and 'See more' link if there are 6 or fewer posts", async () => {
+    it("should not render the 'See more' link if there are 6 or fewer posts", async () => {
         (getPosts as jest.Mock).mockResolvedValue(posts.slice(0, 6));
         await act(async () => {
             render(
@@ -63,7 +63,7 @@ describe("PostList Component", () => {
         });
 
         await waitFor(() => {
-            expect(screen.queryByText("Recent Stories")).not.toBeInTheDocument();
+            expect(screen.queryByText("Recent Stories")).toBeInTheDocument();
             expect(screen.queryByText("See more")).not.toBeInTheDocument();
         });
     });
