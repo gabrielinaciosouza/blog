@@ -3,7 +3,7 @@ package com.gabriel.blog.domain.valueobjects;
 import com.gabriel.blog.domain.abstractions.AbstractValueObject;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -14,8 +14,9 @@ import java.time.format.DateTimeFormatter;
  */
 public class CreationDate extends AbstractValueObject {
 
-  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-      .withZone(ZoneId.systemDefault());
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter
+      .ofPattern("yyyy-MM-dd HH:mm")
+      .withZone(ZoneOffset.UTC);
   private final Instant value;
 
   /**
