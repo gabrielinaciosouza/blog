@@ -37,7 +37,7 @@ class PostResourceTest {
 
   @Test
   void shouldCreatePostSuccessfully() {
-    final var request = new CreatePostRequest("title", "content");
+    final var request = new CreatePostRequest("title", "content", "https://example.com/image.jpg");
     final var expectedResponse = new PostResponse("id", "title", "content", "date", "slug");
     when(createPostUseCase.create(request)).thenReturn(expectedResponse);
 

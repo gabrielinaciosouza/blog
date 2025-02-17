@@ -33,7 +33,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("title", "content"))
+        .body(new CreatePostRequest("title", "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -57,7 +57,9 @@ class PostResourceIntegrationTest {
         "title", "title",
         "content", "content",
         "slug", "title",
-        "creationDate", timestamp
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "isDeleted", false
     ));
 
     Thread.sleep(1000);
@@ -65,7 +67,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("title", "content"))
+        .body(new CreatePostRequest("title", "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -81,7 +83,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest(null, "content"))
+        .body(new CreatePostRequest(null, "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -92,7 +94,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("   ", "content"))
+        .body(new CreatePostRequest("   ", "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -106,7 +108,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("title", null))
+        .body(new CreatePostRequest("title", null, "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -137,7 +139,9 @@ class PostResourceIntegrationTest {
         "title", "title",
         "content", "content",
         "slug", "slug",
-        "creationDate", timestamp
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "isDeleted", false
     ));
 
     Thread.sleep(1000);
@@ -347,7 +351,9 @@ class PostResourceIntegrationTest {
         "title", "title",
         "content", "content",
         "slug", "slug",
-        "creationDate", timestamp
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "isDeleted", false
     ));
 
     Thread.sleep(1000);
@@ -379,6 +385,15 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(204);
 
+    given()
+        .when()
+        .get("/posts/slug")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(404)
+        .body("message", equalTo("Post with slug slug not found"));
+
     deleteTestPosts();
   }
 
@@ -390,13 +405,17 @@ class PostResourceIntegrationTest {
         "title", "title",
         "content", "content",
         "slug", "slug",
-        "creationDate", timestamp));
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "isDeleted", false));
 
     firestore.collection("posts").document("find2").set(Map.of(
         "title", "title2",
         "content", "content",
         "slug", "slug",
-        "creationDate", timestamp));
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "isDeleted", false));
     Thread.sleep(1000);
   }
 

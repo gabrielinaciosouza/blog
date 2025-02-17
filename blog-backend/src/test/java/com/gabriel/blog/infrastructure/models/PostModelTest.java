@@ -28,6 +28,7 @@ class PostModelTest {
     assertEquals(post.getId().getValue(), postModel.getPostId());
     assertEquals(post.isDeleted(), postModel.isDeleted());
     assertNull(postModel.getDeletionDate());
+    assertEquals(post.getCoverImage().getValue().toString(), postModel.getCoverImage());
 
     post = PostFixture.deletedPost();
     postModel = PostModel.from(post);
@@ -43,6 +44,7 @@ class PostModelTest {
     assertEquals(Timestamp.ofTimeSecondsAndNanos(
         post.getDeletionDate().getEpochSecond(),
         post.getDeletionDate().getNano()), postModel.getDeletionDate());
+    assertEquals(post.getCoverImage().getValue().toString(), postModel.getCoverImage());
   }
 
   @Test
@@ -55,6 +57,7 @@ class PostModelTest {
     postModel.setSlug("slug");
     postModel.setDeleted(false);
     postModel.setDeletionDate(Timestamp.now());
+    postModel.setCoverImage("https://example.com/image.jpg");
 
     var post = postModel.toDomain();
 

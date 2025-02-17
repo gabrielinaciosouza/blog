@@ -11,7 +11,9 @@ public class PostFixture {
         TitleFixture.title(),
         ContentFixture.content(),
         CreationDateFixture.creationDate(),
-        SlugFixture.slug());
+        SlugFixture.slug(),
+        ImageFixture.image(),
+        DeletedStatus.notDeleted());
   }
 
   public static Post deletedPost() {
@@ -21,6 +23,7 @@ public class PostFixture {
         ContentFixture.content(),
         CreationDateFixture.creationDate(),
         SlugFixture.slug(),
+        ImageFixture.image(),
         DeletedStatus.deleted());
   }
 }

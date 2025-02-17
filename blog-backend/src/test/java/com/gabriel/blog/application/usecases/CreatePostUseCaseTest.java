@@ -24,6 +24,9 @@ import org.mockito.MockitoAnnotations;
 
 class CreatePostUseCaseTest {
 
+  private static final String title = "Test Title";
+  private static final String content = "Test Content";
+  private static final String coverImage = "https://example.com/image.jpg";
   @Mock
   private IdGenerator idGeneratorMock;
 
@@ -40,9 +43,7 @@ class CreatePostUseCaseTest {
 
   @Test
   void shouldCreatePostSuccessfully() {
-    final var title = "Test Title";
-    final var content = "Test Content";
-    final var createPostRequest = new CreatePostRequest(title, content);
+    final var createPostRequest = new CreatePostRequest(title, content, coverImage);
 
     final var generatedId = "mocked-id";
     when(idGeneratorMock.generateId("posts")).thenReturn(generatedId);
@@ -64,9 +65,7 @@ class CreatePostUseCaseTest {
 
   @Test
   void shouldNotHandleErrorWhenRepositoryFails() {
-    final var title = "Test Title";
-    final var content = "Test Content";
-    final var createPostRequest = new CreatePostRequest(title, content);
+    final var createPostRequest = new CreatePostRequest(title, content, coverImage);
 
 
     final var generatedId = "mocked-id";
@@ -95,7 +94,7 @@ class CreatePostUseCaseTest {
   void shouldThrowAlreadyExistsExceptionWhenPostAlreadyExists() {
     final var title = "Test Title";
     final var content = "Test Content";
-    final var createPostRequest = new CreatePostRequest(title, content);
+    final var createPostRequest = new CreatePostRequest(title, content, coverImage);
 
     when(postRepositoryMock.findBySlug(Slug.fromString("test-title")))
         .thenReturn(Optional.of(PostFixture.post()));

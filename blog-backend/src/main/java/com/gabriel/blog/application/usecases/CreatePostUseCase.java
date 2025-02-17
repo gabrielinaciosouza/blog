@@ -8,7 +8,9 @@ import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
+import com.gabriel.blog.domain.valueobjects.DeletedStatus;
 import com.gabriel.blog.domain.valueobjects.Id;
+import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.gabriel.blog.infrastructure.services.IdGenerator;
@@ -82,7 +84,9 @@ public class CreatePostUseCase {
         new Id(idGenerator.generateId(POSTS_DOMAIN)),
         title, content,
         CreationDate.now(),
-        slug);
+        slug,
+        postRequest.coverImage() == null ? null : new Image(postRequest.coverImage()),
+        DeletedStatus.notDeleted());
 
     postRepository.save(post);
 

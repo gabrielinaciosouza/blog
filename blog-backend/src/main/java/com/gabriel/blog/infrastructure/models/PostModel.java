@@ -5,6 +5,7 @@ import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.DeletedStatus;
 import com.gabriel.blog.domain.valueobjects.Id;
+import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
@@ -25,6 +26,7 @@ public class PostModel {
   private String slug;
   private boolean isDeleted;
   private Timestamp deletionDate;
+  private String coverImage;
 
   /**
    * Constructs a new {@link PostModel} instance.
@@ -37,7 +39,7 @@ public class PostModel {
    */
   public PostModel(final String postId, final String title, final String content,
                    final Timestamp creationDate, final String slug, final boolean isDeleted,
-                   final Timestamp deletionDate) {
+                   final Timestamp deletionDate, final String coverImage) {
     this.postId = postId;
     this.title = title;
     this.content = content;
@@ -45,6 +47,7 @@ public class PostModel {
     this.slug = slug;
     this.isDeleted = isDeleted;
     this.deletionDate = deletionDate;
+    this.coverImage = coverImage;
   }
 
   /**
@@ -64,7 +67,8 @@ public class PostModel {
         post.isDeleted(),
         post.isDeleted() ? Timestamp.ofTimeSecondsAndNanos(
             post.getDeletionDate().getEpochSecond(),
-            post.getDeletionDate().getNano()) : null);
+            post.getDeletionDate().getNano()) : null,
+        post.getCoverImage().getValue().toString());
   }
 
   /**
@@ -79,6 +83,7 @@ public class PostModel {
         new Content(content),
         new CreationDate(creationDate.toDate().toInstant()),
         Slug.fromString(slug),
+        new Image(coverImage),
         new DeletedStatus(isDeleted, isDeleted ? deletionDate.toDate().toInstant() : null));
   }
 
@@ -136,5 +141,13 @@ public class PostModel {
 
   public void setDeletionDate(final Timestamp deletionDate) {
     this.deletionDate = deletionDate;
+  }
+
+  public String getCoverImage() {
+    return coverImage;
+  }
+
+  public void setCoverImage(final String coverImage) {
+    this.coverImage = coverImage;
   }
 }

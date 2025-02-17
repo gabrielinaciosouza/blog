@@ -11,7 +11,7 @@ import com.gabriel.blog.domain.entities.Post;
  * <p>This DTO (Data Transfer Object) is used to collect the necessary data from the client
  * for creating a new post in the blog system. It contains a title and content as strings.</p>
  */
-public record CreatePostRequest(String title, String content) {
+public record CreatePostRequest(String title, String content, String coverImage) {
 
 }
 
