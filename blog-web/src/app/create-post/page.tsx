@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./createPostPage.module.css";
 import Image from "next/image";
 import ReactQuill from "react-quill-new";
@@ -21,14 +21,24 @@ export default function CreatePostPage() {
         handleCloseModal
     } = usePublishPost();
 
+    const titleRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        if (titleRef.current) {
+            titleRef.current.style.height = "auto";
+            titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
+        }
+    }, [title]);
+
     return (
         <div className={styles.container}>
-            <input 
+            <textarea 
+                ref={titleRef}
                 className={styles.input} 
-                type="text" 
                 placeholder="Title" 
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)}
+                rows={1}
             />
             <div className={styles.editor}>
                 <button className={styles.button} onClick={() => setOpen(!open)}>

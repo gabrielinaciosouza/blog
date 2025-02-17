@@ -1,16 +1,25 @@
 .container {
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
 
 .editor {
     display: flex;
+    flex-direction: column;
     gap: 20px;
-    height: 700px;
+    width: 100%;
+    max-width: 800px;
     position: relative;
 }
 
 .textArea {
     width: 100%;
+    min-height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .button, .addButton {
@@ -31,32 +40,50 @@
 
 .add {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     background-color: var(--background);
     position: absolute;
     z-index: 999;
-    width: 100%;
-    left: 50px;
+    top: 50px;
+    left: 0;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .input {
-    padding: 50px;
-    font-size: 64px;
-    border: none;
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    font-size: 24px;
+    border: 1px solid #ddd;
+    background-color: var(--softBg);
+    border-radius: 8px;
     outline: none;
-    background-color: transparent;
+    margin-bottom: 20px;
+    resize: none;
+    overflow: hidden;
 }
 
 .publish {
-    position: absolute;
-    top: 30px;
-    right: 20px;
-    padding: 10px 20px;
+    background: linear-gradient(to right, #374a9b, #02c0fc);
+    border-radius: 8px;
     border: none;
-    background-color: #1a8917;
-    color: white;
+    color: #fcf9f9;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    border-radius: 20px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    margin-top: 20px;
+}
+
+.publish:hover {
+    transform: scale(1.05);
+    background-color: #02a0e0;
 }
 
 .modal {
@@ -88,4 +115,47 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .input {
+        font-size: 20px;
+        padding: 15px;
+    }
+
+    .textArea {
+        min-height: 300px;
+    }
+
+    .publish {
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+
+    .add {
+        gap: 5px;
+        top: 40px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .input {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .textArea {
+        min-height: 200px;
+    }
+
+    .publish {
+        padding: 8px 16px;
+        font-size: 10px;
+    }
+
+    .add {
+        gap: 5px;
+        top: 30px;
+    }
 }

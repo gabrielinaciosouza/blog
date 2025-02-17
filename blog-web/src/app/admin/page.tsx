@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import styles from './admin.module.css';
 import { FaEdit, FaTrash, FaUndo } from 'react-icons/fa';
 import Post from '@/models/post';
+import { useRouter } from 'next/navigation';
 
 const AdminPage = () => {
+    const router = useRouter();
     const [posts, setPosts] = useState<Post[]>([
         new Post("1", 'Post 1', 'post-1', '2021-09-01', 'This is the content of post 1'),
         new Post("2", 'Post 2', 'post-2', '2021-09-02', 'This is the content of post 2'),
@@ -42,8 +44,7 @@ const AdminPage = () => {
     };
 
     const handleCreateNewPost = () => {
-        // Handle create new post logic here
-        console.log('Create new post');
+        router.push('/create-post');
     };
 
     return (
