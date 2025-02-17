@@ -14,6 +14,12 @@
     position: relative;
 }
 
+.editorButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .textArea {
     width: 100%;
     min-height: 400px;
@@ -22,7 +28,7 @@
     overflow: hidden;
 }
 
-.button, .addButton {
+.button, .addButton, .uploadButton {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -36,6 +42,11 @@
 
 .addButton {
     border-color: #1a8917;
+}
+
+.uploadButton {
+    border-color: #374a9b;
+    cursor: pointer;
 }
 
 .add {
@@ -59,10 +70,35 @@
     border: 1px solid #ddd;
     background-color: var(--softBg);
     border-radius: 8px;
+    font-weight: bold;
+    font-family: 'Kanit', sans-serif;
     outline: none;
-    margin-bottom: 20px;
     resize: none;
     overflow: hidden;
+}
+
+.imageUpload {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+
+.imageLabel {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.imageInput {
+    display: none;
+}
+
+.imagePreview {
+    margin-top: 10px;
+}
+
+.previewImage {
+    border-radius: 8px;
 }
 
 .publish {
@@ -117,7 +153,6 @@
     cursor: pointer;
 }
 
-/* Responsive styles */
 @media screen and (max-width: 768px) {
     .input {
         font-size: 20px;

@@ -53,12 +53,20 @@ a {
 .ql-container {
   font-size: 22px !important;
   background-color: var(--softBg);
-  border-radius: 8px;
+  font-family: 'Kanit', sans-serif !important;
 }
 
 .quill > .ql-container > .ql-editor.ql-blank::before {
   color: #14141466;
   background-color: var(--softBg);
+}
+
+.ql-toolbar {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  font-family: 'Kanit', sans-serif !important;
 }
 
 @media screen and (max-width: 1536px) {
