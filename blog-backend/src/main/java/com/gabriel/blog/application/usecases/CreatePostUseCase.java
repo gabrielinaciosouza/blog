@@ -95,6 +95,7 @@ public class CreatePostUseCase {
         post.getTitle().getValue(),
         post.getContent().getValue(),
         post.getCreationDate().toString(),
-        post.getSlug().getValue());
+        post.getSlug().getValue(),
+        post.getCoverImage().toString());
   }
 }

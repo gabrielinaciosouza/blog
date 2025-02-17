@@ -43,7 +43,8 @@ class PostResourceIntegrationTest {
         .body("title", equalTo("title"))
         .body("content", equalTo("content"))
         .body("slug", equalTo("title"))
-        .body("creationDate", notNullValue());
+        .body("creationDate", notNullValue())
+        .body("coverImage", equalTo("https://example.com/image.jpg"));
 
     deleteTestPosts();
   }
@@ -211,11 +212,13 @@ class PostResourceIntegrationTest {
         .body("posts[0].content", equalTo("content"))
         .body("posts[0].slug", equalTo("slug"))
         .body("posts[0].creationDate", equalTo("2024-12-12 01:00"))
+        .body("posts[0].coverImage", equalTo("https://example.com/image.jpg"))
         .body("posts[1].postId", notNullValue())
         .body("posts[1].title", equalTo("title2"))
         .body("posts[1].content", equalTo("content"))
         .body("posts[1].slug", equalTo("slug"))
-        .body("posts[1].creationDate", equalTo("2024-12-12 01:00"));
+        .body("posts[1].creationDate", equalTo("2024-12-12 01:00"))
+        .body("posts[1].coverImage", equalTo("https://example.com/image.jpg"));
 
     deleteTestPosts();
   }
@@ -240,11 +243,13 @@ class PostResourceIntegrationTest {
         .body("posts[0].content", equalTo("content"))
         .body("posts[0].slug", equalTo("slug"))
         .body("posts[0].creationDate", equalTo("2024-12-12 01:00"))
+        .body("posts[0].coverImage", equalTo("https://example.com/image.jpg"))
         .body("posts[1].postId", notNullValue())
         .body("posts[1].title", equalTo("title"))
         .body("posts[1].content", equalTo("content"))
         .body("posts[1].slug", equalTo("slug"))
-        .body("posts[1].creationDate", equalTo("2024-12-12 01:00"));
+        .body("posts[1].creationDate", equalTo("2024-12-12 01:00"))
+        .body("posts[1].coverImage", equalTo("https://example.com/image.jpg"));
 
     deleteTestPosts();
   }
