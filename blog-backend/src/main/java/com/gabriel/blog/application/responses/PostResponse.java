@@ -18,5 +18,6 @@ public record PostResponse(
     String title,
     String content,
     String creationDate,
-    String slug) {
+    String slug,
+    String coverImage) {
 }

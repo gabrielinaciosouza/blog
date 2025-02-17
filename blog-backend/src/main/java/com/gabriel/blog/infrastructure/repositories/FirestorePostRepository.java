@@ -134,4 +134,21 @@ public class FirestorePostRepository implements PostRepository {
       throw new RepositoryException("Failed to get total count of posts in Firestore", e);
     }
   }
+
+  @Override
+  public Post update(final Post post) {
+    try {
+      firestore.collection(COLLECTION_NAME)
+          .document(post.getId().getValue())
+          .set(PostModel.from(post))
+          .get();
+      logger.info("Post with id " + post.getId().getValue() + " updated successfully");
+      return post;
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to update post in Firestore", e);
+      throw new RepositoryException("Failed to update post in Firestore", e);
+    }
+  }
+
 }

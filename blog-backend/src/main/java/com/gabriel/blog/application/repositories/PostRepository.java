@@ -107,4 +107,16 @@ public interface PostRepository {
    * @return the total count of posts in the database.
    */
   int totalCount();
+
+  /**
+   * Updates an existing {@link Post} entity in the database.
+   * This method is responsible for updating an existing {@link Post} entity in the database.
+   *
+   * <p>The implementation should update the state of the {@link Post} entity in the database,
+   * ensuring that any changes made to the entity are reflected in the database.</p>
+   *
+   * @param post the {@link Post} entity to be updated; must not be {@code null}.
+   * @return the updated {@link Post} entity.
+   */
+  Post update(Post post);
 }
