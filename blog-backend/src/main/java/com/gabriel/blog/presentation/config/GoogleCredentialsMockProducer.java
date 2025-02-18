@@ -1,7 +1,8 @@
-package com.gabriel.blog.it;
+package com.gabriel.blog.presentation.config;
 
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
+import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.test.Mock;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
@@ -10,6 +11,7 @@ import jakarta.inject.Singleton;
 
 @Mock
 @ApplicationScoped
+@IfBuildProfile(anyOf = {"dev", "test"})
 public class GoogleCredentialsMockProducer {
 
   @Produces

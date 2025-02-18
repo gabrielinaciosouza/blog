@@ -1,0 +1,16 @@
+services:
+  firestore-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
+    command: gcloud beta emulators firestore start --host-port=0.0.0.0:8082
+    ports:
+      - "8082:8082"
+    environment:
+      - FIRESTORE_PROJECT_ID=test-project
+
+  storage-emulator:
+    image: fsouza/fake-gcs-server:1.45.2
+    command: [ "--scheme=http" ]
+    ports:
+      - "4443:4443"
+    environment:
+      - STORAGE_EMULATOR_HOST=localhost:8081
