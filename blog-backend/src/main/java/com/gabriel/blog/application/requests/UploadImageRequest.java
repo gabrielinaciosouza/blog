@@ -1,5 +1,7 @@
 package com.gabriel.blog.application.requests;
 
+import jakarta.ws.rs.FormParam;
+
 /**
  * The {@link UploadImageRequest} class represents the request object for uploading an image to a storage bucket.
  *
@@ -8,8 +10,12 @@ package com.gabriel.blog.application.requests;
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  */
 public record UploadImageRequest(
-    byte[] fileData,
-    String fileName,
-    String fileMimeType,
-    String bucketName) {
+		@FormParam("file")
+		byte[] fileData,
+		@FormParam("fileName")
+		String fileName,
+		@FormParam("fileMimeType")
+		String fileMimeType,
+		@FormParam("bucketName")
+		String bucketName) {
 }

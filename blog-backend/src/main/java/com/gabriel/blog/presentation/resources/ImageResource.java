@@ -4,7 +4,6 @@ import com.gabriel.blog.application.requests.UploadImageRequest;
 import com.gabriel.blog.application.responses.ImageResponse;
 import com.gabriel.blog.application.usecases.UploadImageUseCase;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -20,7 +19,7 @@ import jakarta.ws.rs.core.MediaType;
  *
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  */
-@Path("/images")
+@Path("/files")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 public class ImageResource {
@@ -36,23 +35,11 @@ public class ImageResource {
     this.uploadImageUseCase = uploadImageUseCase;
   }
 
-  /**
-   * Uploads an image to the storage bucket based on the specified image data and metadata.
-   *
-   * @param fileData     the image file data as a byte array.
-   * @param fileName     the file name of the image.
-   * @param fileMimeType the MIME type of the image file.
-   * @param bucketName   the name of the storage bucket to upload the image to.
-   * @return the response object containing the URL of the uploaded image.
-   */
-  @POST
-  public ImageResponse uploadImage(
-      final @FormParam("file") byte[] fileData,
-      final @FormParam("fileName") String fileName,
-      final @FormParam("fileMimeType") String fileMimeType,
-      final @FormParam("bucketName") String bucketName) {
 
-    return uploadImageUseCase.uploadImage(
-        new UploadImageRequest(fileData, fileName, fileMimeType, bucketName));
+  @POST
+  @Path("/images")
+  public ImageResponse uploadImage(final UploadImageRequest request) {
+
+    return uploadImageUseCase.uploadImage(request);
   }
 }
