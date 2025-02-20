@@ -1,5 +1,8 @@
 package com.gabriel.blog.application.usecases;
 
+import static com.gabriel.blog.application.repositories.ImageBucketRepository.BucketType;
+import static com.gabriel.blog.application.repositories.ImageBucketRepository.UploadImageParams;
+
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.qualifiers.RandomGenerator;
 import com.gabriel.blog.application.repositories.ImageBucketRepository;
@@ -7,9 +10,6 @@ import com.gabriel.blog.application.requests.UploadImageRequest;
 import com.gabriel.blog.application.responses.ImageResponse;
 import com.gabriel.blog.application.services.IdGenerator;
 import jakarta.enterprise.context.ApplicationScoped;
-
-import static com.gabriel.blog.application.repositories.ImageBucketRepository.BucketType;
-import static com.gabriel.blog.application.repositories.ImageBucketRepository.UploadImageParams;
 
 /**
  * The {@link UploadImageUseCase} class represents the use case for uploading images to a storage
@@ -24,59 +24,59 @@ import static com.gabriel.blog.application.repositories.ImageBucketRepository.Up
 @ApplicationScoped
 public class UploadImageUseCase {
 
-	private final ImageBucketRepository imageBucketRepository;
-	private final IdGenerator idGenerator;
+  private final ImageBucketRepository imageBucketRepository;
+  private final IdGenerator idGenerator;
 
-	/**
-	 * Creates a new {@link UploadImageUseCase} with the specified image bucket repository.
-	 *
-	 * @param imageBucketRepository the image bucket repository to use for managing image storage buckets.
-	 */
-	public UploadImageUseCase(final ImageBucketRepository imageBucketRepository,
-							  @RandomGenerator final IdGenerator idGenerator) {
-		this.imageBucketRepository = imageBucketRepository;
-		this.idGenerator = idGenerator;
-	}
+  /**
+   * Creates a new {@link UploadImageUseCase} with the specified image bucket repository.
+   *
+   * @param imageBucketRepository the image bucket repository to use for managing image storage buckets.
+   */
+  public UploadImageUseCase(final ImageBucketRepository imageBucketRepository,
+                            @RandomGenerator final IdGenerator idGenerator) {
+    this.imageBucketRepository = imageBucketRepository;
+    this.idGenerator = idGenerator;
+  }
 
-	/**
-	 * Uploads an image to the specified storage bucket based on the request data.
-	 *
-	 * @param request the request object containing the image data and metadata.
-	 * @return the response object containing the URL of the uploaded image.
-	 */
-	public ImageResponse uploadImage(final UploadImageRequest request) {
-		validateRequest(request);
+  /**
+   * Uploads an image to the specified storage bucket based on the request data.
+   *
+   * @param request the request object containing the image data and metadata.
+   * @return the response object containing the URL of the uploaded image.
+   */
+  public ImageResponse uploadImage(final UploadImageRequest request) {
+    validateRequest(request);
 
-		final var fileName = idGenerator.generateId(request.fileName());
-		final var image =
-				imageBucketRepository.createImage(new UploadImageParams(
-						request.fileData(),
-						fileName,
-						request.fileMimeType(),
-						request.bucketName()));
+    final var fileName = idGenerator.generateId(request.fileName());
+    final var image =
+        imageBucketRepository.createImage(new UploadImageParams(
+            request.fileData(),
+            fileName,
+            request.fileMimeType(),
+            request.bucketName()));
 
-		return new ImageResponse(image.toString(), fileName);
-	}
+    return new ImageResponse(image.toString(), fileName);
+  }
 
-	private void validateRequest(final UploadImageRequest request) {
-		if (request == null) {
-			throw new ValidationException("Request must not be null");
-		}
+  private void validateRequest(final UploadImageRequest request) {
+    if (request == null) {
+      throw new ValidationException("Request must not be null");
+    }
 
-		if (request.fileData() == null || request.fileData().length == 0) {
-			throw new ValidationException("Invalid file data");
-		}
+    if (request.fileData() == null || request.fileData().length == 0) {
+      throw new ValidationException("Invalid file data");
+    }
 
-		if (request.fileName() == null || request.fileName().isBlank()) {
-			throw new ValidationException("Invalid file name");
-		}
+    if (request.fileName() == null || request.fileName().isBlank()) {
+      throw new ValidationException("Invalid file name");
+    }
 
-		if (request.fileMimeType() == null || request.fileMimeType().isBlank()) {
-			throw new ValidationException("Invalid file mime type");
-		}
+    if (request.fileMimeType() == null || request.fileMimeType().isBlank()) {
+      throw new ValidationException("Invalid file mime type");
+    }
 
-		if (!BucketType.existsType(request.bucketName())) {
-			throw new ValidationException("Invalid bucket name");
-		}
-	}
+    if (!BucketType.existsType(request.bucketName())) {
+      throw new ValidationException("Invalid bucket name");
+    }
+  }
 }

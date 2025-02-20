@@ -1,4 +1,4 @@
-package com.gabriel.blog.presentation.config;
+package com.gabriel.blog.infrastructure.config;
 
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
