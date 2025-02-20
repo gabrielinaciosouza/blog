@@ -4,7 +4,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
-
+import jakarta.ws.rs.ext.Provider;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * <p>Created by Gabriel Inacio de Souza on February 9, 2025.</p>
  */
-//@Provider
+@Provider
 public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
   private static final Logger LOGGER = Logger.getLogger(LoggingFilter.class.getName());
@@ -27,7 +27,8 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
 
     final var contentType = requestContext.getHeaders().get("Content-Type");
 
-    if (requestContext.hasEntity() && contentType != null && contentType.contains("multipart/form-data")) {
+    if (requestContext.hasEntity() && contentType != null && !contentType.contains(
+        "multipart/form-data")) {
       try {
         final var requestBodyBytes = requestContext.getEntityStream().readAllBytes();
         final var requestBody = new String(requestBodyBytes, StandardCharsets.UTF_8);
