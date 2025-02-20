@@ -15,7 +15,7 @@ import java.util.UUID;
 public class RandomUuidGenerator implements IdGenerator {
   @Override
   public String generateId(final String domain) {
-    if (domain == null) {
+    if (domain == null || domain.isBlank()) {
       return UUID.randomUUID().toString();
     }
     return UUID.randomUUID() + "-" + domain;

@@ -28,13 +28,12 @@ class RandomUuidGeneratorTest {
   }
 
   @Test
-  void generateIdWithEmptyDomainReturnsUuidWithDash() {
+  void generateIdWithEmptyDomainReturnsUuidWithoutDash() {
     final var domain = "";
     final var generatedId = idGenerator.generateId(domain);
 
     assertNotNull(generatedId);
-    assertTrue(generatedId.endsWith("-"));
-    assertEquals(36 + 1, generatedId.length());
+    assertEquals(36, generatedId.length());
   }
 
   @Test
