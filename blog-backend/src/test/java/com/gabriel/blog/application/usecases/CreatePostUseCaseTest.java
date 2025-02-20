@@ -105,4 +105,26 @@ class CreatePostUseCaseTest {
 
     assertEquals("Post with slug test-title already exists", exception.getMessage());
   }
+
+  @Test
+  void shouldUseDefaultImageWhenCoverImageIsNull() {
+    final var createPostRequest = new CreatePostRequest(title, content, null);
+
+    final var generatedId = "mocked-id";
+    when(idGeneratorMock.generateId("posts")).thenReturn(generatedId);
+    when(postRepositoryMock.findBySlug(Slug.fromString("test-title"))).thenReturn(Optional.empty());
+
+    final var response = createPostUseCase.create(createPostRequest);
+
+    verify(idGeneratorMock).generateId("posts");
+    verify(postRepositoryMock).save(any(Post.class));
+
+    assertNotNull(response);
+    assertEquals(generatedId, response.postId());
+    assertEquals(title, response.title());
+    assertEquals(content, response.content());
+    assertNotNull(response.creationDate());
+    assertEquals(response.slug(), "test-title");
+    assertNotNull(response.coverImage());
+  }
 }
