@@ -146,4 +146,27 @@ class LoggingFilterTest {
     verify(requestContext, times(2)).getHeaders();
     verify(requestContext).hasEntity();
   }
+
+  @Test
+  void shouldNotInterruptIfReadAllBytesThrowsException() throws Exception {
+    when(requestContext.getMethod()).thenReturn("POST");
+    when(requestContext.getUriInfo()).thenReturn(mock(UriInfo.class));
+    when(requestContext.getUriInfo().getRequestUri()).thenReturn(
+        new java.net.URI("http://localhost:8080/test"));
+    when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>() {{
+      put("Content-Type", List.of("application/json"));
+    }});
+    when(requestContext.hasEntity()).thenReturn(true);
+    when(requestContext.getEntityStream()).thenReturn(
+        new ByteArrayInputStream("test body".getBytes(StandardCharsets.UTF_8)));
+    when(requestContext.getEntityStream().readAllBytes()).thenThrow(
+        new RuntimeException("Test Exception"));
+
+    loggingFilter.filter(requestContext);
+
+    verify(requestContext).getMethod();
+    verify(requestContext, times(2)).getUriInfo();
+    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).hasEntity();
+  }
 }
