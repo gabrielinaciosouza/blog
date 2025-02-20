@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.UriInfo;
 import java.io.ByteArrayInputStream;
@@ -20,8 +21,8 @@ import org.junit.jupiter.api.Test;
 class LoggingFilterTest {
 
   private LoggingFilter loggingFilter;
-  private ContainerRequestContext requestContext;
   private ContainerResponseContext responseContext;
+  private ContainerRequestContext requestContext;
 
   @BeforeEach
   void setUp() {
@@ -39,6 +40,7 @@ class LoggingFilterTest {
     when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>() {{
       put("Content-Type", List.of("application/json"));
     }});
+    when(requestContext.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
     when(requestContext.hasEntity()).thenReturn(true);
     when(requestContext.getEntityStream()).thenReturn(
         new ByteArrayInputStream("test body".getBytes(StandardCharsets.UTF_8)));
@@ -48,7 +50,7 @@ class LoggingFilterTest {
     verify(requestContext).setEntityStream(any(ByteArrayInputStream.class));
     verify(requestContext).getMethod();
     verify(requestContext, times(2)).getUriInfo();
-    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).getHeaders();
     verify(requestContext).hasEntity();
   }
 
@@ -72,6 +74,7 @@ class LoggingFilterTest {
     when(requestContext.getUriInfo().getRequestUri()).thenReturn(
         new java.net.URI("http://localhost:8080/test"));
     when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+    when(requestContext.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
     when(requestContext.hasEntity()).thenReturn(true);
     when(requestContext.getEntityStream()).thenThrow(new RuntimeException("Test Exception"));
 
@@ -79,7 +82,7 @@ class LoggingFilterTest {
 
     verify(requestContext).getMethod();
     verify(requestContext, times(2)).getUriInfo();
-    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).getHeaders();
     verify(requestContext).hasEntity();
   }
 
@@ -92,6 +95,7 @@ class LoggingFilterTest {
     when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>() {{
       put("Content-Type", List.of("multipart/form-data"));
     }});
+    when(requestContext.getMediaType()).thenReturn(MediaType.MULTIPART_FORM_DATA_TYPE);
     when(requestContext.hasEntity()).thenReturn(true);
     when(requestContext.getEntityStream()).thenReturn(
         new ByteArrayInputStream("test body".getBytes(StandardCharsets.UTF_8)));
@@ -101,27 +105,28 @@ class LoggingFilterTest {
     verify(requestContext, never()).setEntityStream(any(ByteArrayInputStream.class));
     verify(requestContext).getMethod();
     verify(requestContext, times(2)).getUriInfo();
-    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).getHeaders();
     verify(requestContext).hasEntity();
   }
 
   @Test
-  void shouldNotLogRequestBodyWhenContentTypeIsNull() throws Exception {
+  void shouldLogRequestBodyWhenContentTypeIsNull() throws Exception {
     when(requestContext.getMethod()).thenReturn("POST");
     when(requestContext.getUriInfo()).thenReturn(mock(UriInfo.class));
     when(requestContext.getUriInfo().getRequestUri()).thenReturn(
         new java.net.URI("http://localhost:8080/test"));
     when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+    when(requestContext.getMediaType()).thenReturn(null);
     when(requestContext.hasEntity()).thenReturn(true);
     when(requestContext.getEntityStream()).thenReturn(
         new ByteArrayInputStream("test body".getBytes(StandardCharsets.UTF_8)));
 
     loggingFilter.filter(requestContext);
 
-    verify(requestContext, never()).setEntityStream(any(ByteArrayInputStream.class));
+    verify(requestContext).setEntityStream(any(ByteArrayInputStream.class));
     verify(requestContext).getMethod();
     verify(requestContext, times(2)).getUriInfo();
-    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).getHeaders();
     verify(requestContext).hasEntity();
   }
 
@@ -134,6 +139,7 @@ class LoggingFilterTest {
     when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>() {{
       put("Content-Type", List.of("application/json"));
     }});
+    when(requestContext.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
     when(requestContext.hasEntity()).thenReturn(true);
     when(requestContext.getEntityStream()).thenReturn(
         new ByteArrayInputStream("test body".getBytes(StandardCharsets.UTF_8)));
@@ -143,7 +149,7 @@ class LoggingFilterTest {
     verify(requestContext).setEntityStream(any(ByteArrayInputStream.class));
     verify(requestContext).getMethod();
     verify(requestContext, times(2)).getUriInfo();
-    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).getHeaders();
     verify(requestContext).hasEntity();
   }
 
@@ -156,6 +162,7 @@ class LoggingFilterTest {
     when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap<>() {{
       put("Content-Type", List.of("application/json"));
     }});
+    when(requestContext.getMediaType()).thenReturn(MediaType.APPLICATION_JSON_TYPE);
     when(requestContext.hasEntity()).thenReturn(true);
     when(requestContext.getEntityStream()).thenReturn(
         new ByteArrayInputStream("test body".getBytes(StandardCharsets.UTF_8)));
@@ -166,7 +173,7 @@ class LoggingFilterTest {
 
     verify(requestContext).getMethod();
     verify(requestContext, times(2)).getUriInfo();
-    verify(requestContext, times(2)).getHeaders();
+    verify(requestContext).getHeaders();
     verify(requestContext).hasEntity();
   }
 }
