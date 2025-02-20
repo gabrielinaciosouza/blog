@@ -10,12 +10,12 @@ import jakarta.ws.rs.FormParam;
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  */
 public record UploadImageRequest(
-		@FormParam("file")
-		byte[] fileData,
-		@FormParam("fileName")
-		String fileName,
-		@FormParam("fileMimeType")
-		String fileMimeType,
-		@FormParam("bucketName")
-		String bucketName) {
+    @FormParam("file")
+    byte[] fileData,
+    @FormParam("fileName")
+    String fileName,
+    @FormParam("fileMimeType")
+    String fileMimeType,
+    @FormParam("bucketName")
+    String bucketName) {
 }

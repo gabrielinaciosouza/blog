@@ -35,7 +35,12 @@ public class ImageResource {
     this.uploadImageUseCase = uploadImageUseCase;
   }
 
-
+  /**
+   * Uploads an image to the storage bucket based on the specified image data and metadata.
+   *
+   * @param request the request object containing the image data and metadata.
+   * @return the response object containing the URL of the uploaded image.
+   */
   @POST
   @Path("/images")
   public ImageResponse uploadImage(final UploadImageRequest request) {
