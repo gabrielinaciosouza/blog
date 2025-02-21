@@ -21,7 +21,7 @@ class GcsImageBucketRepositoryTest {
   @BeforeEach
   void setUp() {
     storage = mock(Storage.class);
-    gcsImageBucketRepository = new GcsImageBucketRepository(storage);
+    gcsImageBucketRepository = new GcsImageBucketRepository(storage, "");
   }
 
   @Test

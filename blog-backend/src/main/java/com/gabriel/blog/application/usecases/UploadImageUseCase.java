@@ -10,6 +10,8 @@ import com.gabriel.blog.application.requests.UploadImageRequest;
 import com.gabriel.blog.application.responses.ImageResponse;
 import com.gabriel.blog.application.services.IdGenerator;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The {@link UploadImageUseCase} class represents the use case for uploading images to a storage
@@ -47,7 +49,8 @@ public class UploadImageUseCase {
   public ImageResponse uploadImage(final UploadImageRequest request) {
     validateRequest(request);
 
-    final var fileName = idGenerator.generateId(request.fileName());
+    final var fileName = URLEncoder.encode(idGenerator.generateId(request.fileName()),
+        StandardCharsets.UTF_8);
     final var image =
         imageBucketRepository.createImage(new UploadImageParams(
             request.fileData(),

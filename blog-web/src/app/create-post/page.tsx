@@ -7,10 +7,13 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { usePublishPost } from "@/hooks/usePublishPost";
 import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo } from "react-icons/fa";
+import { API_URL } from "@/services/postService";
+import BlogImage from "@/models/blog-image";
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
-    const [postImage, setPostImage] = useState<File | null>(null);
+    const [postImageFile, setPostImageFile] = useState<File | null>(null);
+    const [coverImage, setCoverImage] = useState<BlogImage | null>(null);
     const {
         title,
         setTitle,
@@ -33,9 +36,20 @@ export default function CreatePostPage() {
         }
     }, [title]);
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setPostImage(e.target.files[0]);
+            setPostImageFile(e.target.files[0]);
+            const formData = new FormData();
+            formData.append("file", e.target.files[0]);
+            formData.append("fileName", e.target.files[0].name);
+            formData.append("fileMimeType", e.target.files[0].type);
+        
+            const result = await fetch(`/api/images?type=cover-images`, {
+                method: "POST",
+                body: formData,
+            });
+            const data = await result.json();
+            setCoverImage(new BlogImage(data.url, data.fileName));
         }
     };
 
@@ -53,29 +67,29 @@ export default function CreatePostPage() {
 
     return (
         <div className={styles.container}>
-            <textarea 
+            <textarea
                 ref={titleRef}
-                className={styles.input} 
-                placeholder="Title" 
-                value={title} 
+                className={styles.input}
+                placeholder="Title"
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 rows={1}
             />
             <div className={styles.imageUpload}>
-                <input 
-                    type="file" 
-                    id="postImage" 
-                    className={styles.imageInput} 
-                    accept="image/*" 
+                <input
+                    type="file"
+                    id="postImage"
+                    className={styles.imageInput}
+                    accept="image/*"
                     onChange={handleImageUpload}
                 />
-                {postImage && (
+                {coverImage && (
                     <div className={styles.imagePreview}>
-                        <Image 
-                            src={URL.createObjectURL(postImage)} 
-                            alt="Post Image" 
-                            width={200} 
-                            height={200} 
+                        <Image
+                            src={coverImage.url}
+                            alt="Post Image"
+                            width={200}
+                            height={200}
                             className={styles.previewImage}
                         />
                     </div>
@@ -105,16 +119,16 @@ export default function CreatePostPage() {
                 )}
                 <ReactQuill
                     ref={quillRef}
-                    className={styles.textArea} 
+                    className={styles.textArea}
                     // theme="bubble" 
-                    value={content} 
-                    onChange={setContent} 
+                    value={content}
+                    onChange={setContent}
                     placeholder="Write your story..."
                 />
             </div>
             <button
-                className={styles.publish} 
-                onClick={handlePublish} 
+                className={styles.publish}
+                onClick={handlePublish}
                 disabled={loading}
             >
                 {loading ? "Publishing..." : "Publish"}

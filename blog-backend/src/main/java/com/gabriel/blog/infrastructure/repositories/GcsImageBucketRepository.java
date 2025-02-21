@@ -6,6 +6,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * The {@link GcsImageBucketRepository} class represents a Google Cloud Storage (GCS) image bucket
@@ -21,14 +22,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class GcsImageBucketRepository implements ImageBucketRepository {
 
   private final Storage storage;
+  private final String gcsUrl;
 
   /**
    * Creates a new {@link GcsImageBucketRepository} with the specified GCS storage client.
    *
    * @param storage the GCS storage client to use for managing GCS buckets.
    */
-  public GcsImageBucketRepository(final Storage storage) {
+  public GcsImageBucketRepository(
+      final Storage storage,
+      @ConfigProperty(name = "google.storage.url") final String gcsUrl) {
     this.storage = storage;
+    this.gcsUrl = gcsUrl;
   }
 
   @Override
@@ -38,7 +43,7 @@ public class GcsImageBucketRepository implements ImageBucketRepository {
     final var bucket = getOrCreateBucket(bucketName);
 
     final var blob = bucket.create(params.fileName(), params.fileData(), params.fileMimeType());
-    return new Image("https://storage.googleapis.com/" + bucketName + "/" + blob.getName());
+    return new Image(gcsUrl + bucketName + "/o/" + blob.getName() + "?alt=media");
   }
 
   private Bucket getOrCreateBucket(final String bucketName) {
