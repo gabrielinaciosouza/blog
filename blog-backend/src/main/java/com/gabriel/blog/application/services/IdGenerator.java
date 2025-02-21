@@ -1,4 +1,4 @@
-package com.gabriel.blog.infrastructure.services;
+package com.gabriel.blog.application.services;
 
 /**
  * The {@link IdGenerator} interface defines the contract for generating unique identifiers (IDs)

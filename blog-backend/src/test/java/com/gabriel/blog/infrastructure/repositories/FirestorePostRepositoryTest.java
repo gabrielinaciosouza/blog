@@ -14,6 +14,7 @@ import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
@@ -32,6 +33,7 @@ class FirestorePostRepositoryTest {
   private CollectionReference collectionReference;
   private ApiFuture apiFuture;
   private Query query;
+  private DocumentReference documentReference;
   private FirestorePostRepository firestorePostRepository;
 
   @BeforeEach
@@ -40,6 +42,7 @@ class FirestorePostRepositoryTest {
     collectionReference = mock(CollectionReference.class);
     apiFuture = mock(ApiFuture.class);
     query = mock(Query.class);
+    documentReference = mock(DocumentReference.class);
     firestorePostRepository = new FirestorePostRepository(firestore);
   }
 
@@ -206,6 +209,70 @@ class FirestorePostRepositoryTest {
       verify(documentSnapshot).toObject(PostModel.class);
       assertEquals(List.of(POST), result);
     }
+
+    @Test
+    void shouldSetDefaultSortByWhenSortByIsNull() throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.orderBy("creationDate", Query.Direction.ASCENDING)).thenReturn(
+          query);
+      when(query.offset(0)).thenReturn(query);
+      when(query.limit(10)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
+
+      final var querySnapshot = mock(QuerySnapshot.class);
+      final var documentSnapshot = mock(QueryDocumentSnapshot.class);
+
+      when(apiFuture.get()).thenReturn(querySnapshot);
+      when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
+      final var params =
+          new PostRepository.FindPostsParams(1, 10, null,
+              PostRepository.SortOrder.ASCENDING);
+
+      final var result = firestorePostRepository.findPosts(params);
+
+      verify(firestore).collection("posts");
+      verify(collectionReference).orderBy("creationDate", Query.Direction.ASCENDING);
+      verify(query).offset(0);
+      verify(query).limit(10);
+      verify(query).get();
+      verify(apiFuture).get();
+      verify(querySnapshot).getDocuments();
+      verify(documentSnapshot).toObject(PostModel.class);
+      assertEquals(List.of(POST), result);
+    }
+
+    @Test
+    void shouldSetDefaultSortOrderWhenSortOrderIsNull()
+        throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
+      when(query.offset(0)).thenReturn(query);
+      when(query.limit(10)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
+
+      final var querySnapshot = mock(QuerySnapshot.class);
+      final var documentSnapshot = mock(QueryDocumentSnapshot.class);
+
+      when(apiFuture.get()).thenReturn(querySnapshot);
+      when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
+      final var params =
+          new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
+              null);
+
+      final var result = firestorePostRepository.findPosts(params);
+
+      verify(firestore).collection("posts");
+      verify(collectionReference).orderBy("title", Query.Direction.DESCENDING);
+      verify(query).offset(0);
+      verify(query).limit(10);
+      verify(query).get();
+      verify(apiFuture).get();
+      verify(querySnapshot).getDocuments();
+      verify(documentSnapshot).toObject(PostModel.class);
+      assertEquals(List.of(POST), result);
+    }
   }
 
   @Nested
@@ -232,6 +299,36 @@ class FirestorePostRepositoryTest {
       when(apiFuture.get()).thenThrow(InterruptedException.class);
 
       assertThrows(RepositoryException.class, () -> firestorePostRepository.totalCount());
+    }
+  }
+
+  @Nested
+  class UpdateTests {
+
+    @Test
+    void shouldUpdatePostCorrectly() throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.document(POST.getId().getValue())).thenReturn(documentReference);
+      when(documentReference.set(any(PostModel.class))).thenReturn(apiFuture);
+
+      final var updatedPost = firestorePostRepository.update(POST);
+
+      verify(firestore).collection("posts");
+      verify(collectionReference).document(POST.getId().getValue());
+      verify(documentReference).set(any(PostModel.class));
+      verify(apiFuture).get();
+      assertEquals(POST, updatedPost);
+    }
+
+    @Test
+    void shouldThrowRepositoryExceptionOnThreadFailure()
+        throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.document(POST.getId().getValue())).thenReturn(documentReference);
+      when(documentReference.set(any(PostModel.class))).thenReturn(apiFuture);
+      when(apiFuture.get()).thenThrow(InterruptedException.class);
+
+      assertThrows(RepositoryException.class, () -> firestorePostRepository.update(POST));
     }
   }
 }

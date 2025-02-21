@@ -21,7 +21,7 @@
 .image {
     height: 160px;
     width: 100%;
-    object-fit: contain;
+    object-fit: cover;
     background: linear-gradient(135deg, #f8f8f8, #e6e6e6);
 }
 
@@ -51,6 +51,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    text-align: left;
 }
 
 .content {
@@ -64,6 +65,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    text-align: left;
 }
 
 @media screen and (max-width: 640px) {

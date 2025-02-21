@@ -6,7 +6,6 @@ import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.ext.Provider;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
@@ -26,7 +25,11 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
     LOGGER.info("Request URI: " + requestContext.getUriInfo().getRequestUri().toString());
     LOGGER.info("Request Headers: " + requestContext.getHeaders().toString());
 
-    if (requestContext.hasEntity()) {
+    final var isNotMultiPartRequest =
+        requestContext.getMediaType() == null || !requestContext.getMediaType().toString()
+            .contains("multipart/form-data");
+
+    if (requestContext.hasEntity() && isNotMultiPartRequest) {
       try {
         final var requestBodyBytes = requestContext.getEntityStream().readAllBytes();
         final var requestBody = new String(requestBodyBytes, StandardCharsets.UTF_8);
@@ -36,6 +39,8 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
         LOGGER.warning("Error reading request body: " + e.getMessage());
       }
 
+    } else {
+      LOGGER.info("Request Body: No body or multipart form data");
     }
   }
 

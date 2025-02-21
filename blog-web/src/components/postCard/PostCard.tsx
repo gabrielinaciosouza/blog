@@ -7,7 +7,7 @@ const PostCard = (post: Post) => {
     return (
         <div className={styles.container}>
 
-            <Image className={styles.image} src="/logo2.png" alt="Post Image" width={0}
+            <Image className={styles.image} src={post.coverImage} alt="Post Image" width={0}
                 height={0}
                 sizes="100vw"
                 role="img"
