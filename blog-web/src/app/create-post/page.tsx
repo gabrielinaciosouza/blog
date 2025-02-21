@@ -6,12 +6,27 @@ import Image from "next/image";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { usePublishPost } from "@/hooks/usePublishPost";
-import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo } from "react-icons/fa";
-import { API_URL } from "@/services/postService";
+import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo, FaEye, FaCross } from "react-icons/fa";
 import BlogImage from "@/models/blog-image";
+import PostCard from "@/components/postCard/PostCard";
+import Post from "@/models/post";
+
+const Modal: React.FC<{ children: React.ReactNode; onClose: () => void }> = ({ children, onClose }) => {
+    return (
+        <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+                {children}
+                <button className={styles.closeModalButton} onClick={onClose}>
+                    close
+                </button>
+            </div>
+        </div>
+    );
+};
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [postImageFile, setPostImageFile] = useState<File | null>(null);
     const [coverImage, setCoverImage] = useState<BlogImage | null>(null);
     const {
@@ -65,8 +80,22 @@ export default function CreatePostPage() {
         }
     };
 
+    const post: Post = {
+        postId: "",
+        title: title,
+        content: content,
+        coverImage: coverImage ? coverImage.url : "/logo2.png",
+        creationDate: new Date().toISOString().split('T')[0],
+        slug: "",
+    };
+
     return (
         <div className={styles.container}>
+             {showPreviewModal && (
+                <Modal onClose={() => setShowPreviewModal(false)}>
+                    <PostCard {...post} />
+                </Modal>
+            )}
             <textarea
                 ref={titleRef}
                 className={styles.input}
@@ -83,22 +112,14 @@ export default function CreatePostPage() {
                     accept="image/*"
                     onChange={handleImageUpload}
                 />
-                {coverImage && (
-                    <div className={styles.imagePreview}>
-                        <Image
-                            src={coverImage.url}
-                            alt="Post Image"
-                            width={200}
-                            height={200}
-                            className={styles.previewImage}
-                        />
-                    </div>
-                )}
             </div>
             <div className={styles.editor}>
                 <div className={styles.editorButtons}>
                     <button className={styles.button} onClick={() => setOpen(!open)}>
                         <FaPlus />
+                    </button>
+                    <button className={styles.button} onClick={() => setShowPreviewModal(true)}>
+                        <FaEye />
                     </button>
                     <label htmlFor="postImage" className={styles.uploadButton}>
                         <FaUpload />
@@ -133,14 +154,6 @@ export default function CreatePostPage() {
             >
                 {loading ? "Publishing..." : "Publish"}
             </button>
-            {showModal && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <p>{responseMessage}</p>
-                        <button className={styles.closeButton} onClick={handleCloseModal}>OK</button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
