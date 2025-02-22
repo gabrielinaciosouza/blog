@@ -28,6 +28,8 @@ export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [postImageFile, setPostImageFile] = useState<File | null>(null);
+    const [uploadedImages, setUploadedImages] = useState<Map<string, string>>(new Map());
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {
         title,
         setTitle,
@@ -45,6 +47,7 @@ export default function CreatePostPage() {
     const titleRef = useRef<HTMLTextAreaElement>(null);
     const quillRef = useRef<ReactQuill>(null);
     const contentImageInputRef = useRef<HTMLInputElement>(null);
+    const postImageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (titleRef.current) {
@@ -54,41 +57,77 @@ export default function CreatePostPage() {
     }, [title]);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setPostImageFile(e.target.files[0]);
-            const formData = new FormData();
-            formData.append("file", e.target.files[0]);
-            formData.append("fileName", e.target.files[0].name);
-            formData.append("fileMimeType", e.target.files[0].type);
-        
-            const result = await fetch(`/api/images?type=cover-images`, {
-                method: "POST",
-                body: formData,
-            });
-            const data = await result.json();
-            setCoverImage(data.url);
+        try {
+            if (e.target.files && e.target.files[0]) {
+                setPostImageFile(e.target.files[0]);
+                const formData = new FormData();
+                formData.append("file", e.target.files[0]);
+                formData.append("fileName", e.target.files[0].name);
+                formData.append("fileMimeType", e.target.files[0].type);
+            
+                const result = await fetch(`/api/images?type=cover-images`, {
+                    method: "POST",
+                    body: formData,
+                });
+                if (!result.ok) {
+                    throw new Error("Failed to upload cover image");
+                }
+                const data = await result.json();
+                setCoverImage(data.url);
+            }
+        } catch (error) {
+            setErrorMessage((error as Error).message);
+            if (postImageInputRef.current) {
+                postImageInputRef.current.value = "";
+            }
         }
     };
 
     const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const formData = new FormData();
-            formData.append("file", e.target.files[0]);
-            formData.append("fileName", e.target.files[0].name);
-            formData.append("fileMimeType", e.target.files[0].type);
-        
-            const result = await fetch(`/api/images?type=content-images`, {
-                method: "POST",
-                body: formData,
-            });
-            const data = await result.json();
-            const imageUrl = data.url;
-
-            if (quillRef.current) {
-                const range = quillRef.current.getEditor().getSelection();
-                if (range) {
-                    quillRef.current.getEditor().insertEmbed(range.index, "image", imageUrl);
+        try {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
+                
+                if (uploadedImages.has(fileKey)) {
+                    const imageUrl = uploadedImages.get(fileKey);
+                    insertImageToEditor(imageUrl);
+                } else {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("fileName", file.name);
+                    formData.append("fileMimeType", file.type);
+                
+                    const result = await fetch(`/api/images?type=content-images`, {
+                        method: "POST",
+                        body: formData,
+                    });
+                    if (!result.ok) {
+                        throw new Error("Failed to upload content image");
+                    }
+                    const data = await result.json();
+                    const imageUrl = data.url;
+                    setUploadedImages(new Map(uploadedImages.set(fileKey, imageUrl)));
+                    insertImageToEditor(imageUrl);
                 }
+            }
+        } catch (error) {
+            setErrorMessage((error as Error).message);
+            if (contentImageInputRef.current) {
+                contentImageInputRef.current.value = "";
+            }
+        }
+    };
+
+    const insertImageToEditor = (imageUrl: string | undefined) => {
+        if (quillRef.current && imageUrl) {
+            const editor = quillRef.current.getEditor();
+            editor.focus();
+            const range = editor.getSelection();
+            if (range) {
+                editor.insertEmbed(range.index, "image", imageUrl);
+            } else {
+                editor.insertEmbed(editor.getLength() - 1, "image", imageUrl);
             }
         }
     };
@@ -115,6 +154,11 @@ export default function CreatePostPage() {
                     <PostCard {...post} />
                 </Modal>
             )}
+            {errorMessage && (
+                <Modal onClose={() => setErrorMessage(null)}>
+                    <p>{errorMessage}</p>
+                </Modal>
+            )}
             <textarea
                 ref={titleRef}
                 className={styles.input}
@@ -127,6 +171,7 @@ export default function CreatePostPage() {
                 <input
                     type="file"
                     id="postImage"
+                    ref={postImageInputRef}
                     className={styles.imageInput}
                     accept="image/*"
                     onChange={handleImageUpload}
