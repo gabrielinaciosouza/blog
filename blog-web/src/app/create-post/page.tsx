@@ -4,33 +4,47 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./createPostPage.module.css";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { usePublishPost } from "@/hooks/usePublishPost";
+import { useModal } from "@/hooks/useModal";
 import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo, FaEye } from "react-icons/fa";
 import BlogImage from "@/models/blog-image";
 import PostCard from "@/components/postCard/PostCard";
 import Post from "@/models/post";
 import Modal from "@/components/modal/Modal";
 import Button from "@/components/button/Button";
+import CreatePostRequest from "@/models/create-post-request";
+import { createPost } from "@/services/postService";
+import { useRouter } from "next/navigation";
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
-    const [showPreviewModal, setShowPreviewModal] = useState(false);
-    const [postImageFile, setPostImageFile] = useState<File | null>(null);
     const [uploadedImages, setUploadedImages] = useState<Map<string, string>>(new Map());
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const {
-        title,
-        setTitle,
-        content,
-        setContent,
-        coverImage,
-        setCoverImage,
-        loading,
-        responseMessage,
-        showModal,
-        handlePublish,
-        handleCloseModal
-    } = usePublishPost();
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [coverImage, setCoverImage] = useState<string | null>(null);
+
+
+    useEffect(() => {
+        const savedTitle = localStorage.getItem("draft-title");
+        const savedContent = localStorage.getItem("draft-content");
+        const savedCoverImage = localStorage.getItem("draft-coverImage");
+        if (savedTitle) setTitle(savedTitle);
+        if (savedContent) setContent(savedContent);
+        if (savedCoverImage) setCoverImage(savedCoverImage);
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("draft-title", title);
+        localStorage.setItem("draft-content", content);
+        if (coverImage) {
+            localStorage.setItem("draft-coverImage", coverImage);
+        } else {
+            localStorage.removeItem("draft-coverImage");
+        }
+    }, [title, content, coverImage]);
+
+    const { modalState, openModal, closeModal } = useModal();
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const titleRef = useRef<HTMLTextAreaElement>(null);
     const quillRef = useRef<ReactQuill>(null);
@@ -47,7 +61,6 @@ export default function CreatePostPage() {
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
             if (e.target.files && e.target.files[0]) {
-                setPostImageFile(e.target.files[0]);
                 const formData = new FormData();
                 formData.append("file", e.target.files[0]);
                 formData.append("fileName", e.target.files[0].name);
@@ -64,7 +77,7 @@ export default function CreatePostPage() {
                 setCoverImage(data.url);
             }
         } catch (error) {
-            setErrorMessage((error as Error).message);
+            openModal((error as Error).message, () => setCoverImage(null));
             if (postImageInputRef.current) {
                 postImageInputRef.current.value = "";
             }
@@ -100,10 +113,33 @@ export default function CreatePostPage() {
                 }
             }
         } catch (error) {
-            setErrorMessage((error as Error).message);
+            openModal((error as Error).message, () => { });
             if (contentImageInputRef.current) {
                 contentImageInputRef.current.value = "";
             }
+        }
+    };
+
+    const handlePublish = async () => {
+        if (!title.trim() || !content.trim()) {
+            openModal("Title and content are required", () => { });
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await createPost(new CreatePostRequest(title, content, coverImage));
+            openModal("Post saved successfully", () => {
+                localStorage.removeItem("draft-title");
+                localStorage.removeItem("draft-content");
+                localStorage.removeItem("draft-coverImage");
+                router.push(`/posts/${response.slug}`);
+            });
+        } catch (error) {
+            openModal((error as Error).message, () => { });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -137,21 +173,7 @@ export default function CreatePostPage() {
 
     return (
         <div className={styles.container}>
-            {showPreviewModal && (
-                <Modal onClose={() => setShowPreviewModal(false)}>
-                    <PostCard {...post} />
-                </Modal>
-            )}
-            {errorMessage && (
-                <Modal onClose={() => setErrorMessage(null)}>
-                    <p>{errorMessage}</p>
-                </Modal>
-            )}
-            {showModal && (
-                <Modal onClose={handleCloseModal}>
-                    <p>{responseMessage}</p>
-                </Modal>
-            )}
+            <Modal isOpen={modalState.isOpen} content={modalState.content} onClose={closeModal} />
             <textarea
                 ref={titleRef}
                 className={styles.input}
@@ -175,14 +197,13 @@ export default function CreatePostPage() {
                     <Button onClick={() => setOpen(!open)} className={styles.addButton}>
                         <FaPlus />
                     </Button>
-
                 </div>
                 {open && (
                     <div className={styles.add}>
                         <Button onClick={handleImageInsert} className={styles.addButton}>
                             <FaImage />
                         </Button>
-                        <Button onClick={() => setShowPreviewModal(true)} className={styles.button}>
+                        <Button onClick={() => openModal(<PostCard {...post} />, () => { })} className={styles.button}>
                             <FaEye />
                         </Button>
                         <Button className={styles.uploadButton} onClick={() => postImageInputRef.current?.click()}>
