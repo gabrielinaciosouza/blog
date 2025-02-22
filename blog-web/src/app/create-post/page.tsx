@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./createPostPage.module.css";
-import Image from "next/image";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { usePublishPost } from "@/hooks/usePublishPost";
@@ -10,19 +9,8 @@ import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo, FaEye } from "re
 import BlogImage from "@/models/blog-image";
 import PostCard from "@/components/postCard/PostCard";
 import Post from "@/models/post";
-
-const Modal: React.FC<{ children: React.ReactNode; onClose: () => void }> = ({ children, onClose }) => {
-    return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
-                {children}
-                <button className={styles.closeModalButton} onClick={onClose}>
-                    close
-                </button>
-            </div>
-        </div>
-    );
-};
+import Modal from "@/components/modal/Modal";
+import Button from "@/components/button/Button";
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
@@ -64,7 +52,7 @@ export default function CreatePostPage() {
                 formData.append("file", e.target.files[0]);
                 formData.append("fileName", e.target.files[0].name);
                 formData.append("fileMimeType", e.target.files[0].type);
-            
+
                 const result = await fetch(`/api/images?type=cover-images`, {
                     method: "POST",
                     body: formData,
@@ -88,7 +76,7 @@ export default function CreatePostPage() {
             if (e.target.files && e.target.files[0]) {
                 const file = e.target.files[0];
                 const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
-                
+
                 if (uploadedImages.has(fileKey)) {
                     const imageUrl = uploadedImages.get(fileKey);
                     insertImageToEditor(imageUrl);
@@ -97,7 +85,7 @@ export default function CreatePostPage() {
                     formData.append("file", file);
                     formData.append("fileName", file.name);
                     formData.append("fileMimeType", file.type);
-                
+
                     const result = await fetch(`/api/images?type=content-images`, {
                         method: "POST",
                         body: formData,
@@ -149,7 +137,7 @@ export default function CreatePostPage() {
 
     return (
         <div className={styles.container}>
-             {showPreviewModal && (
+            {showPreviewModal && (
                 <Modal onClose={() => setShowPreviewModal(false)}>
                     <PostCard {...post} />
                 </Modal>
@@ -157,6 +145,11 @@ export default function CreatePostPage() {
             {errorMessage && (
                 <Modal onClose={() => setErrorMessage(null)}>
                     <p>{errorMessage}</p>
+                </Modal>
+            )}
+            {showModal && (
+                <Modal onClose={handleCloseModal}>
+                    <p>{responseMessage}</p>
                 </Modal>
             )}
             <textarea
@@ -179,27 +172,22 @@ export default function CreatePostPage() {
             </div>
             <div className={styles.editor}>
                 <div className={styles.editorButtons}>
-                    <button className={styles.button} onClick={() => setOpen(!open)}>
+                    <Button onClick={() => setOpen(!open)} className={styles.addButton}>
                         <FaPlus />
-                    </button>
-                    <button className={styles.button} onClick={() => setShowPreviewModal(true)}>
-                        <FaEye />
-                    </button>
-                    <label htmlFor="postImage" className={styles.uploadButton}>
-                        <FaUpload />
-                    </label>
+                    </Button>
+
                 </div>
                 {open && (
                     <div className={styles.add}>
-                        <button className={styles.addButton} onClick={handleImageInsert}>
+                        <Button onClick={handleImageInsert} className={styles.addButton}>
                             <FaImage />
-                        </button>
-                        <button className={styles.addButton}>
-                            <FaExternalLinkAlt />
-                        </button>
-                        <button className={styles.addButton}>
-                            <FaVideo />
-                        </button>
+                        </Button>
+                        <Button onClick={() => setShowPreviewModal(true)} className={styles.button}>
+                            <FaEye />
+                        </Button>
+                        <Button className={styles.uploadButton} onClick={() => postImageInputRef.current?.click()}>
+                            <FaUpload />
+                        </Button>
                     </div>
                 )}
                 <ReactQuill
@@ -218,21 +206,13 @@ export default function CreatePostPage() {
                 onChange={handleContentImageUpload}
                 style={{ display: "none" }}
             />
-            <button
-                className={styles.publish}
+            <Button
                 onClick={handlePublish}
+                className={styles.publishButton}
                 disabled={loading}
             >
                 {loading ? "Publishing..." : "Publish"}
-            </button>
-            {showModal && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <p>{responseMessage}</p>
-                        <button className={styles.closeButton} onClick={handleCloseModal}>OK</button>
-                    </div>
-                </div>
-            )}
+            </Button>
         </div>
     );
 };
