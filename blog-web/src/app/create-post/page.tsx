@@ -6,7 +6,6 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { useModal } from "@/hooks/useModal";
 import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo, FaEye } from "react-icons/fa";
-import BlogImage from "@/models/blog-image";
 import PostCard from "@/components/postCard/PostCard";
 import Post from "@/models/post";
 import Modal from "@/components/modal/Modal";
@@ -14,33 +13,14 @@ import Button from "@/components/button/Button";
 import CreatePostRequest from "@/models/create-post-request";
 import { createPost } from "@/services/postService";
 import { useRouter } from "next/navigation";
+import useStorage from "@/hooks/useStorage";
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
-    const [uploadedImages, setUploadedImages] = useState<Map<string, string>>(new Map());
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [coverImage, setCoverImage] = useState<string | null>(null);
+    const [title, setTitle] = useStorage("draft-title", "");
+    const [content, setContent] = useStorage("draft-content", "");
+    const [coverImage, setCoverImage] = useStorage<string | null>("draft-coverImage", null);
 
-
-    useEffect(() => {
-        const savedTitle = localStorage.getItem("draft-title");
-        const savedContent = localStorage.getItem("draft-content");
-        const savedCoverImage = localStorage.getItem("draft-coverImage");
-        if (savedTitle) setTitle(savedTitle);
-        if (savedContent) setContent(savedContent);
-        if (savedCoverImage) setCoverImage(savedCoverImage);
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem("draft-title", title);
-        localStorage.setItem("draft-content", content);
-        if (coverImage) {
-            localStorage.setItem("draft-coverImage", coverImage);
-        } else {
-            localStorage.removeItem("draft-coverImage");
-        }
-    }, [title, content, coverImage]);
 
     const { modalState, openModal, closeModal } = useModal();
     const [loading, setLoading] = useState(false);
@@ -58,59 +38,25 @@ export default function CreatePostPage() {
         }
     }, [title]);
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
         try {
             if (e.target.files && e.target.files[0]) {
-                const formData = new FormData();
-                formData.append("file", e.target.files[0]);
-                formData.append("fileName", e.target.files[0].name);
-                formData.append("fileMimeType", e.target.files[0].type);
+                const file = e.target.files[0];
 
-                const result = await fetch(`/api/images?type=cover-images`, {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("fileName", file.name);
+                formData.append("fileMimeType", file.type);
+
+                const result = await fetch(`/api/images?type=${type}`, {
                     method: "POST",
                     body: formData,
                 });
                 if (!result.ok) {
-                    throw new Error("Failed to upload cover image");
+                    throw new Error("Failed to upload image");
                 }
                 const data = await result.json();
-                setCoverImage(data.url);
-            }
-        } catch (error) {
-            openModal((error as Error).message, () => setCoverImage(null));
-            if (postImageInputRef.current) {
-                postImageInputRef.current.value = "";
-            }
-        }
-    };
-
-    const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            if (e.target.files && e.target.files[0]) {
-                const file = e.target.files[0];
-                const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
-
-                if (uploadedImages.has(fileKey)) {
-                    const imageUrl = uploadedImages.get(fileKey);
-                    insertImageToEditor(imageUrl);
-                } else {
-                    const formData = new FormData();
-                    formData.append("file", file);
-                    formData.append("fileName", file.name);
-                    formData.append("fileMimeType", file.type);
-
-                    const result = await fetch(`/api/images?type=content-images`, {
-                        method: "POST",
-                        body: formData,
-                    });
-                    if (!result.ok) {
-                        throw new Error("Failed to upload content image");
-                    }
-                    const data = await result.json();
-                    const imageUrl = data.url;
-                    setUploadedImages(new Map(uploadedImages.set(fileKey, imageUrl)));
-                    insertImageToEditor(imageUrl);
-                }
+                return data.url;
             }
         } catch (error) {
             openModal((error as Error).message, () => { });
@@ -131,9 +77,9 @@ export default function CreatePostPage() {
         try {
             const response = await createPost(new CreatePostRequest(title, content, coverImage));
             openModal("Post saved successfully", () => {
-                localStorage.removeItem("draft-title");
-                localStorage.removeItem("draft-content");
-                localStorage.removeItem("draft-coverImage");
+                setTitle("");
+                setContent("");
+                setCoverImage(null);
                 router.push(`/posts/${response.slug}`);
             });
         } catch (error) {
@@ -167,7 +113,7 @@ export default function CreatePostPage() {
         title: title,
         content: content,
         coverImage: coverImage ?? "/logo2.png",
-        creationDate: new Date().toISOString().split('T')[0],
+        creationDate: new Date().toISOString().replace('T', ' ').split('.')[0].slice(0, -3),
         slug: "",
     };
 
@@ -189,7 +135,12 @@ export default function CreatePostPage() {
                     ref={postImageInputRef}
                     className={styles.imageInput}
                     accept="image/*"
-                    onChange={handleImageUpload}
+                    onChange={async (e) => {
+                        const url = await handleImageUpload(e, "cover-images");
+                        if (url) {
+                            setCoverImage(url);
+                        }
+                    }}
                 />
             </div>
             <div className={styles.editor}>
@@ -224,8 +175,12 @@ export default function CreatePostPage() {
                 ref={contentImageInputRef}
                 className={styles.imageInput}
                 accept="image/*"
-                onChange={handleContentImageUpload}
-                style={{ display: "none" }}
+                onChange={async (e) => {
+                    const url = await handleImageUpload(e, "content-images");
+                    if (url) {
+                        insertImageToEditor(url);
+                    }
+                }}
             />
             <Button
                 onClick={handlePublish}
