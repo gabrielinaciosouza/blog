@@ -151,4 +151,22 @@ public class FirestorePostRepository implements PostRepository {
     }
   }
 
+  @Override
+  public List<Post> getDeletedPosts() {
+    try {
+      return firestore.collection(COLLECTION_NAME)
+          .whereEqualTo("isDeleted", true)
+          .get()
+          .get()
+          .getDocuments()
+          .stream()
+          .map(doc -> doc.toObject(PostModel.class))
+          .map(PostModel::toDomain)
+          .toList();
+    } catch (final InterruptedException | ExecutionException e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to get deleted posts from Firestore", e);
+      throw new RepositoryException("Failed to get deleted posts from Firestore", e);
+    }
+  }
 }

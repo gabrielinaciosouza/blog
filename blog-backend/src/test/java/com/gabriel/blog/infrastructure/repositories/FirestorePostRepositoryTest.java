@@ -331,4 +331,43 @@ class FirestorePostRepositoryTest {
       assertThrows(RepositoryException.class, () -> firestorePostRepository.update(POST));
     }
   }
+
+  @Nested
+  class GetDeletedPostsTests {
+
+    @Test
+    void shouldGetDeletedPosts() throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.whereEqualTo("isDeleted", true)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
+
+      final var querySnapshot = mock(QuerySnapshot.class);
+      final var documentSnapshot = mock(QueryDocumentSnapshot.class);
+
+      when(apiFuture.get()).thenReturn(querySnapshot);
+      when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
+
+      final var result = firestorePostRepository.getDeletedPosts();
+
+      verify(firestore).collection("posts");
+      verify(collectionReference).whereEqualTo("isDeleted", true);
+      verify(query).get();
+      verify(apiFuture).get();
+      verify(querySnapshot).getDocuments();
+      verify(documentSnapshot).toObject(PostModel.class);
+      assertEquals(List.of(POST), result);
+    }
+
+    @Test
+    void shouldThrowRepositoryExceptionOnThreadFailure()
+        throws ExecutionException, InterruptedException {
+      when(firestore.collection("posts")).thenReturn(collectionReference);
+      when(collectionReference.whereEqualTo("isDeleted", true)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
+      when(apiFuture.get()).thenThrow(InterruptedException.class);
+
+      assertThrows(RepositoryException.class, () -> firestorePostRepository.getDeletedPosts());
+    }
+  }
 }

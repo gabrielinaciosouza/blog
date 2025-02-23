@@ -12,6 +12,7 @@ import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
 import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
+import com.gabriel.blog.application.usecases.GetDeletedPosts;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ class PostResourceTest {
   private GetPostBySlug getPostBySlug;
   private FindPostsUseCase findPostsUseCase;
   private DeletePostUseCase deletePostUseCase;
+  private GetDeletedPosts getDeletedPosts;
   private PostResource postResource;
 
   @BeforeEach
@@ -31,8 +33,10 @@ class PostResourceTest {
     getPostBySlug = mock(GetPostBySlug.class);
     findPostsUseCase = mock(FindPostsUseCase.class);
     deletePostUseCase = mock(DeletePostUseCase.class);
+    getDeletedPosts = mock(GetDeletedPosts.class);
     postResource =
-        new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase, deletePostUseCase);
+        new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase, deletePostUseCase,
+            getDeletedPosts);
   }
 
   @Test
@@ -83,5 +87,18 @@ class PostResourceTest {
     final var slug = "slug";
     postResource.deletePost(slug);
     verify(deletePostUseCase).deletePost(slug);
+  }
+
+  @Test
+  void shouldGetDeletedPostsSuccessfully() {
+    final var expectedResponse =
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
+    final var expectedPosts = List.of(expectedResponse);
+    when(getDeletedPosts.getDeletedPosts()).thenReturn(expectedPosts);
+
+    final var response = postResource.getDeletedPosts();
+
+    assertEquals(expectedPosts, response);
+    verify(getDeletedPosts).getDeletedPosts();
   }
 }

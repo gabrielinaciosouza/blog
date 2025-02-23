@@ -119,4 +119,16 @@ public interface PostRepository {
    * @return the updated {@link Post} entity.
    */
   Post update(Post post);
+
+  /**
+   * Retrieves a list of {@link Post} entities that have been deleted.
+   * This method is responsible for fetching a list of {@link Post} entities from the database
+   * that have been marked as deleted.
+   *
+   * <p>The implementation should query the database for posts that have been marked as deleted,
+   * and return a list of posts that have been deleted from the database.</p>
+   *
+   * @return a list of {@link Post} entities that have been deleted.
+   */
+  List<Post> getDeletedPosts();
 }
