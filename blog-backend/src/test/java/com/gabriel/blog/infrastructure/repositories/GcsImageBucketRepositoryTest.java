@@ -15,13 +15,14 @@ import org.junit.jupiter.api.Test;
 
 class GcsImageBucketRepositoryTest {
 
+  private static final String GCS_URL = "https://storage.googleapis.com/";
   private Storage storage;
   private GcsImageBucketRepository gcsImageBucketRepository;
 
   @BeforeEach
   void setUp() {
     storage = mock(Storage.class);
-    gcsImageBucketRepository = new GcsImageBucketRepository(storage, "");
+    gcsImageBucketRepository = new GcsImageBucketRepository(storage, GCS_URL);
   }
 
   @Test
@@ -42,7 +43,7 @@ class GcsImageBucketRepositoryTest {
     final var result = gcsImageBucketRepository.createImage(params);
 
     assertNotNull(result);
-    assertEquals("https://storage.googleapis.com/" + bucketName + "/" + fileName,
+    assertEquals(GCS_URL + bucketName + "/o/" + fileName + "?alt=media",
         result.toString());
     verify(storage).get(bucketName);
     verify(bucket).create(fileName, fileData, fileMimeType);
@@ -67,7 +68,7 @@ class GcsImageBucketRepositoryTest {
     final var result = gcsImageBucketRepository.createImage(params);
 
     assertNotNull(result);
-    assertEquals("https://storage.googleapis.com/" + bucketName + "/" + fileName,
+    assertEquals(GCS_URL + bucketName + "/o/" + fileName + "?alt=media",
         result.toString());
     verify(storage).get(bucketName);
     verify(storage).create(BucketInfo.of(bucketName));

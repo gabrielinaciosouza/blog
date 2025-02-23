@@ -3,6 +3,7 @@ package com.gabriel.blog.application.usecases;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -104,5 +105,27 @@ class UploadImageUseCaseTest {
         new UploadImageRequest("fileData".getBytes(), "fileName.jpg", "image/jpeg", null);
     assertThrows(ValidationException.class,
         () -> uploadImageUseCase.uploadImage(requestWithNullBucketName));
+  }
+
+  @Test
+  void shouldChangeFileName() {
+    final var request = validRequest();
+    final var generatedFileName = "generated File Name.jpg";
+    final var image = new Image("http://example.com/image.jpg");
+
+    when(idGenerator.generateId(request.fileName())).thenReturn(generatedFileName);
+    final var expectedFileName = "generated+File+Name.jpg";
+    when(imageBucketRepository.createImage(
+        argThat(uploadImageParams -> uploadImageParams.fileName()
+            .equals(expectedFileName)))).thenReturn(image);
+
+    final var result = uploadImageUseCase.uploadImage(request);
+
+    assertNotNull(result);
+    assertEquals(image.toString(), result.url());
+    assertEquals(expectedFileName, result.fileName());
+    verify(imageBucketRepository).createImage(
+        argThat(uploadImageParams -> uploadImageParams.fileName()
+            .equals(expectedFileName)));
   }
 }
