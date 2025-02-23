@@ -77,7 +77,13 @@ export default function CreatePostPage() {
         startLoading();
 
         try {
-            const response = await createPost(new CreatePostRequest(title, content, coverImage));
+            const response = await fetch('/api/create-post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, content, coverImage }),
+            }).then(res => res.json());
             openModal("Post saved successfully", () => {
                 setTitle("");
                 setContent("");
