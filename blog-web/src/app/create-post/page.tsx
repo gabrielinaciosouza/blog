@@ -86,7 +86,7 @@ export default function CreatePostPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ title, content, coverImage }),
+                body: JSON.stringify(new CreatePostRequest(title, content, coverImage)),
             }).then(res => res.json());
             openModal("Post saved successfully", () => {
                 setTitle("");
