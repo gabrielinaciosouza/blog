@@ -41,6 +41,7 @@ export default function CreatePostPage() {
     }, [title]);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+        let message = "Image not uploaded";
         try {
             if (e.target.files && e.target.files[0]) {
                 const file = e.target.files[0];
@@ -58,13 +59,16 @@ export default function CreatePostPage() {
                     throw new Error("Failed to upload image");
                 }
                 const data = await result.json();
+                message = "Image uploaded successfully";
                 return data.url;
             }
         } catch (error) {
-            openModal((error as Error).message, () => { });
+            message = (error as Error).message;
             if (contentImageInputRef.current) {
                 contentImageInputRef.current.value = "";
             }
+        } finally {
+            openModal(message, () => { });
         }
     };
 
@@ -104,8 +108,6 @@ export default function CreatePostPage() {
             const range = editor.getSelection();
             if (range) {
                 editor.insertEmbed(range.index, "image", imageUrl);
-            } else {
-                editor.insertEmbed(editor.getLength() - 1, "image", imageUrl);
             }
         }
     };
@@ -141,6 +143,7 @@ export default function CreatePostPage() {
                 <input
                     type="file"
                     id="postImage"
+                    role="coverImageUpload"
                     ref={postImageInputRef}
                     className={styles.imageInput}
                     accept="image/*"
@@ -154,19 +157,19 @@ export default function CreatePostPage() {
             </div>
             <div className={styles.editor}>
                 <div className={styles.editorButtons}>
-                    <Button onClick={() => setOpen(!open)} className={styles.addButton}>
+                    <Button onClick={() => setOpen(!open)} className={styles.addButton} ariaLabel="Plus">
                         <FaPlus />
                     </Button>
                 </div>
                 {open && (
                     <div className={styles.add}>
-                        <Button onClick={handleImageInsert} className={styles.addButton}>
+                        <Button onClick={handleImageInsert} className={styles.addButton} ariaLabel="Image">
                             <FaImage />
                         </Button>
-                        <Button onClick={() => openModal(<PostCard {...post} />, () => { })} className={styles.button}>
+                        <Button onClick={() => openModal(<PostCard {...post} />, () => { })} className={styles.button} ariaLabel="Preview">
                             <FaEye />
                         </Button>
-                        <Button className={styles.uploadButton} onClick={() => postImageInputRef.current?.click()}>
+                        <Button className={styles.uploadButton} onClick={() => postImageInputRef.current?.click()} ariaLabel="Upload Image">
                             <FaUpload />
                         </Button>
                     </div>
@@ -184,6 +187,7 @@ export default function CreatePostPage() {
                 ref={contentImageInputRef}
                 className={styles.imageInput}
                 accept="image/*"
+                role="contentImageUpload"
                 onChange={async (e) => {
                     const url = await handleImageUpload(e, "content-images");
                     if (url) {

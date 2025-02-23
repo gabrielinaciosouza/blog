@@ -6,14 +6,16 @@ interface ButtonProps {
     children: React.ReactNode;
     className?: string;
     disabled?: boolean;
+    ariaLabel?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ onClick, children, className, disabled }) => {
+const Button: React.FC<ButtonProps> = ({ onClick, children, className, disabled, ariaLabel }) => {
     return (
         <button
             className={`${className} ${styles.button}`}
             onClick={onClick}
             disabled={disabled}
+            aria-label={ariaLabel}
         >
             {children}
         </button>
