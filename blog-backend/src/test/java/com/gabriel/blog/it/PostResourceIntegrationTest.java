@@ -402,6 +402,43 @@ class PostResourceIntegrationTest {
     deleteTestPosts();
   }
 
+  @Test
+  void shouldGetDeletedPosts() throws InterruptedException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
+    firestore.collection("posts").document("delete").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "isDeleted", false
+    ));
+
+    firestore.collection("posts").document("delete").set(Map.of(
+        "title", "title2",
+        "content", "content2",
+        "slug", "slug2",
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image2.jpg",
+        "isDeleted", true
+    ));
+
+    Thread.sleep(1000);
+
+    given()
+        .when()
+        .get("/posts/deleted")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("size()", equalTo(1));
+
+    deleteTestPosts();
+  }
+
   private void createTestPosts() throws InterruptedException {
     final var timestamp = Timestamp.ofTimeSecondsAndNanos(
         CreationDateFixture.creationDate().getValue().getEpochSecond(),

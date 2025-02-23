@@ -2,6 +2,7 @@ package com.gabriel.blog.application.usecases;
 
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.responses.PostResponse;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ import java.util.List;
  *
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  */
+@ApplicationScoped
 public class GetDeletedPosts {
 
   private final PostRepository postRepository;
