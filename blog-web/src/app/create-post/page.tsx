@@ -5,7 +5,7 @@ import styles from "./createPostPage.module.css";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { useModal } from "@/hooks/useModal";
-import { FaUpload, FaPlus, FaImage, FaExternalLinkAlt, FaVideo, FaEye } from "react-icons/fa";
+import { FaUpload, FaPlus, FaImage, FaEye } from "react-icons/fa";
 import PostCard from "@/components/postCard/PostCard";
 import Post from "@/models/post";
 import Modal from "@/components/modal/Modal";
@@ -14,6 +14,8 @@ import CreatePostRequest from "@/models/create-post-request";
 import { createPost } from "@/services/postService";
 import { useRouter } from "next/navigation";
 import useStorage from "@/hooks/useStorage";
+import useLoading from "@/hooks/useLoading";
+import Loading from "@/components/loading/Loading";
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function CreatePostPage() {
 
 
     const { modalState, openModal, closeModal } = useModal();
-    const [loading, setLoading] = useState(false);
+    const { isLoading, startLoading, stopLoading } = useLoading();
     const router = useRouter();
 
     const titleRef = useRef<HTMLTextAreaElement>(null);
@@ -72,7 +74,7 @@ export default function CreatePostPage() {
             return;
         }
 
-        setLoading(true);
+        startLoading();
 
         try {
             const response = await createPost(new CreatePostRequest(title, content, coverImage));
@@ -85,7 +87,7 @@ export default function CreatePostPage() {
         } catch (error) {
             openModal((error as Error).message, () => { });
         } finally {
-            setLoading(false);
+            stopLoading();
         }
     };
 
@@ -119,6 +121,7 @@ export default function CreatePostPage() {
 
     return (
         <div className={styles.container}>
+            {isLoading && <Loading />}
             <Modal isOpen={modalState.isOpen} content={modalState.content} onClose={closeModal} />
             <textarea
                 ref={titleRef}
@@ -185,9 +188,9 @@ export default function CreatePostPage() {
             <Button
                 onClick={handlePublish}
                 className={styles.publishButton}
-                disabled={loading}
+                disabled={isLoading}
             >
-                {loading ? "Publishing..." : "Publish"}
+                Publish
             </Button>
         </div>
     );
