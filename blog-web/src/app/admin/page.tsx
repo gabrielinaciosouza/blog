@@ -21,40 +21,44 @@ const AdminPage = () => {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = 10;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            startLoading();
-            try {
-                const [deletedResponse, postsResponse] = await Promise.all([
-                    fetch('/api/posts/deleted'),
-                    fetch(`/api/posts?page=${page}&size=${pageSize}`)
-                ]);
+    const fetchData = async () => {
+        startLoading();
+        try {
+            const [deletedResponse, postsResponse] = await Promise.all([
+                fetch('/api/posts/deleted'),
+                fetch(`/api/posts?page=${page}&size=${pageSize}`)
+            ]);
 
-                let deletedData = [];
-                let availablePosts = [];
-                let totalCountResult = 0;
-                if (deletedResponse.ok) {
-                    deletedData = await deletedResponse.json();
-                }
-
-                if (postsResponse.ok) {
-                    const { posts, totalCount } = await postsResponse.json();
-                    availablePosts = posts;
-                    totalCountResult = totalCount;
-                }
-
-                console.log('posts', posts);
-
-                setDeletedPosts(deletedData);
-                setPosts(availablePosts);
-                setTotalCount(totalCountResult);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                stopLoading();
+            let deletedData = [];
+            let availablePosts = [];
+            let totalCountResult = 0;
+            if (deletedResponse.ok) {
+                deletedData = await deletedResponse.json();
             }
-        };
 
+            if (postsResponse.ok) {
+                const { posts, totalCount } = await postsResponse.json();
+                if (posts.length === 0 && page > 1) {
+                    router.push('/admin?page=1');
+                    return;
+                }
+                availablePosts = posts;
+                totalCountResult = totalCount;
+            }
+
+            console.log('posts', posts);
+
+            setDeletedPosts(deletedData);
+            setPosts(availablePosts);
+            setTotalCount(totalCountResult);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            stopLoading();
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, [page, startLoading, stopLoading]);
 
@@ -71,12 +75,9 @@ const AdminPage = () => {
             });
 
             if (response.ok) {
-                const deletedPost = posts.find(post => post.slug === slug);
-                setPosts(posts.filter(post => post.slug !== slug));
-                setTotalCount(totalCount - 1);
-                if (deletedPost) {
-                    setDeletedPosts([...deletedPosts, deletedPost]);
-                }
+
+                fetchData();
+
             } else {
                 console.error('Failed to delete the post');
             }
@@ -110,7 +111,7 @@ const AdminPage = () => {
             label: 'Active Posts',
             content: (
                 <>
-                    {posts.length > 0 && (
+                    {posts.length > 0 ? (
                         <>
                             {posts.map(post => (
                                 <PostTile
@@ -124,6 +125,8 @@ const AdminPage = () => {
                             {totalCount > pageSize &&
                                 <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext} />}
                         </>
+                    ) : (
+                        <div>No posts available</div>
                     )}
                 </>
             )
@@ -132,7 +135,7 @@ const AdminPage = () => {
             label: 'Deleted Posts',
             content: (
                 <>
-                    {deletedPosts.length > 0 && (
+                    {deletedPosts.length > 0 ? (
                         <>
                             {deletedPosts.map(post => (
                                 <PostTile
@@ -144,6 +147,8 @@ const AdminPage = () => {
                                 />
                             ))}
                         </>
+                    ) : (
+                        <div>No deleted posts</div>
                     )}
                 </>
             )
