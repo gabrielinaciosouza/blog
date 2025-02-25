@@ -73,3 +73,13 @@ export const getDeletedPosts = async (): Promise<Post[]> => {
 
     return data;
 }
+
+export const deletePost = async (slug: string): Promise<void> => {
+    const response = await fetch(`${POSTS_PATH}/${slug}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete post");
+    }
+}

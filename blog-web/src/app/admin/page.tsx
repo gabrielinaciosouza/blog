@@ -62,15 +62,31 @@ const AdminPage = () => {
         console.log(`Edit post with id: ${id}`);
     };
 
-    const handleDelete = (id: string) => {
-        // Handle delete logic here
-        console.log(`Delete post with id: ${id}`);
-        const postToDelete = posts.find(post => post.postId === id);
-        setPosts(posts.filter(post => post.postId !== id));
-        if (postToDelete) {
-            setDeletedPosts([...deletedPosts, postToDelete]);
+
+    const handleDelete = async (slug: string) => {
+        try {
+            startLoading();
+            const response = await fetch(`/api/posts/${slug}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                const deletedPost = posts.find(post => post.slug === slug);
+                setPosts(posts.filter(post => post.slug !== slug));
+                setTotalCount(totalCount - 1);
+                if (deletedPost) {
+                    setDeletedPosts([...deletedPosts, deletedPost]);
+                }
+            } else {
+                console.error('Failed to delete the post');
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
+        } finally {
+            stopLoading();
         }
     };
+
 
     const handleRestore = (id: string) => {
         // Handle restore logic here
@@ -119,7 +135,7 @@ const AdminPage = () => {
                             key={post.postId}
                             post={post}
                             onEdit={handleEdit}
-                            onDelete={handleDelete}
+                            onDelete={() => handleDelete(post.slug)}
                             onOpen={() => router.push(`/post/${post.slug}`)}
                         />
                     ))}
