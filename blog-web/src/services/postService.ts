@@ -20,7 +20,7 @@ export const createPost = async (request: CreatePostRequest): Promise<Post> => {
         throw new Error(data.message);
     }
 
-    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug);
+    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage);
 };
 
 export const getPostBySlug = async (slug: string): Promise<Post> => {
@@ -36,7 +36,7 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
 
     
 
-    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug);
+    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage);
 };
 
 export const getPosts = async (page: number, size: number): Promise<{posts: Post[], totalCount: number}> => {
@@ -46,6 +46,23 @@ export const getPosts = async (page: number, size: number): Promise<{posts: Post
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ page, size }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message);
+    }
+
+    return data;
+}
+
+export const getDeletedPosts = async (): Promise<Post[]> => {
+    const response = await fetch(`${POSTS_PATH}/deleted/`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        }
     });
 
     const data = await response.json();

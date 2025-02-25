@@ -37,7 +37,7 @@ const AdminPage = () => {
                 }
 
                 if (postsResponse.ok) {
-                    const {posts, totalCount } = await postsResponse.json();
+                    const { posts, totalCount } = await postsResponse.json();
                     availablePosts = posts;
                     totalCountResult = totalCount;
                 }
@@ -95,9 +95,9 @@ const AdminPage = () => {
             <div className={styles.buttonContainer}>
                 <Button className={styles.createButton} onClick={handleCreateNewPost}>Create New Post</Button>
             </div>
-            {isLoading ? (
-                <Loading />
-            ) : (
+            {isLoading && (<Loading />)}
+
+            {deletedPosts.length > 0 && (
                 <>
                     <div className={styles.deletedPostsHeader}>Deleted Posts</div>
                     {deletedPosts.map(post => (
@@ -109,6 +109,10 @@ const AdminPage = () => {
                             onOpen={() => router.push(`/post/${post.slug}`)}
                         />
                     ))}
+                </>
+            )}
+            {posts.length > 0 && (
+                <>
                     <div className={styles.activePosts}>Active Posts</div>
                     {posts.map(post => (
                         <PostTile
@@ -123,6 +127,7 @@ const AdminPage = () => {
                         <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext} />}
                 </>
             )}
+
         </div>
     );
 };
