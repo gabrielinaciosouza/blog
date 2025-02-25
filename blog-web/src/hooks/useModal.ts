@@ -3,14 +3,13 @@ import { useState } from "react";
 interface ModalState {
     isOpen: boolean;
     content: React.ReactNode | null;
-    onClose: () => void;
+    onClose?: () => void;
 }
 
 export const useModal = () => {
     const [modalState, setModalState] = useState<ModalState>({
         isOpen: false,
         content: null,
-        onClose: () => {},
     });
 
     const openModal = (content: React.ReactNode, onClose: () => void) => {
@@ -27,8 +26,7 @@ export const useModal = () => {
         }
         setModalState({
             isOpen: false,
-            content: null,
-            onClose: () => {},
+            content: null
         });
     };
 

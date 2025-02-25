@@ -56,4 +56,14 @@ describe('useStorage', () => {
         expect(result.current[0]).toBe('initialValue');
         expect(localStorage.getItem('testKey')).toBeNull();
     });
+
+    it('should handle errors when getItem fails', () => {
+        jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+            throw new Error('Storage error');
+        });
+
+        const { result } = renderHook(() => useStorage('testKey', 'initialValue'));
+
+        expect(result.current[0]).toBe('initialValue');
+    });
 });
