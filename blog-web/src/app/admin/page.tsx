@@ -2,20 +2,21 @@
 
 import React, { useState } from 'react';
 import styles from './admin.module.css';
-import { FaEdit, FaTrash, FaUndo } from 'react-icons/fa';
+import PostTile from '@/components/postTile/PostTile';
 import Post from '@/models/post';
 import { useRouter } from 'next/navigation';
+import Button from '@/components/button/Button';
 
 const AdminPage = () => {
     const router = useRouter();
     const [posts, setPosts] = useState<Post[]>([
-        new Post("1", 'Post 1', 'post-1', '2021-09-01', 'This is the content of post 1'),
-        new Post("2", 'Post 2', 'post-2', '2021-09-02', 'This is the content of post 2'),
+        new Post("1", 'Post 1', 'post-1', '2021-09-01', 'This is the content of post 1', 'coverImage.jpg'),
+        new Post("2", 'Post 2', 'post-2', '2021-09-02', 'This is the content of post 2', 'coverImage.jpg'),
     ]);
 
     const [deletedPosts, setDeletedPosts] = useState<Post[]>([
-        new Post("3", 'Post 3', 'post-3', '2021-09-03', 'This is the content of post 3'),
-        new Post("4", 'Post 4', 'post-4', '2021-09-04', 'This is the content of post 4'),
+        new Post("3", 'Post 3', 'post-3', '2021-09-03', 'This is the content of post 3', 'coverImage.jpg'),
+        new Post("4", 'Post 4', 'post-4', '2021-09-04', 'This is the content of post 4', 'coverImage.jpg'),
     ]);
 
     const handleEdit = (id: string) => {
@@ -50,64 +51,28 @@ const AdminPage = () => {
     return (
         <div className={styles.adminContainer}>
             <div className={styles.buttonContainer}>
-                <button className={styles.createButton} onClick={handleCreateNewPost}>Create New Post</button>
+                <Button className={styles.createButton} onClick={handleCreateNewPost}>Create New Post</Button>
             </div>
-            <div className={styles.activePosts}>Active Posts</div>
-            <table className={styles.adminTable}>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th className={styles.slugColumn}>Slug</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {posts.map(post => (
-                        <tr key={post.postId} className={styles.tableRow} onClick={() => handleEdit(post.postId)}>
-                            <td>{post.title}</td>
-                            <td className={styles.slugColumn}>{post.slug}</td>
-                            <td>{post.creationDate}</td>
-                            <td className={styles.actionsColumn}>
-                                <button className={styles.iconButton} onClick={(e) => { e.stopPropagation(); handleEdit(post.postId); }}>
-                                    <FaEdit />
-                                </button>
-                                <button className={styles.iconButton} onClick={(e) => { e.stopPropagation(); handleDelete(post.postId); }}>
-                                    <FaTrash />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
             <div className={styles.deletedPostsHeader}>Deleted Posts</div>
-            <table className={styles.adminTable}>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th className={styles.slugColumn}>Slug</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {deletedPosts.map(post => (
-                        <tr key={post.postId} className={styles.tableRow} onClick={() => handleEdit(post.postId)}>
-                            <td>{post.title}</td>
-                            <td className={styles.slugColumn}>{post.slug}</td>
-                            <td>{post.creationDate}</td>
-                            <td className={styles.actionsColumn}>
-                                <button className={styles.iconButton} onClick={(e) => { e.stopPropagation(); handleEdit(post.postId); }}>
-                                    <FaEdit />
-                                </button>
-                                <button className={styles.iconButton} onClick={(e) => { e.stopPropagation(); handleRestore(post.postId); }}>
-                                    <FaUndo />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {deletedPosts.map(post => (
+                <PostTile
+                    key={post.postId}
+                    post={post}
+                    onEdit={handleEdit}
+                    onRestore={handleRestore}
+                    onOpen={() => router.push(`/post/${post.slug}`)}
+                />
+            ))}
+            <div className={styles.activePosts}>Active Posts</div>
+            {posts.map(post => (
+                <PostTile
+                    key={post.postId}
+                    post={post}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onOpen={() => router.push(`/post/${post.slug}`)}
+                />
+            ))}
         </div>
     );
 };
