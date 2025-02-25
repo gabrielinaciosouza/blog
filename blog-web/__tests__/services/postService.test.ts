@@ -1,4 +1,4 @@
-import { createPost, getDeletedPosts, getPostBySlug, getPosts, POSTS_PATH } from '@/services/postService';
+import { createPost, deletePost, getDeletedPosts, getPostBySlug, getPosts, POSTS_PATH } from '@/services/postService';
 import CreatePostRequest from '@/models/create-post-request';
 import Post from '@/models/post';
 
@@ -176,6 +176,30 @@ describe('postService', () => {
       });
 
       await expect(getDeletedPosts()).rejects.toThrow(errorMessage);
+    });
+  });
+
+  describe('deletePost', () => {
+    it('should delete a post successfully', async () => {
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+      });
+
+      await deletePost('test-title');
+
+      expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/test-title`, {
+        method: 'DELETE',
+      });
+    });
+
+    it('should throw an error if the API call fails', async () => {
+      const errorMessage = 'Failed to delete post';
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        json: jest.fn().mockResolvedValue({ message: errorMessage }),
+      });
+
+      await expect(deletePost('non-existent-post')).rejects.toThrow(errorMessage);
     });
   });
 
