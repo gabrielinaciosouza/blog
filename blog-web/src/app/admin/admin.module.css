@@ -2,6 +2,19 @@
     display: flex;
     flex-direction: column;
     align-items: space-between;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .buttonContainer {
@@ -101,6 +114,10 @@
     .actionsColumn {
         gap: 4px;
     }
+
+    .title {
+        font-size: 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -124,5 +141,9 @@
 
     .activePosts {
         font-size: 16px;
+    }
+
+    .title {
+        font-size: 18px;
     }
 }

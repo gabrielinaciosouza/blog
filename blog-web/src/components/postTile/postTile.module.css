@@ -69,5 +69,30 @@
 
     .actions {
         justify-content: flex-start;
+        width: 100%;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .postTile {
+        padding: 12px;
+    }
+
+    .postContent h3 {
+        font-size: 16px;
+    }
+
+    .postContent p {
+        font-size: 12px;
+    }
+
+    .iconButton {
+        font-size: 16px;
+    }
+
+    .actions {
+        gap: 2px;
+        flex-wrap: wrap;
     }
 }

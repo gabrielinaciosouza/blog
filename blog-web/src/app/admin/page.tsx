@@ -9,6 +9,7 @@ import Button from '@/components/button/Button';
 import useLoading from '@/hooks/useLoading';
 import Loading from '@/components/loading/Loading';
 import Pagination from '@/components/pagination/Pagination';
+import Tabs from '@/components/tabs/Tabs';
 
 const AdminPage = () => {
     const router = useRouter();
@@ -62,7 +63,6 @@ const AdminPage = () => {
         console.log(`Edit post with id: ${id}`);
     };
 
-
     const handleDelete = async (slug: string) => {
         try {
             startLoading();
@@ -87,7 +87,6 @@ const AdminPage = () => {
         }
     };
 
-
     const handleRestore = (id: string) => {
         // Handle restore logic here
         console.log(`Restore post with id: ${id}`);
@@ -106,44 +105,59 @@ const AdminPage = () => {
     const hasPrev = page > 1;
     const hasNext = page < totalPages;
 
+    const tabs = [
+        {
+            label: 'Active Posts',
+            content: (
+                <>
+                    {posts.length > 0 && (
+                        <>
+                            {posts.map(post => (
+                                <PostTile
+                                    key={post.postId}
+                                    post={post}
+                                    onEdit={handleEdit}
+                                    onDelete={() => handleDelete(post.slug)}
+                                    onOpen={() => router.push(`/post/${post.slug}`)}
+                                />
+                            ))}
+                            {totalCount > pageSize &&
+                                <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext} />}
+                        </>
+                    )}
+                </>
+            )
+        },
+        {
+            label: 'Deleted Posts',
+            content: (
+                <>
+                    {deletedPosts.length > 0 && (
+                        <>
+                            {deletedPosts.map(post => (
+                                <PostTile
+                                    key={post.postId}
+                                    post={post}
+                                    onEdit={handleEdit}
+                                    onRestore={handleRestore}
+                                    onOpen={() => router.push(`/post/${post.slug}`)}
+                                />
+                            ))}
+                        </>
+                    )}
+                </>
+            )
+        }
+    ];
+
     return (
         <div className={styles.adminContainer}>
-            <div className={styles.buttonContainer}>
-                <Button className={styles.createButton} onClick={handleCreateNewPost}>Create New Post</Button>
+            <div className={styles.header}>
+                <div className={styles.title}>Dashboard</div>
+                <Button onClick={handleCreateNewPost}>New Post</Button>
             </div>
             {isLoading && (<Loading />)}
-
-            {deletedPosts.length > 0 && (
-                <>
-                    <div className={styles.deletedPostsHeader}>Deleted Posts</div>
-                    {deletedPosts.map(post => (
-                        <PostTile
-                            key={post.postId}
-                            post={post}
-                            onEdit={handleEdit}
-                            onRestore={handleRestore}
-                            onOpen={() => router.push(`/post/${post.slug}`)}
-                        />
-                    ))}
-                </>
-            )}
-            {posts.length > 0 && (
-                <>
-                    <div className={styles.activePosts}>Active Posts</div>
-                    {posts.map(post => (
-                        <PostTile
-                            key={post.postId}
-                            post={post}
-                            onEdit={handleEdit}
-                            onDelete={() => handleDelete(post.slug)}
-                            onOpen={() => router.push(`/post/${post.slug}`)}
-                        />
-                    ))}
-                    {totalCount > pageSize &&
-                        <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext} />}
-                </>
-            )}
-
+            <Tabs tabs={tabs} />
         </div>
     );
 };
