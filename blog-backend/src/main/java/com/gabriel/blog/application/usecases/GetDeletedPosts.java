@@ -28,7 +28,8 @@ public class GetDeletedPosts {
   }
 
   public List<PostResponse> getDeletedPosts() {
-    return postRepository.getDeletedPosts()
+    return postRepository.findPosts(
+            new PostRepository.FindPostsParams(1, Integer.MAX_VALUE, null, null, true))
         .stream()
         .map(post -> new PostResponse(post.getId().getValue(),
             post.getTitle().getValue(),

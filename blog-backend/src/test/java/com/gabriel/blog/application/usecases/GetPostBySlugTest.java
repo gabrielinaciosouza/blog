@@ -58,14 +58,4 @@ class GetPostBySlugTest {
     assertEquals("Post with slug test-slug not found", exception.getMessage());
   }
 
-  @Test
-  void shouldThrowExceptionWhenPostIsDeleted() {
-    when(postRepository.findBySlug(Slug.fromString("test-slug"))).thenReturn(
-        Optional.of(PostFixture.deletedPost()));
-
-    final var exception = assertThrows(NotFoundException.class,
-        () -> getPostBySlug.getPostBySlug("test-slug"));
-    assertEquals("Post with slug test-slug not found", exception.getMessage());
-  }
-
 }

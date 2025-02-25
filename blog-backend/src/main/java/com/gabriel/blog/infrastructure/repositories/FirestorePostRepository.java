@@ -58,6 +58,7 @@ public class FirestorePostRepository implements PostRepository {
   public Optional<Post> findBySlug(final Slug slug) {
     try {
       return firestore.collection(COLLECTION_NAME)
+          .whereEqualTo("deleted", false)
           .whereEqualTo("slug", slug.getValue())
           .get()
           .get()
@@ -105,6 +106,7 @@ public class FirestorePostRepository implements PostRepository {
         params.sortOrder() == null ? PostRepository.SortOrder.DESCENDING : params.sortOrder();
 
     return firestore.collection(COLLECTION_NAME)
+        .whereEqualTo("deleted", params.deleted())
         .orderBy(sortBy.name(), Query.Direction.valueOf(sortOrder.name()))
         .offset((params.page() - 1) * size)
         .limit(size);
@@ -125,6 +127,7 @@ public class FirestorePostRepository implements PostRepository {
   public int totalCount() {
     try {
       return firestore.collection(COLLECTION_NAME)
+          .whereEqualTo("deleted", false)
           .get()
           .get()
           .size();
@@ -148,25 +151,6 @@ public class FirestorePostRepository implements PostRepository {
       Thread.currentThread().interrupt();
       logger.error("Failed to update post in Firestore", e);
       throw new RepositoryException("Failed to update post in Firestore", e);
-    }
-  }
-
-  @Override
-  public List<Post> getDeletedPosts() {
-    try {
-      return firestore.collection(COLLECTION_NAME)
-          .whereEqualTo("isDeleted", true)
-          .get()
-          .get()
-          .getDocuments()
-          .stream()
-          .map(doc -> doc.toObject(PostModel.class))
-          .map(PostModel::toDomain)
-          .toList();
-    } catch (final InterruptedException | ExecutionException e) {
-      Thread.currentThread().interrupt();
-      logger.error("Failed to get deleted posts from Firestore", e);
-      throw new RepositoryException("Failed to get deleted posts from Firestore", e);
     }
   }
 }

@@ -13,6 +13,8 @@ import org.mockito.Mockito;
 
 class GetDeletedPostsTest {
 
+  private static final PostRepository.FindPostsParams params =
+      new PostRepository.FindPostsParams(1, Integer.MAX_VALUE, null, null, true);
   private PostRepository postRepository;
   private GetDeletedPosts getDeletedPosts;
 
@@ -25,7 +27,7 @@ class GetDeletedPostsTest {
   @Test
   void retrievesDeletedPostsSuccessfully() {
     final var post = PostFixture.post();
-    when(postRepository.getDeletedPosts()).thenReturn(List.of(post));
+    when(postRepository.findPosts(params)).thenReturn(List.of(post));
 
     final var result = getDeletedPosts.getDeletedPosts();
 
@@ -35,7 +37,7 @@ class GetDeletedPostsTest {
 
   @Test
   void retrievesNoDeletedPostsWhenNoneExist() {
-    when(postRepository.getDeletedPosts()).thenReturn(Collections.emptyList());
+    when(postRepository.findPosts(params)).thenReturn(Collections.emptyList());
 
     final var result = getDeletedPosts.getDeletedPosts();
 

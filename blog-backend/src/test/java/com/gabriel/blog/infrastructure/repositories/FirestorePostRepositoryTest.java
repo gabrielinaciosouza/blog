@@ -50,7 +50,8 @@ class FirestorePostRepositoryTest {
   void shouldThrowRepositoryExceptionOnThreadFailure()
       throws ExecutionException, InterruptedException {
     when(firestore.collection("posts")).thenReturn(collectionReference);
-    when(collectionReference.whereEqualTo("slug", POST.getSlug().getValue()))
+    when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+    when(query.whereEqualTo("slug", POST.getSlug().getValue()))
         .thenReturn(query);
     when(query.get()).thenReturn(apiFuture);
     when(apiFuture.get()).thenThrow(InterruptedException.class);
@@ -93,7 +94,8 @@ class FirestorePostRepositoryTest {
     @Test
     void shouldGetPostBySlug() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.whereEqualTo("slug", POST.getSlug().getValue()))
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.whereEqualTo("slug", POST.getSlug().getValue()))
           .thenReturn(query);
       when(query.get()).thenReturn(apiFuture);
 
@@ -107,7 +109,8 @@ class FirestorePostRepositoryTest {
       final var result = firestorePostRepository.findBySlug(POST.getSlug());
 
       verify(firestore).collection("posts");
-      verify(collectionReference).whereEqualTo("slug", POST.getSlug().getValue());
+      verify(collectionReference).whereEqualTo("deleted", false);
+      verify(query).whereEqualTo("slug", POST.getSlug().getValue());
       verify(query).get();
       verify(apiFuture).get();
       verify(querySnapshot).getDocuments();
@@ -122,7 +125,8 @@ class FirestorePostRepositoryTest {
     @Test
     void shouldFindPostsWithValidParams() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.orderBy("creationDate", Query.Direction.ASCENDING)).thenReturn(
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.orderBy("creationDate", Query.Direction.ASCENDING)).thenReturn(
           query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
@@ -136,12 +140,13 @@ class FirestorePostRepositoryTest {
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
-              PostRepository.SortOrder.ASCENDING);
+              PostRepository.SortOrder.ASCENDING, false);
 
       final var result = firestorePostRepository.findPosts(params);
 
       verify(firestore).collection("posts");
-      verify(collectionReference).orderBy("creationDate", Query.Direction.ASCENDING);
+      verify(collectionReference).whereEqualTo("deleted", false);
+      verify(query).orderBy("creationDate", Query.Direction.ASCENDING);
       verify(query).offset(0);
       verify(query).limit(10);
       verify(query).get();
@@ -156,14 +161,15 @@ class FirestorePostRepositoryTest {
         throws ExecutionException, InterruptedException {
 
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
       when(query.get()).thenReturn(apiFuture);
       when(apiFuture.get()).thenThrow(InterruptedException.class);
       final var params =
           new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-              PostRepository.SortOrder.DESCENDING);
+              PostRepository.SortOrder.DESCENDING, false);
       assertThrows(RepositoryException.class, () -> firestorePostRepository.findPosts(params));
     }
 
@@ -176,13 +182,14 @@ class FirestorePostRepositoryTest {
     void shouldThrowRepositoryExceptionWhenPageIsLessThan1() {
       assertThrows(RepositoryException.class, () -> firestorePostRepository.findPosts(
           new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.title,
-              PostRepository.SortOrder.ASCENDING)));
+              PostRepository.SortOrder.ASCENDING, false)));
     }
 
     @Test
     void shouldSetDefaultSizeWhenSizeIsLessThan1() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.orderBy("title", Query.Direction.ASCENDING)).thenReturn(query);
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.orderBy("title", Query.Direction.ASCENDING)).thenReturn(query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
       when(query.get()).thenReturn(apiFuture);
@@ -195,12 +202,13 @@ class FirestorePostRepositoryTest {
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title,
-              PostRepository.SortOrder.ASCENDING);
+              PostRepository.SortOrder.ASCENDING, false);
 
       final var result = firestorePostRepository.findPosts(params);
 
       verify(firestore).collection("posts");
-      verify(collectionReference).orderBy("title", Query.Direction.ASCENDING);
+      verify(collectionReference).whereEqualTo("deleted", false);
+      verify(query).orderBy("title", Query.Direction.ASCENDING);
       verify(query).offset(0);
       verify(query).limit(10);
       verify(query).get();
@@ -213,7 +221,8 @@ class FirestorePostRepositoryTest {
     @Test
     void shouldSetDefaultSortByWhenSortByIsNull() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.orderBy("creationDate", Query.Direction.ASCENDING)).thenReturn(
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.orderBy("creationDate", Query.Direction.ASCENDING)).thenReturn(
           query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
@@ -227,12 +236,13 @@ class FirestorePostRepositoryTest {
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 10, null,
-              PostRepository.SortOrder.ASCENDING);
+              PostRepository.SortOrder.ASCENDING, false);
 
       final var result = firestorePostRepository.findPosts(params);
 
       verify(firestore).collection("posts");
-      verify(collectionReference).orderBy("creationDate", Query.Direction.ASCENDING);
+      verify(collectionReference).whereEqualTo("deleted", false);
+      verify(query).orderBy("creationDate", Query.Direction.ASCENDING);
       verify(query).offset(0);
       verify(query).limit(10);
       verify(query).get();
@@ -246,7 +256,8 @@ class FirestorePostRepositoryTest {
     void shouldSetDefaultSortOrderWhenSortOrderIsNull()
         throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.orderBy("title", Query.Direction.DESCENDING)).thenReturn(query);
       when(query.offset(0)).thenReturn(query);
       when(query.limit(10)).thenReturn(query);
       when(query.get()).thenReturn(apiFuture);
@@ -259,12 +270,13 @@ class FirestorePostRepositoryTest {
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-              null);
+              null, false);
 
       final var result = firestorePostRepository.findPosts(params);
 
       verify(firestore).collection("posts");
-      verify(collectionReference).orderBy("title", Query.Direction.DESCENDING);
+      verify(collectionReference).whereEqualTo("deleted", false);
+      verify(query).orderBy("title", Query.Direction.DESCENDING);
       verify(query).offset(0);
       verify(query).limit(10);
       verify(query).get();
@@ -281,13 +293,15 @@ class FirestorePostRepositoryTest {
     @Test
     void shouldReturnTotalCount() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.get()).thenReturn(apiFuture);
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
       when(apiFuture.get()).thenReturn(mock(QuerySnapshot.class));
 
       firestorePostRepository.totalCount();
 
       verify(firestore).collection("posts");
-      verify(collectionReference).get();
+      verify(collectionReference).whereEqualTo("deleted", false);
+      verify(query).get();
       verify(apiFuture).get();
     }
 
@@ -295,7 +309,8 @@ class FirestorePostRepositoryTest {
     void shouldThrowRepositoryExceptionOnThreadFailure()
         throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.get()).thenReturn(apiFuture);
+      when(collectionReference.whereEqualTo("deleted", false)).thenReturn(query);
+      when(query.get()).thenReturn(apiFuture);
       when(apiFuture.get()).thenThrow(InterruptedException.class);
 
       assertThrows(RepositoryException.class, () -> firestorePostRepository.totalCount());
@@ -329,45 +344,6 @@ class FirestorePostRepositoryTest {
       when(apiFuture.get()).thenThrow(InterruptedException.class);
 
       assertThrows(RepositoryException.class, () -> firestorePostRepository.update(POST));
-    }
-  }
-
-  @Nested
-  class GetDeletedPostsTests {
-
-    @Test
-    void shouldGetDeletedPosts() throws ExecutionException, InterruptedException {
-      when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.whereEqualTo("isDeleted", true)).thenReturn(query);
-      when(query.get()).thenReturn(apiFuture);
-
-      final var querySnapshot = mock(QuerySnapshot.class);
-      final var documentSnapshot = mock(QueryDocumentSnapshot.class);
-
-      when(apiFuture.get()).thenReturn(querySnapshot);
-      when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
-      when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
-
-      final var result = firestorePostRepository.getDeletedPosts();
-
-      verify(firestore).collection("posts");
-      verify(collectionReference).whereEqualTo("isDeleted", true);
-      verify(query).get();
-      verify(apiFuture).get();
-      verify(querySnapshot).getDocuments();
-      verify(documentSnapshot).toObject(PostModel.class);
-      assertEquals(List.of(POST), result);
-    }
-
-    @Test
-    void shouldThrowRepositoryExceptionOnThreadFailure()
-        throws ExecutionException, InterruptedException {
-      when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.whereEqualTo("isDeleted", true)).thenReturn(query);
-      when(query.get()).thenReturn(apiFuture);
-      when(apiFuture.get()).thenThrow(InterruptedException.class);
-
-      assertThrows(RepositoryException.class, () -> firestorePostRepository.getDeletedPosts());
     }
   }
 }

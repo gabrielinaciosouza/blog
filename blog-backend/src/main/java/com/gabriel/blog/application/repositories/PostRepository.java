@@ -85,16 +85,14 @@ public interface PostRepository {
 
   /**
    * Represents the search parameters used to filter the list of posts.
-   * This record contains the search criteria used to filter the list of posts
-   * based on the specified page, size, sorting order, and title.
+   * This class defines the search parameters that can be used to filter the list of posts.
    *
    * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
    *
-   * <p>This record provides a structured representation of the search parameters
-   * used to filter the list of posts, making it easier to pass the search criteria
-   * to the repository method that retrieves the list of posts.</p>
+   * <p>The search parameters include the page number, page size, sorting criteria,
+   * sorting order, and whether to include deleted posts in the search results.</p>
    */
-  record FindPostsParams(int page, int size, SortBy sortBy, SortOrder sortOrder) {
+  record FindPostsParams(int page, int size, SortBy sortBy, SortOrder sortOrder, boolean deleted) {
   }
 
   /**
@@ -119,16 +117,4 @@ public interface PostRepository {
    * @return the updated {@link Post} entity.
    */
   Post update(Post post);
-
-  /**
-   * Retrieves a list of {@link Post} entities that have been deleted.
-   * This method is responsible for fetching a list of {@link Post} entities from the database
-   * that have been marked as deleted.
-   *
-   * <p>The implementation should query the database for posts that have been marked as deleted,
-   * and return a list of posts that have been deleted from the database.</p>
-   *
-   * @return a list of {@link Post} entities that have been deleted.
-   */
-  List<Post> getDeletedPosts();
 }

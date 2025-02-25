@@ -40,13 +40,12 @@ public class FindPostsUseCase {
     final var pageSize = determinePageSize(request.size());
 
     final var params =
-        new PostRepository.FindPostsParams(request.page(), pageSize, sortBy, sortOrder);
+        new PostRepository.FindPostsParams(request.page(), pageSize, sortBy, sortOrder, false);
     final var findResult = postRepository.findPosts(params);
     final var total = new AtomicInteger(postRepository.totalCount());
 
     return new FindPostsResponse(
         findResult.stream()
-            .filter(post -> filterDeletedPosts(post, total))
             .map(this::mapToPostResponse)
             .toList(), total.get());
   }
@@ -78,14 +77,6 @@ public class FindPostsUseCase {
 
   private int determinePageSize(final int size) {
     return size < 1 ? 10 : size;
-  }
-
-  private boolean filterDeletedPosts(final Post post, final AtomicInteger total) {
-    if (post.isDeleted()) {
-      total.decrementAndGet();
-      return false;
-    }
-    return true;
   }
 
   private PostResponse mapToPostResponse(final Post post) {

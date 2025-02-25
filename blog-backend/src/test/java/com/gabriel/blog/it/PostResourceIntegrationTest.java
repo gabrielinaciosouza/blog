@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.gabriel.blog.application.requests.FindPostsRequest;
 import com.gabriel.blog.fixtures.CreationDateFixture;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.Timestamp;
@@ -60,7 +60,7 @@ class PostResourceIntegrationTest {
         "slug", "title",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image.jpg",
-        "isDeleted", false
+        "deleted", false
     ));
 
     Thread.sleep(1000);
@@ -142,7 +142,7 @@ class PostResourceIntegrationTest {
         "slug", "slug",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image.jpg",
-        "isDeleted", false
+        "deleted", false
     ));
 
     Thread.sleep(1000);
@@ -181,8 +181,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.ASCENDING))
+        .body(new FindPostsRequest(1, 10, "title",
+            "ASCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -199,8 +199,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.ASCENDING))
+        .body(new FindPostsRequest(1, 10, "title",
+            "ASCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -230,8 +230,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.DESCENDING))
+        .body(new FindPostsRequest(1, 10, "title",
+            "DESCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -259,8 +259,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(0, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.DESCENDING))
+        .body(new FindPostsRequest(0, 10, "title",
+            "DESCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -276,8 +276,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title,
-            PostRepository.SortOrder.DESCENDING))
+        .body(new FindPostsRequest(1, 0, "title",
+            "DESCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -296,7 +296,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title, null))
+        .body(new FindPostsRequest(1, 10, "title",
+            null))
         .post("/posts/find")
         .then()
         .log()
@@ -315,7 +316,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 0, null, PostRepository.SortOrder.DESCENDING))
+        .body(new FindPostsRequest(1, 10, null,
+            "DESCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -334,8 +336,8 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new PostRepository.FindPostsParams(1, 1, PostRepository.SortBy.title,
-            PostRepository.SortOrder.DESCENDING))
+        .body(new FindPostsRequest(1, 1, "title",
+            "DESCENDING"))
         .post("/posts/find")
         .then()
         .log()
@@ -358,7 +360,7 @@ class PostResourceIntegrationTest {
         "slug", "slug",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image.jpg",
-        "isDeleted", false
+        "deleted", false
     ));
 
     Thread.sleep(1000);
@@ -413,16 +415,17 @@ class PostResourceIntegrationTest {
         "slug", "slug",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image.jpg",
-        "isDeleted", false
+        "deleted", false
     ));
 
-    firestore.collection("posts").document("delete").set(Map.of(
+    firestore.collection("posts").document("delete2").set(Map.of(
         "title", "title2",
         "content", "content2",
         "slug", "slug2",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image2.jpg",
-        "isDeleted", true
+        "deleted", true,
+        "deletionDate", timestamp
     ));
 
     Thread.sleep(1000);
@@ -449,7 +452,7 @@ class PostResourceIntegrationTest {
         "slug", "slug",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image.jpg",
-        "isDeleted", false));
+        "deleted", false));
 
     firestore.collection("posts").document("find2").set(Map.of(
         "title", "title2",
@@ -457,7 +460,7 @@ class PostResourceIntegrationTest {
         "slug", "slug",
         "creationDate", timestamp,
         "coverImage", "https://example.com/image.jpg",
-        "isDeleted", false));
+        "deleted", false));
     Thread.sleep(1000);
   }
 
