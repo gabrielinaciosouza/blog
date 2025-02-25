@@ -22,22 +22,22 @@ const PostTile: React.FC<PostTileProps> = ({ post, onEdit, onDelete, onRestore, 
             </div>
             <div className={styles.actions}>
                 {onEdit && (
-                    <Button className={styles.iconButton} onClick={() => { onEdit(post.postId); }}>
+                    <Button className={styles.iconButton} onClick={() => { onEdit(post.postId); }} ariaLabel='Edit'>
                         <FaEdit />
                     </Button>
                 )}
                 {onDelete && (
-                    <Button className={styles.iconButton} onClick={() => { onDelete(post.postId); }}>
+                    <Button className={styles.iconButton} onClick={() => { onDelete(post.postId); }} ariaLabel='Delete'>
                         <FaTrash />
                     </Button>
                 )}
                 {onRestore && (
-                    <Button className={styles.iconButton} onClick={() => { onRestore(post.postId); }}>
+                    <Button className={styles.iconButton} onClick={() => { onRestore(post.postId); }} ariaLabel='Restore'>
                         <FaUndo />
                     </Button>
                 )}
                 {onOpen && (
-                    <Button className={styles.iconButton} onClick={() => { onOpen(post.postId); }}>
+                    <Button className={styles.iconButton} onClick={() => { onOpen(post.postId); }} ariaLabel='Open'>
                         <FaExternalLinkAlt />
                     </Button>
                 )}
