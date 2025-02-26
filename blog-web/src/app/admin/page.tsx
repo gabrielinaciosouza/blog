@@ -46,8 +46,6 @@ const AdminPage = () => {
                 totalCountResult = totalCount;
             }
 
-            console.log('posts', posts);
-
             setDeletedPosts(deletedData);
             setPosts(availablePosts);
             setTotalCount(totalCountResult);
@@ -61,11 +59,6 @@ const AdminPage = () => {
     useEffect(() => {
         fetchData();
     }, [page, startLoading, stopLoading]);
-
-    const handleEdit = (id: string) => {
-        // Handle edit logic here
-        console.log(`Edit post with id: ${id}`);
-    };
 
     const handleDelete = async (slug: string) => {
         try {
@@ -88,16 +81,6 @@ const AdminPage = () => {
         }
     };
 
-    const handleRestore = (id: string) => {
-        // Handle restore logic here
-        console.log(`Restore post with id: ${id}`);
-        const postToRestore = deletedPosts.find(post => post.postId === id);
-        setDeletedPosts(deletedPosts.filter(post => post.postId !== id));
-        if (postToRestore) {
-            setPosts([...posts, postToRestore]);
-        }
-    };
-
     const handleCreateNewPost = () => {
         router.push('/create-post');
     };
@@ -117,9 +100,7 @@ const AdminPage = () => {
                                 <PostTile
                                     key={post.postId}
                                     post={post}
-                                    onEdit={handleEdit}
                                     onDelete={() => handleDelete(post.slug)}
-                                    onOpen={() => router.push(`/post/${post.slug}`)}
                                 />
                             ))}
                             {totalCount > pageSize &&
@@ -141,9 +122,6 @@ const AdminPage = () => {
                                 <PostTile
                                     key={post.postId}
                                     post={post}
-                                    onEdit={handleEdit}
-                                    onRestore={handleRestore}
-                                    onOpen={() => router.push(`/post/${post.slug}`)}
                                 />
                             ))}
                         </>

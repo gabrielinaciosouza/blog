@@ -15,21 +15,6 @@ jest.mock('@/hooks/useLoading', () => ({
     default: jest.fn(),
 }));
 
-jest.mock('@/components/postTile/PostTile', () => () => <div>PostTile</div>);
-jest.mock('@/components/button/Button', () => ({ children, onClick }: { children: React.ReactNode, onClick: () => void }) => <button onClick={onClick}>{children}</button>);
-jest.mock('@/components/loading/Loading', () => () => <div>Loading...</div>);
-jest.mock('@/components/pagination/Pagination', () => () => <div>Pagination</div>);
-jest.mock('@/components/tabs/Tabs', () => ({ tabs }: { tabs: { label: string, content: React.ReactNode }[] }) => (
-    <div>
-        {tabs.map((tab, index) => (
-            <div key={index}>
-                <button>{tab.label}</button>
-                <div>{tab.content}</div>
-            </div>
-        ))}
-    </div>
-));
-
 describe('AdminPage', () => {
     const mockRouterPush = jest.fn();
     const mockStartLoading = jest.fn();
@@ -50,7 +35,8 @@ describe('AdminPage', () => {
     });
 
     it('should render the dashboard with tabs', async () => {
-        render(AdminPage());
+        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(''));
+        render(<AdminPage />);
         expect(screen.getByText('Dashboard')).toBeInTheDocument();
         expect(screen.getByText('New Post')).toBeInTheDocument();
         expect(screen.getByText('Active Posts')).toBeInTheDocument();
@@ -117,4 +103,185 @@ describe('AdminPage', () => {
         expect(global.fetch).toHaveBeenCalledWith('/api/posts/deleted');
         expect(global.fetch).toHaveBeenCalledWith('/api/posts?page=1&size=10');
     });
+
+    it('should back to page 1 when there are no posts on the current page', async () => {
+        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('?page=2'));
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [], totalCount: 10
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [], totalCount: 10
+                }),
+            });
+
+        render(<AdminPage />);
+
+        await waitFor(() => {
+            expect(screen.getAllByText('slug-1')).toHaveLength(1);
+            fireEvent.click(screen.getByText('Next'));
+            fireEvent.click(screen.getByLabelText('Delete'));
+        });
+
+        await waitFor(() => {
+            expect(mockRouterPush).toHaveBeenCalledWith('/admin?page=1');
+        });
+    });
+
+    it('should not fetch data when delete is not successful', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: false,
+            });
+
+        render(<AdminPage />);
+
+        await waitFor(() => {
+            expect(screen.getAllByText('slug-1')).toHaveLength(1);
+            fireEvent.click(screen.getByLabelText('Delete'));
+        });
+
+        expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    it('should not fetch data when delete throw error', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockRejectedValueOnce(new Error('Error'));
+
+        render(<AdminPage />);
+
+        await waitFor(() => {
+            expect(screen.getAllByText('slug-1')).toHaveLength(1);
+            fireEvent.click(screen.getByLabelText('Delete'));
+        });
+
+        expect(global.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    it('should render deleted posts', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValue({
+                ok: true,
+                json: async () => ({
+                    posts: [{
+                        postId: "1",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-1`,
+                        coverImage: "cover-image"
+                    }], totalCount: 11
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ([{
+                        postId: "2",
+                        title: "title",
+                        content: "content",
+                        creationDate: "creationDate",
+                        slug: `slug-2`,
+                        coverImage: "cover-image"
+                    }])
+                }),
+            
+
+        render(<AdminPage />);
+        await waitFor(() => {
+            expect(global.fetch).toHaveBeenCalledTimes(2);
+            fireEvent.click(screen.getByText('Deleted Posts'));
+        });
+
+        await waitFor(() => {
+            expect(screen.getAllByText('slug-2')).toHaveLength(1);
+        });
+       
+    });
+
 });
