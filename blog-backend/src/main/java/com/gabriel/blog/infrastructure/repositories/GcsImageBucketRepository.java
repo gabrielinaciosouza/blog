@@ -38,7 +38,7 @@ public class GcsImageBucketRepository implements ImageBucketRepository {
 
   @Override
   public Image createImage(final UploadImageParams params) {
-    final var bucketName = params.bucketName();
+    final var bucketName = params.bucketType().toString();
 
     final var bucket = getOrCreateBucket(bucketName);
 

@@ -2,6 +2,8 @@ package com.gabriel.blog.application.repositories;
 
 import com.gabriel.blog.domain.valueobjects.Image;
 
+import java.util.Optional;
+
 /**
  * The {@link ImageBucketRepository} interface represents the repository for managing image storage buckets.
  *
@@ -38,17 +40,17 @@ public interface ImageBucketRepository {
       this.bucketName = bucketName;
     }
 
-    public static boolean existsType(final String bucketName) {
-      for (final BucketType type : BucketType.values()) {
-        if (type.getBucketName().equals(bucketName)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
     public String getBucketName() {
       return bucketName;
+    }
+
+    public static Optional<BucketType> getBucketType(final String bucketName) {
+      for (final BucketType type : BucketType.values()) {
+        if (type.getBucketName().equals(bucketName)) {
+          return Optional.of(type);
+        }
+      }
+      return Optional.empty();
     }
   }
 
@@ -61,6 +63,6 @@ public interface ImageBucketRepository {
    * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
    */
   record UploadImageParams(byte[] fileData, String fileName, String fileMimeType,
-                           String bucketName) {
+                           BucketType bucketType) {
   }
 }

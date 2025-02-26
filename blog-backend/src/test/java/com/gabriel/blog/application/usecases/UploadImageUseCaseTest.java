@@ -1,5 +1,13 @@
 package com.gabriel.blog.application.usecases;
 
+import com.gabriel.blog.application.exceptions.ValidationException;
+import com.gabriel.blog.application.repositories.ImageBucketRepository;
+import com.gabriel.blog.application.requests.UploadImageRequest;
+import com.gabriel.blog.application.services.IdGenerator;
+import com.gabriel.blog.domain.valueobjects.Image;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,14 +16,6 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.gabriel.blog.application.exceptions.ValidationException;
-import com.gabriel.blog.application.repositories.ImageBucketRepository;
-import com.gabriel.blog.application.requests.UploadImageRequest;
-import com.gabriel.blog.application.services.IdGenerator;
-import com.gabriel.blog.domain.valueobjects.Image;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 class UploadImageUseCaseTest {
 
@@ -97,9 +97,11 @@ class UploadImageUseCaseTest {
 
   @Test
   void uploadImageWithInvalidBucketNameThrowsException() {
+    final var generatedFileName = "generatedFileName.jpg";
     final var request =
         new UploadImageRequest("fileData".getBytes(), "fileName.jpg", "image/jpeg",
             "invalidBucketName");
+    when(idGenerator.generateId(request.fileName())).thenReturn(generatedFileName);
     assertThrows(ValidationException.class, () -> uploadImageUseCase.uploadImage(request));
     final var requestWithNullBucketName =
         new UploadImageRequest("fileData".getBytes(), "fileName.jpg", "image/jpeg", null);

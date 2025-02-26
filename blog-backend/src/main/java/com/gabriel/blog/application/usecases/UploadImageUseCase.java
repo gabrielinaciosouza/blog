@@ -1,8 +1,5 @@
 package com.gabriel.blog.application.usecases;
 
-import static com.gabriel.blog.application.repositories.ImageBucketRepository.BucketType;
-import static com.gabriel.blog.application.repositories.ImageBucketRepository.UploadImageParams;
-
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.qualifiers.RandomGenerator;
 import com.gabriel.blog.application.repositories.ImageBucketRepository;
@@ -10,8 +7,12 @@ import com.gabriel.blog.application.requests.UploadImageRequest;
 import com.gabriel.blog.application.responses.ImageResponse;
 import com.gabriel.blog.application.services.IdGenerator;
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+
+import static com.gabriel.blog.application.repositories.ImageBucketRepository.BucketType;
+import static com.gabriel.blog.application.repositories.ImageBucketRepository.UploadImageParams;
 
 /**
  * The {@link UploadImageUseCase} class represents the use case for uploading images to a storage
@@ -56,7 +57,7 @@ public class UploadImageUseCase {
             request.fileData(),
             fileName,
             request.fileMimeType(),
-            request.bucketName()));
+                BucketType.getBucketType(request.bucketName()).orElseThrow(() -> new ValidationException("Invalid bucket name"))));
 
     return new ImageResponse(image.toString(), fileName);
   }
@@ -78,7 +79,7 @@ public class UploadImageUseCase {
       throw new ValidationException("Invalid file mime type");
     }
 
-    if (!BucketType.existsType(request.bucketName())) {
+    if (request.bucketName() == null || request.bucketName().isBlank()) {
       throw new ValidationException("Invalid bucket name");
     }
   }
