@@ -11,7 +11,6 @@ import Post from "@/models/post";
 import Modal from "@/components/modal/Modal";
 import Button from "@/components/button/Button";
 import CreatePostRequest from "@/models/create-post-request";
-import { createPost } from "@/services/postService";
 import { useRouter } from "next/navigation";
 import useStorage from "@/hooks/useStorage";
 import useLoading from "@/hooks/useLoading";

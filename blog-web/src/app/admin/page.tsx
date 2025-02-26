@@ -58,7 +58,7 @@ const AdminPage = () => {
 
     useEffect(() => {
         fetchData();
-    }, [page, startLoading, stopLoading]);
+    });
 
     const handleDelete = async (slug: string) => {
         try {
