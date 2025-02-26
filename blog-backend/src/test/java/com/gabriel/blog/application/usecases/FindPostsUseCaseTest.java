@@ -37,14 +37,25 @@ class FindPostsUseCaseTest {
 
   @Test
   void shouldReturnPostsSuccessfully() {
-    final var request = new FindPostsRequest(1, 10, "title", "ASCENDING");
+    var request = new FindPostsRequest(1, 10, "title", "ASCENDING");
     final var post = PostFixture.post();
     when(postRepository.findPosts(
         new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.ASCENDING))).thenReturn(List.of(post));
+            PostRepository.SortOrder.ASCENDING, false))).thenReturn(List.of(post));
     when(postRepository.totalCount()).thenReturn(1);
 
-    final var response = findPostsUseCase.findPosts(request);
+    var response = findPostsUseCase.findPosts(request);
+
+    assertEquals(1, response.totalCount());
+    assertEquals(1, response.posts().size());
+    assertEquals("any title", response.posts().getFirst().title());
+
+    request = new FindPostsRequest(1, 10, "creationDate", "DESCENDING");
+    when(postRepository.findPosts(
+        new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
+            PostRepository.SortOrder.DESCENDING, false))).thenReturn(List.of(post));
+
+    response = findPostsUseCase.findPosts(request);
 
     assertEquals(1, response.totalCount());
     assertEquals(1, response.posts().size());
@@ -57,7 +68,7 @@ class FindPostsUseCaseTest {
     final var post = PostFixture.post();
     when(postRepository.findPosts(
         new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.DESCENDING))).thenReturn(List.of(post));
+            PostRepository.SortOrder.DESCENDING, false))).thenReturn(List.of(post));
     when(postRepository.totalCount()).thenReturn(1);
 
     final var response = findPostsUseCase.findPosts(request);
@@ -73,7 +84,7 @@ class FindPostsUseCaseTest {
     final var post = PostFixture.post();
     when(postRepository.findPosts(
         new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
-            PostRepository.SortOrder.ASCENDING))).thenReturn(List.of(post));
+            PostRepository.SortOrder.ASCENDING, false))).thenReturn(List.of(post));
     when(postRepository.totalCount()).thenReturn(1);
 
     final var response = findPostsUseCase.findPosts(request);
@@ -89,7 +100,7 @@ class FindPostsUseCaseTest {
     final var post = PostFixture.post();
     when(postRepository.findPosts(
         new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,
-            PostRepository.SortOrder.ASCENDING))).thenReturn(List.of(post));
+            PostRepository.SortOrder.ASCENDING, false))).thenReturn(List.of(post));
     when(postRepository.totalCount()).thenReturn(1);
 
     final var response = findPostsUseCase.findPosts(request);
@@ -105,7 +116,7 @@ class FindPostsUseCaseTest {
     final var post = PostFixture.post();
     when(postRepository.findPosts(
         new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
-            PostRepository.SortOrder.DESCENDING))).thenReturn(List.of(post));
+            PostRepository.SortOrder.DESCENDING, false))).thenReturn(List.of(post));
     when(postRepository.totalCount()).thenReturn(1);
 
     final var response = findPostsUseCase.findPosts(request);
@@ -121,7 +132,7 @@ class FindPostsUseCaseTest {
     final var post = PostFixture.post();
     when(postRepository.findPosts(
         new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
-            PostRepository.SortOrder.ASCENDING))).thenReturn(List.of(post));
+            PostRepository.SortOrder.ASCENDING, false))).thenReturn(List.of(post));
     when(postRepository.totalCount()).thenReturn(1);
 
     final var response = findPostsUseCase.findPosts(request);

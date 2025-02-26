@@ -10,6 +10,7 @@ describe("PostCard Component", () => {
         content: "<p>This is a sample post content.</p>",
         creationDate: "2025-01-01",
         slug: "sample-post",
+        coverImage: "/logo2.png",
     };
 
     it("should render the post title", () => {

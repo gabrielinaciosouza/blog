@@ -5,13 +5,15 @@ import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.responses.PostResponse;
+import com.gabriel.blog.application.services.IdGenerator;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
+import com.gabriel.blog.domain.valueobjects.DeletedStatus;
 import com.gabriel.blog.domain.valueobjects.Id;
+import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
-import com.gabriel.blog.infrastructure.services.IdGenerator;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
@@ -82,7 +84,9 @@ public class CreatePostUseCase {
         new Id(idGenerator.generateId(POSTS_DOMAIN)),
         title, content,
         CreationDate.now(),
-        slug);
+        slug,
+        postRequest.coverImage() == null ? null : new Image(postRequest.coverImage()),
+        DeletedStatus.notDeleted());
 
     postRepository.save(post);
 
@@ -91,6 +95,7 @@ public class CreatePostUseCase {
         post.getTitle().getValue(),
         post.getContent().getValue(),
         post.getCreationDate().toString(),
-        post.getSlug().getValue());
+        post.getSlug().getValue(),
+        post.getCoverImage().toString());
   }
 }

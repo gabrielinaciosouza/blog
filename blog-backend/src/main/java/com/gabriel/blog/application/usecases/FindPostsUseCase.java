@@ -5,7 +5,9 @@ import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.FindPostsRequest;
 import com.gabriel.blog.application.responses.FindPostsResponse;
 import com.gabriel.blog.application.responses.PostResponse;
+import com.gabriel.blog.domain.entities.Post;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Use case for finding posts based on the provided search criteria.
@@ -31,6 +33,24 @@ public class FindPostsUseCase {
    * @return The response containing the list of posts and the total count.
    */
   public FindPostsResponse findPosts(final FindPostsRequest request) {
+    validateRequest(request);
+
+    final var sortBy = determineSortBy(request.sortBy());
+    final var sortOrder = determineSortOrder(request.sortOrder());
+    final var pageSize = determinePageSize(request.size());
+
+    final var params =
+        new PostRepository.FindPostsParams(request.page(), pageSize, sortBy, sortOrder, false);
+    final var findResult = postRepository.findPosts(params);
+    final var total = new AtomicInteger(postRepository.totalCount());
+
+    return new FindPostsResponse(
+        findResult.stream()
+            .map(this::mapToPostResponse)
+            .toList(), total.get());
+  }
+
+  private void validateRequest(final FindPostsRequest request) {
     if (request == null) {
       throw new ValidationException("Request must not be null");
     }
@@ -38,32 +58,34 @@ public class FindPostsUseCase {
     if (request.page() < 1) {
       throw new ValidationException("Page must be greater than 0");
     }
+  }
 
-    var sortBy = PostRepository.SortBy.creationDate;
-    if (request.sortBy() != null && (request.sortBy().equalsIgnoreCase("title") || request.sortBy()
-        .equalsIgnoreCase("creationDate"))) {
-      sortBy = PostRepository.SortBy.valueOf(request.sortBy().toLowerCase());
+  private PostRepository.SortBy determineSortBy(final String sortBy) {
+    if (sortBy != null && (sortBy.equals("title") || sortBy.equals("creationDate"))) {
+      return PostRepository.SortBy.valueOf(sortBy);
     }
+    return PostRepository.SortBy.creationDate;
+  }
 
-    var sortOrder = PostRepository.SortOrder.DESCENDING;
-    if (request.sortOrder() != null && (request.sortOrder().equalsIgnoreCase("ASCENDING")
-        || request.sortOrder()
-        .equalsIgnoreCase("DESCENDING"))) {
-      sortOrder = PostRepository.SortOrder.valueOf(request.sortOrder().toUpperCase());
+  private PostRepository.SortOrder determineSortOrder(final String sortOrder) {
+    if (sortOrder != null && (sortOrder.equalsIgnoreCase("ASCENDING") || sortOrder.equalsIgnoreCase(
+        "DESCENDING"))) {
+      return PostRepository.SortOrder.valueOf(sortOrder.toUpperCase());
     }
+    return PostRepository.SortOrder.DESCENDING;
+  }
 
-    final var pageSize = request.size() < 1 ? 10 : request.size();
-    final var params =
-        new PostRepository.FindPostsParams(request.page(), pageSize, sortBy, sortOrder);
+  private int determinePageSize(final int size) {
+    return size < 1 ? 10 : size;
+  }
 
-    final var findResult = postRepository.findPosts(params);
-    final var total = postRepository.totalCount();
-
-    return new FindPostsResponse(findResult.stream().map(post -> new PostResponse(
+  private PostResponse mapToPostResponse(final Post post) {
+    return new PostResponse(
         post.getId().getValue(),
         post.getTitle().getValue(),
         post.getContent().getValue(),
         post.getCreationDate().toString(),
-        post.getSlug().getValue())).toList(), total);
+        post.getSlug().getValue(),
+        post.getCoverImage().toString());
   }
 }

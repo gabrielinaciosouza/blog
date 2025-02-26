@@ -3,26 +3,25 @@
 import React from "react";
 import styles from "./pagination.module.css";
 import { useRouter } from "next/navigation";
+import Button from "../button/Button";
 
 const Pagination = ({ page, hasPrev, hasNext } : {page: number, hasPrev: boolean, hasNext: boolean}) => {
     const router = useRouter();
 
     return (
         <div className={styles.container}>
-            <button
-                className={styles.button}
+            <Button
                 disabled={!hasPrev}
                 onClick={() => router.push(`?page=${+page - +1}`)}
             >
                 Previous
-            </button>
-            <button
+            </Button>
+            <Button
                 disabled={!hasNext}
-                className={styles.button}
                 onClick={() => router.push(`?page=${+page + +1}`)}
             >
                 Next
-            </button>
+            </Button>
         </div>
     );
 };

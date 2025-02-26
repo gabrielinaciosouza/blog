@@ -1,4 +1,4 @@
-import { createPost, getPostBySlug, getPosts, POSTS_PATH } from '@/services/postService';
+import { createPost, deletePost, getDeletedPosts, getPostBySlug, getPosts, POSTS_PATH } from '@/services/postService';
 import CreatePostRequest from '@/models/create-post-request';
 import Post from '@/models/post';
 
@@ -13,6 +13,7 @@ describe('postService', () => {
       const postRequest: CreatePostRequest = {
         title: 'Test Title',
         content: 'Test Content',
+        coverImage: 'cover-image-1'
       };
 
       const postResponse = {
@@ -21,6 +22,7 @@ describe('postService', () => {
         content: 'Test Content',
         creationDate: '2025-02-08T00:00:00Z',
         slug: 'test-title',
+        coverImage: 'cover-image-1'
       };
 
       (fetch as jest.Mock).mockResolvedValue({
@@ -42,7 +44,8 @@ describe('postService', () => {
         postResponse.title,
         postResponse.content,
         postResponse.creationDate,
-        postResponse.slug
+        postResponse.slug,
+        postResponse.coverImage
       ));
     });
 
@@ -50,6 +53,7 @@ describe('postService', () => {
       const postRequest: CreatePostRequest = {
         title: 'Test Title',
         content: 'Test Content',
+        coverImage: 'cover-image-1'
       };
 
       const errorMessage = 'Failed to publish post';
@@ -70,6 +74,7 @@ describe('postService', () => {
         content: 'Test Content',
         creationDate: '2025-02-08T00:00:00Z',
         slug: 'test-title',
+        coverImage: 'cover-image-1'
       };
 
       (fetch as jest.Mock).mockResolvedValue({
@@ -85,7 +90,8 @@ describe('postService', () => {
         mockPost.title,
         mockPost.content,
         mockPost.creationDate,
-        mockPost.slug
+        mockPost.slug,
+        mockPost.coverImage
       ));
     });
 
@@ -102,41 +108,99 @@ describe('postService', () => {
 
   describe("getPosts", () => {
     const mockPosts = [
-        { postId: "1", title: "Post 1", content: "<p>Content 1</p>", creationDate: "2025-01-01", slug: "post-1" },
-        { postId: "2", title: "Post 2", content: "<p>Content 2</p>", creationDate: "2025-01-02", slug: "post-2" },
+      { postId: "1", title: "Post 1", content: "<p>Content 1</p>", creationDate: "2025-01-01", slug: "post-1", coverImage: "cover-image-1" },
+      { postId: "2", title: "Post 2", content: "<p>Content 2</p>", creationDate: "2025-01-02", slug: "post-2", coverImage: "cover-image-2" },
     ];
 
     beforeEach(() => {
-        (fetch as jest.Mock).mockClear();
+      (fetch as jest.Mock).mockClear();
     });
 
     it("should fetch posts and return them as Post instances", async () => {
-        (fetch as jest.Mock).mockResolvedValueOnce({
-            ok: true,
-            json: async () => mockPosts,
-        });
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockPosts,
+      });
 
-        const result = await getPosts(1, 10);
+      const result = await getPosts(1, 10);
 
-        expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/find`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ page: 1, size: 10 }),
-        });
+      expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/find`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ page: 1, size: 10 }),
+      });
 
-        expect(result).toEqual(mockPosts.map(post => new Post(post.postId, post.title, post.content, post.creationDate, post.slug)));
+      expect(result).toEqual(mockPosts.map(post => new Post(post.postId, post.title, post.content, post.creationDate, post.slug, post.coverImage)));
     });
 
     it("should throw an error if the response is not ok", async () => {
-        (fetch as jest.Mock).mockResolvedValueOnce({
-            ok: false,
-            json: async () => ({ message: "Error fetching posts" }),
-        });
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ message: "Error fetching posts" }),
+      });
 
-        await expect(getPosts(1, 10)).rejects.toThrow("Error fetching posts");
+      await expect(getPosts(1, 10)).rejects.toThrow("Error fetching posts");
     });
-});
+  });
+
+  describe('getDeletedPosts', () => {
+    it('should fetch deleted posts successfully', async () => {
+      const mockDeletedPosts = [
+        { postId: '1', title: 'Post 1', content: '<p>Content 1</p>', creationDate: '2025-01-01', slug: 'post-1', coverImage: 'cover-image-1' },
+        { postId: '2', title: 'Post 2', content: '<p>Content 2</p>', creationDate: '2025-01-02', slug: 'post-2', coverImage: 'cover-image-2' },
+      ];
+
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue(mockDeletedPosts),
+      });
+
+      const result = await getDeletedPosts();
+
+      expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/deleted/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      expect(result).toEqual(mockDeletedPosts.map(post => new Post(post.postId, post.title, post.content, post.creationDate, post.slug, post.coverImage)));
+    });
+
+    it('should throw an error if the API call fails', async () => {
+      const errorMessage = 'Failed to fetch deleted posts';
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        json: jest.fn().mockResolvedValue({ message: errorMessage }),
+      });
+
+      await expect(getDeletedPosts()).rejects.toThrow(errorMessage);
+    });
+  });
+
+  describe('deletePost', () => {
+    it('should delete a post successfully', async () => {
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+      });
+
+      await deletePost('test-title');
+
+      expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/test-title`, {
+        method: 'DELETE',
+      });
+    });
+
+    it('should throw an error if the API call fails', async () => {
+      const errorMessage = 'Failed to delete post';
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        json: jest.fn().mockResolvedValue({ message: errorMessage }),
+      });
+
+      await expect(deletePost('non-existent-post')).rejects.toThrow(errorMessage);
+    });
+  });
 
 });

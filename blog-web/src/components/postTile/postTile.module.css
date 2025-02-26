@@ -1,0 +1,98 @@
+.postTile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+}
+
+.postTile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.postContent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1;
+    margin-right: 16px;
+    flex-wrap: wrap;
+}
+
+.postContent h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.postContent p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 18px;
+    transition: color 0.2s ease;
+}
+
+.iconButton:hover {
+    color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .postTile {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .postContent {
+        margin-bottom: 8px;
+    }
+
+    .actions {
+        justify-content: flex-start;
+        width: 100%;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .postTile {
+        padding: 12px;
+    }
+
+    .postContent h3 {
+        font-size: 16px;
+    }
+
+    .postContent p {
+        font-size: 12px;
+    }
+
+    .iconButton {
+        font-size: 16px;
+    }
+
+    .actions {
+        gap: 2px;
+        flex-wrap: wrap;
+    }
+}

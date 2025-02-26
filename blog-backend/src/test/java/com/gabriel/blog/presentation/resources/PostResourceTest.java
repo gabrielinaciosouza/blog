@@ -10,7 +10,9 @@ import com.gabriel.blog.application.requests.FindPostsRequest;
 import com.gabriel.blog.application.responses.FindPostsResponse;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
+import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
+import com.gabriel.blog.application.usecases.GetDeletedPosts;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,21 +22,28 @@ class PostResourceTest {
 
   private CreatePostUseCase createPostUseCase;
   private GetPostBySlug getPostBySlug;
-  private PostResource postResource;
   private FindPostsUseCase findPostsUseCase;
+  private DeletePostUseCase deletePostUseCase;
+  private GetDeletedPosts getDeletedPosts;
+  private PostResource postResource;
 
   @BeforeEach
   void setup() {
     createPostUseCase = mock(CreatePostUseCase.class);
     getPostBySlug = mock(GetPostBySlug.class);
     findPostsUseCase = mock(FindPostsUseCase.class);
-    postResource = new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase);
+    deletePostUseCase = mock(DeletePostUseCase.class);
+    getDeletedPosts = mock(GetDeletedPosts.class);
+    postResource =
+        new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase, deletePostUseCase,
+            getDeletedPosts);
   }
 
   @Test
   void shouldCreatePostSuccessfully() {
-    final var request = new CreatePostRequest("title", "content");
-    final var expectedResponse = new PostResponse("id", "title", "content", "date", "slug");
+    final var request = new CreatePostRequest("title", "content", "https://example.com/image.jpg");
+    final var expectedResponse =
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
     when(createPostUseCase.create(request)).thenReturn(expectedResponse);
 
     final var response = postResource.create(request);
@@ -46,7 +55,8 @@ class PostResourceTest {
   @Test
   void shouldGetPostBySlugSuccessfully() {
     final var slug = "slug";
-    final var expectedResponse = new PostResponse("id", "title", "content", "date", "slug");
+    final var expectedResponse =
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
     when(getPostBySlug.getPostBySlug(slug)).thenReturn(expectedResponse);
 
     final var response = postResource.getPostBySlug(slug);
@@ -58,7 +68,8 @@ class PostResourceTest {
   @Test
   void shouldFindPostsSuccessfully() {
     final var request = new FindPostsRequest(1, 10, "title", "ASCENDING");
-    final var expectedResponse = new PostResponse("id", "title", "content", "date", "slug");
+    final var expectedResponse =
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
     final var expectedPosts = List.of(expectedResponse);
     final var expectedTotal = 1;
     when(findPostsUseCase.findPosts(request)).thenReturn(
@@ -69,5 +80,25 @@ class PostResourceTest {
     assertEquals(expectedPosts, response.posts());
     assertEquals(expectedTotal, response.totalCount());
     verify(findPostsUseCase).findPosts(request);
+  }
+
+  @Test
+  void shouldDeletePostSuccessfully() {
+    final var slug = "slug";
+    postResource.deletePost(slug);
+    verify(deletePostUseCase).deletePost(slug);
+  }
+
+  @Test
+  void shouldGetDeletedPostsSuccessfully() {
+    final var expectedResponse =
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
+    final var expectedPosts = List.of(expectedResponse);
+    when(getDeletedPosts.getDeletedPosts()).thenReturn(expectedPosts);
+
+    final var response = postResource.getDeletedPosts();
+
+    assertEquals(expectedPosts, response);
+    verify(getDeletedPosts).getDeletedPosts();
   }
 }
