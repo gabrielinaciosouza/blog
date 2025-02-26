@@ -57,8 +57,11 @@ const AdminPage = () => {
     };
 
     useEffect(() => {
+       
         fetchData();
-    });
+    },
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+    [page, startLoading, stopLoading]);
 
     const handleDelete = async (slug: string) => {
         try {
