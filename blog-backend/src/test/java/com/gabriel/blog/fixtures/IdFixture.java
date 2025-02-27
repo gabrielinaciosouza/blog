@@ -9,6 +9,10 @@ public class IdFixture {
   }
 
   public static Id postId() {
-    return new Id("any id");
+    return new Id("post id");
+  }
+
+  public static Id authorId() {
+    return new Id("author id");
   }
 }
