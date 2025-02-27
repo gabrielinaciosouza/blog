@@ -8,7 +8,7 @@ import com.gabriel.blog.domain.abstractions.AbstractValueObject;
  *
  * <p>Created by Gabriel Inacio de Souza on February 27, 2025.</p>
  */
-public class AuthorName extends AbstractValueObject {
+public class Name extends AbstractValueObject {
 
   final String value;
 
@@ -17,8 +17,8 @@ public class AuthorName extends AbstractValueObject {
    *
    * @param value the author name value, must not be null
    */
-  public AuthorName(final String value) {
-    this.value = nonNull(value, "Tried to create an AuthorName with a null value");
+  public Name(final String value) {
+    this.value = nonNull(value, "Tried to create an Name with a null value");
   }
 
   public String getValue() {

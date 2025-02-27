@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Test;
 
-class AuthorNameTest {
+class NameTest {
 
   @Test
-  void shouldCreateCorrectAuthorName() {
-    final var thrown = assertThrows(DomainException.class, () -> new AuthorName(null));
-    assertEquals("Tried to create an AuthorName with a null value", thrown.getMessage());
-    assertDoesNotThrow(() -> new AuthorName("any"));
+  void shouldCreateCorrectName() {
+    final var thrown = assertThrows(DomainException.class, () -> new Name(null));
+    assertEquals("Tried to create an Name with a null value", thrown.getMessage());
+    assertDoesNotThrow(() -> new Name("any"));
   }
 
 }
