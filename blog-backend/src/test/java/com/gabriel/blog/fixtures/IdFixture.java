@@ -7,4 +7,8 @@ public class IdFixture {
   public static Id withId(final String id) {
     return new Id(id);
   }
+
+  public static Id postId() {
+    return new Id("any id");
+  }
 }
