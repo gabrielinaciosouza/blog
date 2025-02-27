@@ -10,6 +10,7 @@ import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import java.time.Instant;
+import java.util.List;
 
 /**
  * Represents a blog post as an entity.
@@ -29,6 +30,7 @@ public class Post extends AbstractEntity {
   private final Slug slug;
   private final Image coverImage;
   private DeletedStatus deletedStatus;
+  private final List<Comment> comments;
 
   /**
    * Constructs a {@code Post} instance with the given
@@ -41,11 +43,12 @@ public class Post extends AbstractEntity {
    * @param slug          the post slug, must not be null
    * @param coverImage    the post cover image, must not be null
    * @param deletedStatus the post deleted status, must not be null
+   * @param comments      the post comments, must not be null
    * @throws DomainException if any of the provided parameters is null
    */
   public Post(final Id id, final Title title, final Content content,
               final CreationDate creationDate, final Slug slug, final Image coverImage,
-              final DeletedStatus deletedStatus) {
+              final DeletedStatus deletedStatus, final List<Comment> comments) {
     super(id);
     this.title = nonNull(title, "Tried to create a Post with a null title");
     this.content = nonNull(content, "Tried to create a Post with a null content");
@@ -53,6 +56,7 @@ public class Post extends AbstractEntity {
     this.slug = nonNull(slug, "Tried to create a Post with a null slug");
     this.coverImage = coverImage == null ? DEFAULT_IMAGE : coverImage;
     this.deletedStatus = nonNull(deletedStatus, "Tried to create a Post with a null deletedStatus");
+    this.comments = comments == null ? List.of() : comments;
   }
 
   public Title getTitle() {
@@ -95,5 +99,19 @@ public class Post extends AbstractEntity {
 
   public Instant getDeletionDate() {
     return deletedStatus.getDeletionDate();
+  }
+
+  public List<Comment> getComments() {
+    return comments;
+  }
+
+  /**
+   * Adds a comment to the post.
+   *
+   * @param comment the comment to be added, must not be null
+   * @throws DomainException if the provided comment is null
+   */
+  public void addComment(final Comment comment) {
+    this.comments.add(nonNull(comment, "Tried to add a null comment to the post"));
   }
 }

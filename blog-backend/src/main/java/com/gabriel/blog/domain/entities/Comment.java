@@ -5,6 +5,7 @@ import com.gabriel.blog.domain.valueobjects.Content;
 import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.domain.valueobjects.DeletedStatus;
 import com.gabriel.blog.domain.valueobjects.Id;
+import java.time.Instant;
 
 /**
  * Represents a comment as an entity.
@@ -17,7 +18,6 @@ public class Comment extends AbstractEntity {
   private final Id authorId;
   private final Content content;
   private final CreationDate creationDate;
-  private final Id postId;
   private final DeletedStatus deletedStatus;
 
   /**
@@ -28,7 +28,6 @@ public class Comment extends AbstractEntity {
    * @param authorId      the comment author id, must not be null
    * @param content       the comment content, must not be null
    * @param creationDate  the comment creation date, must not be null
-   * @param postId        the id of the post this comment belongs to, must not be null
    * @param deletedStatus the comment deleted status, must not be null
    */
   public Comment(
@@ -36,16 +35,36 @@ public class Comment extends AbstractEntity {
       final Id authorId,
       final Content content,
       final CreationDate creationDate,
-      final Id postId,
       final DeletedStatus deletedStatus) {
     super(id);
     this.authorId = nonNull(authorId, "Tried to create a Comment with a null authorId");
     this.content = nonNull(content, "Tried to create a Comment with a null content");
     this.creationDate = nonNull(creationDate, "Tried to create a Comment with a null creationDate");
-    this.postId = nonNull(postId, "Tried to create a Comment with a null postId");
     this.deletedStatus =
         nonNull(deletedStatus, "Tried to create a Comment with a null deletedStatus");
   }
 
+  public Id getAuthorId() {
+    return authorId;
+  }
 
+  public Content getContent() {
+    return content;
+  }
+
+  public CreationDate getCreationDate() {
+    return creationDate;
+  }
+
+  public DeletedStatus getDeletedStatus() {
+    return deletedStatus;
+  }
+
+  public boolean isDeleted() {
+    return deletedStatus.isDeleted();
+  }
+
+  public Instant getDeletionDate() {
+    return deletedStatus.getDeletionDate();
+  }
 }

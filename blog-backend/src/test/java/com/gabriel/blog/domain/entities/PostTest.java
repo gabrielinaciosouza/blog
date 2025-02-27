@@ -15,6 +15,7 @@ import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
+import com.gabriel.blog.fixtures.CommentFixture;
 import com.gabriel.blog.fixtures.ContentFixture;
 import com.gabriel.blog.fixtures.CreationDateFixture;
 import com.gabriel.blog.fixtures.IdFixture;
@@ -22,6 +23,7 @@ import com.gabriel.blog.fixtures.ImageFixture;
 import com.gabriel.blog.fixtures.SlugFixture;
 import com.gabriel.blog.fixtures.TitleFixture;
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class PostTest {
@@ -32,56 +34,64 @@ class PostTest {
   private static final CreationDate creationDate = CreationDateFixture.creationDate();
   private static final Slug slug = SlugFixture.slug();
   private static final Image coverImage = ImageFixture.image();
+  private static final List<Comment> comments = List.of(CommentFixture.comment());
 
   @Test
   void shouldCreateCorrectPost() {
     final var nullIdException =
         assertThrows(DomainException.class,
             () -> new Post(null, title, content, creationDate, slug, coverImage,
-                DeletedStatus.notDeleted()));
+                DeletedStatus.notDeleted(), comments));
     assertEquals("Tried to create an Entity with a null id", nullIdException.getMessage());
 
     final var nullTitleException =
         assertThrows(DomainException.class,
             () -> new Post(id, null, content, creationDate, slug, coverImage,
-                DeletedStatus.notDeleted()));
+                DeletedStatus.notDeleted(), comments));
     assertEquals("Tried to create a Post with a null title", nullTitleException.getMessage());
 
     final var nullContentException =
         assertThrows(DomainException.class,
             () -> new Post(id, title, null, creationDate, slug, coverImage,
-                DeletedStatus.notDeleted()));
+                DeletedStatus.notDeleted(), comments));
     assertEquals("Tried to create a Post with a null content", nullContentException.getMessage());
 
     final var nullCreationDateException =
         assertThrows(DomainException.class,
             () -> new Post(id, title, content, null, slug, coverImage,
-                DeletedStatus.notDeleted()));
+                DeletedStatus.notDeleted(), comments));
     assertEquals("Tried to create a Post with a null creationDate",
         nullCreationDateException.getMessage());
 
     final var nullSlugException =
         assertThrows(DomainException.class,
             () -> new Post(id, title, content, creationDate, null, coverImage,
-                DeletedStatus.notDeleted()));
+                DeletedStatus.notDeleted(), comments));
     assertEquals("Tried to create a Post with a null slug",
         nullSlugException.getMessage());
 
     final var nullDeletedStatusException =
         assertThrows(DomainException.class,
             () -> new Post(id, title, content, creationDate, slug, coverImage,
-                null));
+                null, comments));
     assertEquals("Tried to create a Post with a null deletedStatus",
         nullDeletedStatusException.getMessage());
 
+    final var nullCommentsException =
+        assertThrows(DomainException.class,
+            () -> new Post(id, title, content, creationDate, slug, coverImage,
+                DeletedStatus.notDeleted(), null));
+    assertEquals("Tried to create a Post with a null comments",
+        nullCommentsException.getMessage());
+
     assertDoesNotThrow(() -> new Post(id, title, content, creationDate, slug, coverImage,
-        DeletedStatus.notDeleted()));
+        DeletedStatus.notDeleted(), comments));
   }
 
   @Test
   void shouldCreateCorrectToString() {
     final var post = new Post(id, title, content, creationDate, slug, coverImage,
-        DeletedStatus.notDeleted());
+        DeletedStatus.notDeleted(), comments);
     assertEquals(
         "Post {"
             + "\"content\":\"Content "
@@ -100,7 +110,7 @@ class PostTest {
   @Test
   void shouldMarkPostAsDeleted() {
     final var post = new Post(id, title, content, creationDate, slug, coverImage,
-        DeletedStatus.notDeleted());
+        DeletedStatus.notDeleted(), comments);
     post.markAsDeleted();
     assertTrue(post.isDeleted());
     assertTrue(post.getDeletionDate().isBefore(Instant.now()) || post.getDeletionDate()
@@ -110,7 +120,7 @@ class PostTest {
   @Test
   void shouldMarkPostAsNotDeleted() {
     final var post = new Post(id, title, content, creationDate, slug, coverImage,
-        DeletedStatus.deleted());
+        DeletedStatus.deleted(), comments);
     post.markAsDeleted();
     post.markAsNotDeleted();
     assertFalse(post.isDeleted());
@@ -119,14 +129,27 @@ class PostTest {
   @Test
   void shouldCreatePostWithDefaultImage() {
     final var post = new Post(id, title, content, creationDate, slug, null,
-        DeletedStatus.notDeleted());
+        DeletedStatus.notDeleted(), comments);
     assertNotNull(post.getCoverImage());
   }
 
   @Test
   void shouldCreatePostWithImage() {
     final var post = new Post(id, title, content, creationDate, slug, coverImage,
-        DeletedStatus.notDeleted());
+        DeletedStatus.notDeleted(), comments);
     assertEquals(coverImage, post.getCoverImage());
+  }
+
+  @Test
+  void shouldAddValidComment() {
+    final var post = new Post(id, title, content, creationDate, slug, coverImage,
+        DeletedStatus.notDeleted(), null);
+
+    final var thrown = assertThrows(DomainException.class, () -> post.addComment(null));
+    assertEquals("Tried to add a null comment to a Post", thrown.getMessage());
+
+    final var comment = CommentFixture.comment();
+    post.addComment(comment);
+    assertTrue(post.getComments().contains(comment));
   }
 }

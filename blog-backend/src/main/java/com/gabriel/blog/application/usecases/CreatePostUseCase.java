@@ -86,7 +86,7 @@ public class CreatePostUseCase {
         CreationDate.now(),
         slug,
         postRequest.coverImage() == null ? null : new Image(postRequest.coverImage()),
-        DeletedStatus.notDeleted());
+        DeletedStatus.notDeleted(), null);
 
     postRepository.save(post);
 

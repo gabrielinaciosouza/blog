@@ -10,6 +10,8 @@ import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.DocumentId;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a Firestore-compatible model for storing blog posts.
@@ -27,6 +29,7 @@ public class PostModel {
   private boolean isDeleted;
   private Timestamp deletionDate;
   private String coverImage;
+  private List<CommentModel> comments;
 
   /**
    * Constructs a new {@link PostModel} instance.
@@ -37,9 +40,15 @@ public class PostModel {
   /**
    * Constructs a {@link PostModel} from a given input fields.
    */
-  public PostModel(final String postId, final String title, final String content,
-                   final Timestamp creationDate, final String slug, final boolean isDeleted,
-                   final Timestamp deletionDate, final String coverImage) {
+  public PostModel(final String postId,
+                   final String title,
+                   final String content,
+                   final Timestamp creationDate,
+                   final String slug,
+                   final boolean isDeleted,
+                   final Timestamp deletionDate,
+                   final String coverImage,
+                   final List<CommentModel> comments) {
     this.postId = postId;
     this.title = title;
     this.content = content;
@@ -48,6 +57,7 @@ public class PostModel {
     this.isDeleted = isDeleted;
     this.deletionDate = deletionDate;
     this.coverImage = coverImage;
+    this.comments = comments;
   }
 
   /**
@@ -68,7 +78,8 @@ public class PostModel {
         post.isDeleted() ? Timestamp.ofTimeSecondsAndNanos(
             post.getDeletionDate().getEpochSecond(),
             post.getDeletionDate().getNano()) : null,
-        post.getCoverImage().getValue().toString());
+        post.getCoverImage().getValue().toString(),
+        post.getComments().stream().map(CommentModel::from).toList());
   }
 
   /**
@@ -77,6 +88,8 @@ public class PostModel {
    * @return a {@link Post} entity representing the data in this model.
    */
   public Post toDomain() {
+
+
     return new Post(
         new Id(postId),
         new Title(title),
@@ -84,7 +97,12 @@ public class PostModel {
         new CreationDate(creationDate.toDate().toInstant()),
         Slug.fromString(slug),
         new Image(coverImage),
-        new DeletedStatus(isDeleted, isDeleted ? deletionDate.toDate().toInstant() : null));
+        new DeletedStatus(isDeleted, isDeleted ? deletionDate.toDate().toInstant() : null),
+        comments
+            .stream()
+            .filter(Objects::nonNull)
+            .map(CommentModel::toDomain)
+            .toList());
   }
 
   public String getPostId() {
