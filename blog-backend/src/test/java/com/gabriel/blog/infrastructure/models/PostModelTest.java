@@ -10,6 +10,7 @@ import com.gabriel.blog.domain.valueobjects.CreationDate;
 import com.gabriel.blog.fixtures.PostFixture;
 import com.google.cloud.Timestamp;
 import java.time.ZoneId;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class PostModelTest {
@@ -29,6 +30,7 @@ class PostModelTest {
     assertEquals(post.isDeleted(), postModel.isDeleted());
     assertNull(postModel.getDeletionDate());
     assertEquals(post.getCoverImage().getValue().toString(), postModel.getCoverImage());
+    assertTrue(postModel.getComments().isEmpty());
 
     post = PostFixture.deletedPost();
     postModel = PostModel.from(post);
@@ -45,11 +47,12 @@ class PostModelTest {
         post.getDeletionDate().getEpochSecond(),
         post.getDeletionDate().getNano()), postModel.getDeletionDate());
     assertEquals(post.getCoverImage().getValue().toString(), postModel.getCoverImage());
+    assertTrue(postModel.getComments().isEmpty());
   }
 
   @Test
   void shouldReturnPostFromQueryDocumentSnapshot() {
-    var postModel = new PostModel();
+    final var postModel = new PostModel();
     postModel.setPostId("id");
     postModel.setTitle("title");
     postModel.setContent("content");
@@ -58,6 +61,7 @@ class PostModelTest {
     postModel.setDeleted(false);
     postModel.setDeletionDate(Timestamp.now());
     postModel.setCoverImage("https://example.com/image.jpg");
+    postModel.setComments(List.of());
 
     var post = postModel.toDomain();
 
@@ -68,6 +72,7 @@ class PostModelTest {
     assertEquals("slug", post.getSlug().getValue());
     assertFalse(post.isDeleted());
     assertNull(post.getDeletionDate());
+    assertTrue(post.getComments().isEmpty());
 
     postModel.setDeleted(true);
     postModel.setDeletionDate(Timestamp.now());
@@ -79,6 +84,7 @@ class PostModelTest {
     assertEquals("content", post.getContent().getValue());
     assertEquals(CreationDate.now().toString(), post.getCreationDate().toString());
     assertEquals("slug", post.getSlug().getValue());
+    assertTrue(post.getComments().isEmpty());
     assertTrue(post.isDeleted());
     assertNotNull(post.getDeletionDate());
   }

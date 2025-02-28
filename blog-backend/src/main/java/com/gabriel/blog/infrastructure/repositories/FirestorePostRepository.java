@@ -2,6 +2,7 @@ package com.gabriel.blog.infrastructure.repositories;
 
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.domain.entities.Post;
+import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.PostModel;
@@ -151,6 +152,26 @@ public class FirestorePostRepository implements PostRepository {
       Thread.currentThread().interrupt();
       logger.error("Failed to update post in Firestore", e);
       throw new RepositoryException("Failed to update post in Firestore", e);
+    }
+  }
+
+  @Override
+  public Optional<Post> findById(final Id id) {
+    try {
+      final var documentSnapshot = firestore.collection(COLLECTION_NAME)
+          .document(id.getValue())
+          .get()
+          .get();
+
+      if (!documentSnapshot.exists()) {
+        return Optional.empty();
+      }
+
+      return Optional.of(documentSnapshot.toObject(PostModel.class).toDomain());
+    } catch (final Exception e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to find post by id in Firestore", e);
+      throw new RepositoryException("Failed to find post by id in Firestore", e);
     }
   }
 }

@@ -29,7 +29,7 @@ public class PostModel {
   private boolean isDeleted;
   private Timestamp deletionDate;
   private String coverImage;
-  private List<CommentModel> comments;
+  private List<String> comments;
 
   /**
    * Constructs a new {@link PostModel} instance.
@@ -48,7 +48,7 @@ public class PostModel {
                    final boolean isDeleted,
                    final Timestamp deletionDate,
                    final String coverImage,
-                   final List<CommentModel> comments) {
+                   final List<String> comments) {
     this.postId = postId;
     this.title = title;
     this.content = content;
@@ -79,7 +79,7 @@ public class PostModel {
             post.getDeletionDate().getEpochSecond(),
             post.getDeletionDate().getNano()) : null,
         post.getCoverImage().getValue().toString(),
-        post.getComments().stream().map(CommentModel::from).toList());
+        post.getComments().stream().map(Id::getValue).toList());
   }
 
   /**
@@ -101,7 +101,7 @@ public class PostModel {
         comments
             .stream()
             .filter(Objects::nonNull)
-            .map(CommentModel::toDomain)
+            .map(Id::new)
             .toList());
   }
 
@@ -167,5 +167,13 @@ public class PostModel {
 
   public void setCoverImage(final String coverImage) {
     this.coverImage = coverImage;
+  }
+
+  public List<String> getComments() {
+    return comments;
+  }
+
+  public void setComments(final List<String> comments) {
+    this.comments = comments;
   }
 }

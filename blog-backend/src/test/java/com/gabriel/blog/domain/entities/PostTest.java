@@ -15,7 +15,6 @@ import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
-import com.gabriel.blog.fixtures.CommentFixture;
 import com.gabriel.blog.fixtures.ContentFixture;
 import com.gabriel.blog.fixtures.CreationDateFixture;
 import com.gabriel.blog.fixtures.IdFixture;
@@ -34,7 +33,7 @@ class PostTest {
   private static final CreationDate creationDate = CreationDateFixture.creationDate();
   private static final Slug slug = SlugFixture.slug();
   private static final Image coverImage = ImageFixture.image();
-  private static final List<Comment> comments = List.of(CommentFixture.comment());
+  private static final List<Id> comments = List.of(IdFixture.withId("commentId"));
 
   @Test
   void shouldCreateCorrectPost() {
@@ -77,13 +76,6 @@ class PostTest {
     assertEquals("Tried to create a Post with a null deletedStatus",
         nullDeletedStatusException.getMessage());
 
-    final var nullCommentsException =
-        assertThrows(DomainException.class,
-            () -> new Post(id, title, content, creationDate, slug, coverImage,
-                DeletedStatus.notDeleted(), null));
-    assertEquals("Tried to create a Post with a null comments",
-        nullCommentsException.getMessage());
-
     assertDoesNotThrow(() -> new Post(id, title, content, creationDate, slug, coverImage,
         DeletedStatus.notDeleted(), comments));
   }
@@ -94,6 +86,7 @@ class PostTest {
         DeletedStatus.notDeleted(), comments);
     assertEquals(
         "Post {"
+            + "\"comments\":[\"Id {\\\"value\\\":\\\"commentId\\\"}\"],"
             + "\"content\":\"Content "
             + "{\\\"value\\\":\\\"any content\\\"}\","
             + "\"coverImage\":\"https:\\/\\/example.com\\/image.jpg\","
@@ -141,15 +134,15 @@ class PostTest {
   }
 
   @Test
-  void shouldAddValidComment() {
+  void shouldLinkValidComment() {
     final var post = new Post(id, title, content, creationDate, slug, coverImage,
         DeletedStatus.notDeleted(), null);
 
-    final var thrown = assertThrows(DomainException.class, () -> post.addComment(null));
-    assertEquals("Tried to add a null comment to a Post", thrown.getMessage());
+    final var thrown = assertThrows(DomainException.class, () -> post.linkComment(null));
+    assertEquals("Tried to add a null comment to the post", thrown.getMessage());
 
-    final var comment = CommentFixture.comment();
-    post.addComment(comment);
+    final var comment = IdFixture.withId("commentId");
+    post.linkComment(comment);
     assertTrue(post.getComments().contains(comment));
   }
 }

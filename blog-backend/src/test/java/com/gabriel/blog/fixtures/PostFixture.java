@@ -2,6 +2,7 @@ package com.gabriel.blog.fixtures;
 
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.valueobjects.DeletedStatus;
+import java.util.List;
 
 public class PostFixture {
 
@@ -13,7 +14,8 @@ public class PostFixture {
         CreationDateFixture.creationDate(),
         SlugFixture.slug(),
         ImageFixture.image(),
-        DeletedStatus.notDeleted());
+        DeletedStatus.notDeleted(),
+        List.of());
   }
 
   public static Post deletedPost() {
@@ -24,6 +26,7 @@ public class PostFixture {
         CreationDateFixture.creationDate(),
         SlugFixture.slug(),
         ImageFixture.image(),
-        DeletedStatus.deleted());
+        DeletedStatus.deleted(),
+        List.of());
   }
 }

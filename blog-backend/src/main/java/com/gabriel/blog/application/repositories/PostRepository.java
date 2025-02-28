@@ -1,6 +1,7 @@
 package com.gabriel.blog.application.repositories;
 
 import com.gabriel.blog.domain.entities.Post;
+import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import java.util.List;
 import java.util.Optional;
@@ -117,4 +118,18 @@ public interface PostRepository {
    * @return the updated {@link Post} entity.
    */
   Post update(Post post);
+
+  /**
+   * Retrieves a {@link Post} entity by its unique identifier.
+   * This method is responsible for fetching a {@link Post} entity from the database
+   * based on its unique identifier.
+   *
+   * <p>The implementation should query the database for a post with the given identifier,
+   * and return an {@link Optional} containing the post if it exists, or an empty
+   * {@link Optional} if no post with the given identifier was found.</p>
+   *
+   * @param id the unique identifier of the post to retrieve.
+   * @return an {@link Optional} with the post, or an empty {@link Optional}.
+   */
+  Optional<Post> findById(Id id);
 }

@@ -10,6 +10,7 @@ import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class Post extends AbstractEntity {
   private final Slug slug;
   private final Image coverImage;
   private DeletedStatus deletedStatus;
-  private final List<Comment> comments;
+  private final List<Id> comments;
 
   /**
    * Constructs a {@code Post} instance with the given
@@ -48,7 +49,7 @@ public class Post extends AbstractEntity {
    */
   public Post(final Id id, final Title title, final Content content,
               final CreationDate creationDate, final Slug slug, final Image coverImage,
-              final DeletedStatus deletedStatus, final List<Comment> comments) {
+              final DeletedStatus deletedStatus, final List<Id> comments) {
     super(id);
     this.title = nonNull(title, "Tried to create a Post with a null title");
     this.content = nonNull(content, "Tried to create a Post with a null content");
@@ -56,7 +57,7 @@ public class Post extends AbstractEntity {
     this.slug = nonNull(slug, "Tried to create a Post with a null slug");
     this.coverImage = coverImage == null ? DEFAULT_IMAGE : coverImage;
     this.deletedStatus = nonNull(deletedStatus, "Tried to create a Post with a null deletedStatus");
-    this.comments = comments == null ? List.of() : comments;
+    this.comments = comments == null ? new ArrayList<>() : comments;
   }
 
   public Title getTitle() {
@@ -101,17 +102,17 @@ public class Post extends AbstractEntity {
     return deletedStatus.getDeletionDate();
   }
 
-  public List<Comment> getComments() {
+  public List<Id> getComments() {
     return comments;
   }
 
   /**
-   * Adds a comment to the post.
+   * Links a comment to this post.
    *
-   * @param comment the comment to be added, must not be null
-   * @throws DomainException if the provided comment is null
+   * @param commentId the comment id to be linked to this post, must not be null
+   * @throws DomainException if the provided comment id is null
    */
-  public void addComment(final Comment comment) {
-    this.comments.add(nonNull(comment, "Tried to add a null comment to the post"));
+  public void linkComment(final Id commentId) {
+    this.comments.add(nonNull(commentId, "Tried to add a null comment to the post"));
   }
 }
