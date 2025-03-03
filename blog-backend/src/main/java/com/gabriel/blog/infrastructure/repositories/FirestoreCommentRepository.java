@@ -32,7 +32,8 @@ public class FirestoreCommentRepository implements CommentRepository {
   public void save(final Comment comment) {
     try {
       firestore.collection(COLLECTION_NAME)
-          .add(CommentModel.from(comment))
+          .document(comment.getId().getValue())
+          .set(CommentModel.from(comment))
           .get();
     } catch (final Exception e) {
       Thread.currentThread().interrupt();

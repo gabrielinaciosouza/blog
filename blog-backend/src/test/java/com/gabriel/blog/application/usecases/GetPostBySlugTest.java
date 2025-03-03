@@ -12,6 +12,7 @@ import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.fixtures.PostFixture;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class GetPostBySlugTest {
     verify(postRepository).findBySlug(Slug.fromString("test-slug"));
     assertEquals(
         new PostResponse("any", "any title", "any content", "2024-12-12 01:00", "any-title",
-            "https://example.com/image.jpg"),
+            "https://example.com/image.jpg", List.of()),
         result);
   }
 

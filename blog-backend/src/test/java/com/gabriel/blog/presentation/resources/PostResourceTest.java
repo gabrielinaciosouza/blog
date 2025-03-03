@@ -43,7 +43,8 @@ class PostResourceTest {
   void shouldCreatePostSuccessfully() {
     final var request = new CreatePostRequest("title", "content", "https://example.com/image.jpg");
     final var expectedResponse =
-        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg",
+            List.of());
     when(createPostUseCase.create(request)).thenReturn(expectedResponse);
 
     final var response = postResource.create(request);
@@ -56,7 +57,8 @@ class PostResourceTest {
   void shouldGetPostBySlugSuccessfully() {
     final var slug = "slug";
     final var expectedResponse =
-        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg",
+            List.of());
     when(getPostBySlug.getPostBySlug(slug)).thenReturn(expectedResponse);
 
     final var response = postResource.getPostBySlug(slug);
@@ -69,7 +71,8 @@ class PostResourceTest {
   void shouldFindPostsSuccessfully() {
     final var request = new FindPostsRequest(1, 10, "title", "ASCENDING");
     final var expectedResponse =
-        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg",
+            List.of());
     final var expectedPosts = List.of(expectedResponse);
     final var expectedTotal = 1;
     when(findPostsUseCase.findPosts(request)).thenReturn(
@@ -92,7 +95,8 @@ class PostResourceTest {
   @Test
   void shouldGetDeletedPostsSuccessfully() {
     final var expectedResponse =
-        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
+        new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg",
+            List.of());
     final var expectedPosts = List.of(expectedResponse);
     when(getDeletedPosts.getDeletedPosts()).thenReturn(expectedPosts);
 

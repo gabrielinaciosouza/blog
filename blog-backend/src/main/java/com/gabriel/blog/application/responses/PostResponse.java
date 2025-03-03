@@ -1,6 +1,7 @@
 package com.gabriel.blog.application.responses;
 
 import com.gabriel.blog.domain.entities.Post;
+import java.util.List;
 
 /**
  * Represents the response returned after creating a new {@link Post}.
@@ -19,5 +20,6 @@ public record PostResponse(
     String content,
     String creationDate,
     String slug,
-    String coverImage) {
+    String coverImage,
+    List<String> comments) {
 }

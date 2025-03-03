@@ -3,6 +3,7 @@ package com.gabriel.blog.application.usecases;
 import com.gabriel.blog.application.exceptions.NotFoundException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.responses.PostResponse;
+import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -46,6 +47,7 @@ public class GetPostBySlug {
         post.getContent().getValue(),
         post.getCreationDate().toString(),
         post.getSlug().getValue(),
-        post.getCoverImage().toString());
+        post.getCoverImage().toString(),
+        post.getComments().stream().map(Id::getValue).toList());
   }
 }

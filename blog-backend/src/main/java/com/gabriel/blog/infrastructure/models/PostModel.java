@@ -9,9 +9,9 @@ import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
-import com.google.cloud.firestore.annotation.DocumentId;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Represents a Firestore-compatible model for storing blog posts.
@@ -20,8 +20,7 @@ import java.util.Objects;
  */
 public class PostModel {
 
-  @DocumentId
-  private String postId;
+
   private String title;
   private String content;
   private Timestamp creationDate;
@@ -40,8 +39,7 @@ public class PostModel {
   /**
    * Constructs a {@link PostModel} from a given input fields.
    */
-  public PostModel(final String postId,
-                   final String title,
+  public PostModel(final String title,
                    final String content,
                    final Timestamp creationDate,
                    final String slug,
@@ -49,7 +47,6 @@ public class PostModel {
                    final Timestamp deletionDate,
                    final String coverImage,
                    final List<String> comments) {
-    this.postId = postId;
     this.title = title;
     this.content = content;
     this.creationDate = creationDate;
@@ -67,7 +64,6 @@ public class PostModel {
    */
   public static PostModel from(final Post post) {
     return new PostModel(
-        post.getId().getValue(),
         post.getTitle().getValue(),
         post.getContent().getValue(),
         Timestamp.ofTimeSecondsAndNanos(
@@ -87,7 +83,7 @@ public class PostModel {
    *
    * @return a {@link Post} entity representing the data in this model.
    */
-  public Post toDomain() {
+  public Post toDomain(final String postId) {
 
 
     return new Post(
@@ -98,19 +94,11 @@ public class PostModel {
         Slug.fromString(slug),
         new Image(coverImage),
         new DeletedStatus(isDeleted, isDeleted ? deletionDate.toDate().toInstant() : null),
-        comments
+        comments == null ? List.of() : comments
             .stream()
             .filter(Objects::nonNull)
             .map(Id::new)
-            .toList());
-  }
-
-  public String getPostId() {
-    return postId;
-  }
-
-  public void setPostId(final String postId) {
-    this.postId = postId;
+            .collect(Collectors.toList()));
   }
 
   public String getTitle() {

@@ -45,7 +45,8 @@ public class FirestorePostRepository implements PostRepository {
   public void save(final Post post) {
     try {
       firestore.collection(COLLECTION_NAME)
-          .add(PostModel.from(post))
+          .document(post.getId().getValue())
+          .set(PostModel.from(post))
           .get();
       logger.info("Post with id " + post.getId().getValue() + " saved successfully");
     } catch (final InterruptedException | ExecutionException e) {
@@ -66,8 +67,9 @@ public class FirestorePostRepository implements PostRepository {
           .getDocuments()
           .stream()
           .findFirst()
-          .map(doc -> doc.toObject(PostModel.class))
-          .map(PostModel::toDomain);
+          .map(doc -> doc
+              .toObject(PostModel.class)
+              .toDomain(doc.getId()));
     } catch (final InterruptedException | ExecutionException e) {
       Thread.currentThread().interrupt();
       logger.error("Failed to find post by slug in Firestore", e);
@@ -119,8 +121,9 @@ public class FirestorePostRepository implements PostRepository {
         .get()
         .getDocuments()
         .stream()
-        .map(doc -> doc.toObject(PostModel.class))
-        .map(PostModel::toDomain)
+        .map(doc -> doc
+            .toObject(PostModel.class)
+            .toDomain(doc.getId()))
         .toList();
   }
 
@@ -167,7 +170,8 @@ public class FirestorePostRepository implements PostRepository {
         return Optional.empty();
       }
 
-      return Optional.of(documentSnapshot.toObject(PostModel.class).toDomain());
+      return Optional.of(
+          documentSnapshot.toObject(PostModel.class).toDomain(documentSnapshot.getId()));
     } catch (final Exception e) {
       Thread.currentThread().interrupt();
       logger.error("Failed to find post by id in Firestore", e);

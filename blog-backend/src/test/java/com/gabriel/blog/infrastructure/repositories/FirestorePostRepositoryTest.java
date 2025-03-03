@@ -66,13 +66,14 @@ class FirestorePostRepositoryTest {
     @Test
     void shouldSavePostCorrectly() throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.add(any(PostModel.class)))
+      when(collectionReference.document("any")).thenReturn(documentReference);
+      when(documentReference.set(any(PostModel.class)))
           .thenReturn(apiFuture);
 
       firestorePostRepository.save(POST);
 
       verify(firestore).collection("posts");
-      verify(collectionReference).add(any(PostModel.class));
+      verify(documentReference).set(any(PostModel.class));
       verify(apiFuture).get();
     }
 
@@ -80,7 +81,8 @@ class FirestorePostRepositoryTest {
     void shouldThrowRepositoryExceptionOnThreadFailure()
         throws ExecutionException, InterruptedException {
       when(firestore.collection("posts")).thenReturn(collectionReference);
-      when(collectionReference.add(any(PostModel.class)))
+      when(collectionReference.document("any")).thenReturn(documentReference);
+      when(documentReference.set(any(PostModel.class)))
           .thenReturn(apiFuture);
       when(apiFuture.get()).thenThrow(InterruptedException.class);
 
@@ -104,6 +106,7 @@ class FirestorePostRepositoryTest {
 
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.getId()).thenReturn("any");
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
 
       final var result = firestorePostRepository.findBySlug(POST.getSlug());
@@ -137,6 +140,7 @@ class FirestorePostRepositoryTest {
 
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.getId()).thenReturn("any");
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.creationDate,
@@ -199,6 +203,7 @@ class FirestorePostRepositoryTest {
 
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.getId()).thenReturn("any");
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 0, PostRepository.SortBy.title,
@@ -233,6 +238,7 @@ class FirestorePostRepositoryTest {
 
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.getId()).thenReturn("any");
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 10, null,
@@ -267,6 +273,7 @@ class FirestorePostRepositoryTest {
 
       when(apiFuture.get()).thenReturn(querySnapshot);
       when(querySnapshot.getDocuments()).thenReturn(List.of(documentSnapshot));
+      when(documentSnapshot.getId()).thenReturn("any");
       when(documentSnapshot.toObject(PostModel.class)).thenReturn(PostModel.from(POST));
       final var params =
           new PostRepository.FindPostsParams(1, 10, PostRepository.SortBy.title,

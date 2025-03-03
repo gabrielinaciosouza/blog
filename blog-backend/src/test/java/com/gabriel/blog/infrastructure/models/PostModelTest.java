@@ -26,7 +26,6 @@ class PostModelTest {
         post.getCreationDate().getValue().atZone(ZoneId.systemDefault()).toEpochSecond(),
         post.getCreationDate().getValue().getNano()), postModel.getCreationDate());
     assertEquals(post.getSlug().getValue(), postModel.getSlug());
-    assertEquals(post.getId().getValue(), postModel.getPostId());
     assertEquals(post.isDeleted(), postModel.isDeleted());
     assertNull(postModel.getDeletionDate());
     assertEquals(post.getCoverImage().getValue().toString(), postModel.getCoverImage());
@@ -41,7 +40,6 @@ class PostModelTest {
         post.getCreationDate().getValue().atZone(ZoneId.systemDefault()).toEpochSecond(),
         post.getCreationDate().getValue().getNano()), postModel.getCreationDate());
     assertEquals(post.getSlug().getValue(), postModel.getSlug());
-    assertEquals(post.getId().getValue(), postModel.getPostId());
     assertEquals(post.isDeleted(), postModel.isDeleted());
     assertEquals(Timestamp.ofTimeSecondsAndNanos(
         post.getDeletionDate().getEpochSecond(),
@@ -53,7 +51,6 @@ class PostModelTest {
   @Test
   void shouldReturnPostFromQueryDocumentSnapshot() {
     final var postModel = new PostModel();
-    postModel.setPostId("id");
     postModel.setTitle("title");
     postModel.setContent("content");
     postModel.setCreationDate(Timestamp.now());
@@ -63,7 +60,7 @@ class PostModelTest {
     postModel.setCoverImage("https://example.com/image.jpg");
     postModel.setComments(List.of());
 
-    var post = postModel.toDomain();
+    var post = postModel.toDomain("id");
 
     assertEquals("id", post.getId().getValue());
     assertEquals("title", post.getTitle().getValue());
@@ -77,7 +74,7 @@ class PostModelTest {
     postModel.setDeleted(true);
     postModel.setDeletionDate(Timestamp.now());
 
-    post = postModel.toDomain();
+    post = postModel.toDomain("id");
 
     assertEquals("id", post.getId().getValue());
     assertEquals("title", post.getTitle().getValue());

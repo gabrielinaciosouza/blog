@@ -22,13 +22,15 @@ class FirestoreCommentRepositoryTest {
 
   private Firestore firestore;
   private CollectionReference collectionReference;
-  private ApiFuture<DocumentReference> apiFuture;
+  private DocumentReference documentReference;
+  private ApiFuture apiFuture;
   private FirestoreCommentRepository firestoreCommentRepository;
 
   @BeforeEach
   void setUp() {
     firestore = mock(Firestore.class);
     collectionReference = mock(CollectionReference.class);
+    documentReference = mock(DocumentReference.class);
     apiFuture = mock(ApiFuture.class);
     firestoreCommentRepository = new FirestoreCommentRepository(firestore);
   }
@@ -39,13 +41,15 @@ class FirestoreCommentRepositoryTest {
     @Test
     void shouldSaveCommentCorrectly() throws ExecutionException, InterruptedException {
       when(firestore.collection("comments")).thenReturn(collectionReference);
-      when(collectionReference.add(any(CommentModel.class))).thenReturn(apiFuture);
+      when(collectionReference.document("any")).thenReturn(documentReference);
+      when(documentReference.set(any(CommentModel.class))).thenReturn(apiFuture);
 
       final var comment = CommentFixture.comment();
       firestoreCommentRepository.save(comment);
 
       verify(firestore).collection("comments");
-      verify(collectionReference).add(any(CommentModel.class));
+      verify(collectionReference).document("any");
+      verify(documentReference).set(any(CommentModel.class));
       verify(apiFuture).get();
     }
 

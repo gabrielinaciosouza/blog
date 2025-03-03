@@ -96,6 +96,7 @@ public class CreatePostUseCase {
         post.getContent().getValue(),
         post.getCreationDate().toString(),
         post.getSlug().getValue(),
-        post.getCoverImage().toString());
+        post.getCoverImage().toString(),
+        post.getComments().stream().map(Id::getValue).toList());
   }
 }
