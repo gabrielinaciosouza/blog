@@ -9,6 +9,7 @@ import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -94,7 +95,7 @@ public class PostModel {
         Slug.fromString(slug),
         new Image(coverImage),
         new DeletedStatus(isDeleted, isDeleted ? deletionDate.toDate().toInstant() : null),
-        comments == null ? List.of() : comments
+        comments == null ? new ArrayList<>() : comments
             .stream()
             .filter(Objects::nonNull)
             .map(Id::new)
