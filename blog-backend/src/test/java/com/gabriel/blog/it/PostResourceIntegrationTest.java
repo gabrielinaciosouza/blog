@@ -1,6 +1,8 @@
 package com.gabriel.blog.it;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,9 +19,11 @@ import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -28,8 +32,13 @@ class PostResourceIntegrationTest {
   @Inject
   private Firestore firestore;
 
+  @AfterEach
+  void tearDown() throws InterruptedException {
+    deleteTestPosts();
+  }
+
   @Test
-  void shouldCreatePost() throws InterruptedException {
+  void shouldCreatePost() {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
@@ -44,9 +53,8 @@ class PostResourceIntegrationTest {
         .body("content", equalTo("content"))
         .body("slug", equalTo("title"))
         .body("creationDate", notNullValue())
-        .body("coverImage", equalTo("https://example.com/image.jpg"));
-
-    deleteTestPosts();
+        .body("coverImage", equalTo("https://example.com/image.jpg"))
+        .body("comments", empty());
   }
 
   @Test
@@ -75,8 +83,6 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(409)
         .body("message", equalTo("Post with slug title already exists"));
-
-    deleteTestPosts();
   }
 
   @Test
@@ -158,10 +164,8 @@ class PostResourceIntegrationTest {
         .body("title", equalTo("title"))
         .body("content", equalTo("content"))
         .body("slug", equalTo("slug"))
-        .body("creationDate", equalTo("2024-12-12 01:00"));
-
-    firestore.collection("posts").document("slug").delete();
-    Thread.sleep(1000);
+        .body("creationDate", equalTo("2024-12-12 01:00"))
+        .body("comments", empty());
   }
 
   @Test
@@ -213,14 +217,14 @@ class PostResourceIntegrationTest {
         .body("posts[0].slug", equalTo("slug"))
         .body("posts[0].creationDate", equalTo("2024-12-12 01:00"))
         .body("posts[0].coverImage", equalTo("https://example.com/image.jpg"))
+        .body("posts[0].comments", empty())
         .body("posts[1].postId", notNullValue())
         .body("posts[1].title", equalTo("title2"))
         .body("posts[1].content", equalTo("content"))
         .body("posts[1].slug", equalTo("slug"))
         .body("posts[1].creationDate", equalTo("2024-12-12 01:00"))
-        .body("posts[1].coverImage", equalTo("https://example.com/image.jpg"));
-
-    deleteTestPosts();
+        .body("posts[1].coverImage", equalTo("https://example.com/image.jpg"))
+        .body("posts[1].comments", empty());
   }
 
   @Test
@@ -244,14 +248,14 @@ class PostResourceIntegrationTest {
         .body("posts[0].slug", equalTo("slug"))
         .body("posts[0].creationDate", equalTo("2024-12-12 01:00"))
         .body("posts[0].coverImage", equalTo("https://example.com/image.jpg"))
+        .body("posts[0].comments", empty())
         .body("posts[1].postId", notNullValue())
         .body("posts[1].title", equalTo("title"))
         .body("posts[1].content", equalTo("content"))
         .body("posts[1].slug", equalTo("slug"))
         .body("posts[1].creationDate", equalTo("2024-12-12 01:00"))
-        .body("posts[1].coverImage", equalTo("https://example.com/image.jpg"));
-
-    deleteTestPosts();
+        .body("posts[1].coverImage", equalTo("https://example.com/image.jpg"))
+        .body("posts[1].comments", empty());
   }
 
   @Test
@@ -285,8 +289,6 @@ class PostResourceIntegrationTest {
         .statusCode(200)
         .body("totalCount", equalTo(2))
         .body("posts.size()", equalTo(2));
-
-    deleteTestPosts();
   }
 
   @Test
@@ -305,8 +307,6 @@ class PostResourceIntegrationTest {
         .statusCode(200)
         .body("totalCount", equalTo(2))
         .body("posts.size()", equalTo(2));
-
-    deleteTestPosts();
   }
 
   @Test
@@ -325,8 +325,6 @@ class PostResourceIntegrationTest {
         .statusCode(200)
         .body("totalCount", equalTo(2))
         .body("posts.size()", equalTo(2));
-
-    deleteTestPosts();
   }
 
   @Test
@@ -345,12 +343,10 @@ class PostResourceIntegrationTest {
         .statusCode(200)
         .body("totalCount", equalTo(2))
         .body("posts.size()", equalTo(1));
-
-    deleteTestPosts();
   }
 
   @Test
-  void shouldDeletePost() throws InterruptedException, ExecutionException {
+  void shouldDeletePost() throws ExecutionException, InterruptedException {
     final var timestamp = Timestamp.ofTimeSecondsAndNanos(
         CreationDateFixture.creationDate().getValue().getEpochSecond(),
         CreationDateFixture.creationDate().getValue().getNano());
@@ -400,8 +396,6 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(404)
         .body("message", equalTo("Post with slug slug not found"));
-
-    deleteTestPosts();
   }
 
   @Test
@@ -438,8 +432,37 @@ class PostResourceIntegrationTest {
         .ifValidationFails(LogDetail.BODY)
         .statusCode(200)
         .body("size()", equalTo(1));
+  }
 
-    deleteTestPosts();
+  @Test
+  void shouldLoadPostWithComment() throws InterruptedException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
+    firestore.collection("posts").document("comment").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "deleted", false,
+        "comments", List.of("any")));
+
+    Thread.sleep(1000);
+
+    given()
+        .when()
+        .get("/posts/slug")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("postId", notNullValue())
+        .body("title", equalTo("title"))
+        .body("content", equalTo("content"))
+        .body("slug", equalTo("slug"))
+        .body("creationDate", equalTo("2024-12-12 01:00"))
+        .body("comments", contains("any"));
   }
 
   private void createTestPosts() throws InterruptedException {
