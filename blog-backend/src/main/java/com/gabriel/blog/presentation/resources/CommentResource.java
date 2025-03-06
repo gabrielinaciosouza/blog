@@ -1,6 +1,7 @@
 package com.gabriel.blog.presentation.resources;
 
 import com.gabriel.blog.application.requests.AddCommentRequest;
+import com.gabriel.blog.application.responses.CommentResponse;
 import com.gabriel.blog.application.usecases.AddCommentUseCase;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -33,7 +34,7 @@ public class CommentResource {
    */
   @POST
   @ResponseStatus(204)
-  public void addComment(final AddCommentRequest request) {
-    addCommentUseCase.addComment(request);
+  public CommentResponse addComment(final AddCommentRequest request) {
+    return addCommentUseCase.addComment(request);
   }
 }
