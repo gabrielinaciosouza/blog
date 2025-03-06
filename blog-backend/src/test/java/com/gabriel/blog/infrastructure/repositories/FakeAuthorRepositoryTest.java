@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-class FakeUserRepositoryTest {
+class FakeAuthorRepositoryTest {
 
   @Test
   void shouldReturnTrueWhenExistsById() {
-    final var fakeUserRepository = new FakeUserRepository();
-    assertTrue(fakeUserRepository.existsById(null));
+    final var fakeUserRepository = new FakeAuthorRepository();
+    assertTrue(fakeUserRepository.findById(null).isPresent());
   }
 
 }
