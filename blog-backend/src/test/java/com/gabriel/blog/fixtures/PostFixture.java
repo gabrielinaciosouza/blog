@@ -2,7 +2,7 @@ package com.gabriel.blog.fixtures;
 
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.valueobjects.DeletedStatus;
-import java.util.List;
+import java.util.ArrayList;
 
 public class PostFixture {
 
@@ -15,7 +15,7 @@ public class PostFixture {
         SlugFixture.slug(),
         ImageFixture.image(),
         DeletedStatus.notDeleted(),
-        List.of());
+        new ArrayList<>());
   }
 
   public static Post deletedPost() {
@@ -27,6 +27,6 @@ public class PostFixture {
         SlugFixture.slug(),
         ImageFixture.image(),
         DeletedStatus.deleted(),
-        List.of());
+        new ArrayList<>());
   }
 }

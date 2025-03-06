@@ -2,10 +2,13 @@ package com.gabriel.blog.infrastructure.repositories;
 
 import com.gabriel.blog.application.repositories.CommentRepository;
 import com.gabriel.blog.domain.entities.Comment;
+import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.gabriel.blog.infrastructure.models.CommentModel;
 import com.google.cloud.firestore.Firestore;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.logging.Logger;
 
 /**
@@ -39,6 +42,28 @@ public class FirestoreCommentRepository implements CommentRepository {
       Thread.currentThread().interrupt();
       logger.error("Failed to save comment to Firestore", e);
       throw new RepositoryException("Failed to save comment to Firestore", e);
+    }
+  }
+
+  @Override
+  public List<Comment> getCommentsById(final List<Id> ids) {
+    try {
+      final var futures = ids.stream()
+          .map(id -> firestore.collection(COLLECTION_NAME).document(id.getValue()).get())
+          .toList();
+
+      final var comments = new ArrayList<Comment>();
+      for (final var future : futures) {
+        final var document = future.get();
+        if (document.exists()) {
+          comments.add(document.toObject(CommentModel.class).toDomain());
+        }
+      }
+      return comments;
+    } catch (final Exception e) {
+      Thread.currentThread().interrupt();
+      logger.error("Failed to retrieve comments from Firestore", e);
+      throw new RepositoryException("Failed to retrieve comments from Firestore", e);
     }
   }
 }
