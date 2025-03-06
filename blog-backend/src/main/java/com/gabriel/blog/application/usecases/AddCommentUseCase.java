@@ -1,10 +1,12 @@
 package com.gabriel.blog.application.usecases;
 
 import com.gabriel.blog.application.exceptions.ValidationException;
+import com.gabriel.blog.application.repositories.AuthorRepository;
 import com.gabriel.blog.application.repositories.CommentRepository;
 import com.gabriel.blog.application.repositories.PostRepository;
-import com.gabriel.blog.application.repositories.UserRepository;
 import com.gabriel.blog.application.requests.AddCommentRequest;
+import com.gabriel.blog.application.responses.AuthorResponse;
+import com.gabriel.blog.application.responses.CommentResponse;
 import com.gabriel.blog.application.services.IdGenerator;
 import com.gabriel.blog.domain.entities.Comment;
 import com.gabriel.blog.domain.valueobjects.Content;
@@ -22,23 +24,23 @@ public class AddCommentUseCase {
   private static final String COMMENT_DOMAIN = "comment";
 
   private final PostRepository postRepository;
-  private final UserRepository userRepository;
+  private final AuthorRepository authorRepository;
   private final CommentRepository commentRepository;
   private final IdGenerator idGenerator;
 
   /**
    * Default constructor for the {@link AddCommentUseCase} class.
    *
-   * @param postRepository the repository for managing post data.
-   * @param userRepository the repository for managing user data.
-   * @param idGenerator    the service for generating IDs.
+   * @param postRepository   the repository for managing post data.
+   * @param authorRepository the repository for managing user data.
+   * @param idGenerator      the service for generating IDs.
    */
   public AddCommentUseCase(final PostRepository postRepository,
-                           final UserRepository userRepository,
+                           final AuthorRepository authorRepository,
                            final CommentRepository commentRepository,
                            final IdGenerator idGenerator) {
     this.postRepository = postRepository;
-    this.userRepository = userRepository;
+    this.authorRepository = authorRepository;
     this.commentRepository = commentRepository;
     this.idGenerator = idGenerator;
   }
@@ -49,7 +51,7 @@ public class AddCommentUseCase {
    *
    * @param request the request containing the comment data.
    */
-  public void addComment(final AddCommentRequest request) {
+  public CommentResponse addComment(final AddCommentRequest request) {
     final var content = new Content(request.content());
     final var postId = new Id(request.postId());
     final var postOptional = postRepository.findById(postId);
@@ -59,11 +61,13 @@ public class AddCommentUseCase {
     }
 
     final var authorId = new Id(request.authorId());
-    final var userExists = userRepository.existsById(authorId);
+    final var userOptional = authorRepository.findById(authorId);
 
-    if (!userExists) {
+    if (userOptional.isEmpty()) {
       throw new ValidationException("Author not found");
     }
+
+    final var author = userOptional.get();
 
     final var post = postOptional.get();
 
@@ -74,5 +78,17 @@ public class AddCommentUseCase {
 
     post.linkComment(comment.getId());
     postRepository.update(post);
+
+    return new CommentResponse(
+        comment.getId().getValue(),
+        comment.getContent().getValue(),
+        comment.getCreationDate().toString(),
+        new AuthorResponse(
+            author.getId().getValue(),
+            author.getName().getValue(),
+            author.getEmail().getEmail(),
+            author.getProfilePicture().toString()
+        )
+    );
   }
 }
