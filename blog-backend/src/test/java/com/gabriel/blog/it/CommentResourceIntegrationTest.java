@@ -2,6 +2,7 @@ package com.gabriel.blog.it;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.gabriel.blog.application.requests.AddCommentRequest;
@@ -52,7 +53,14 @@ class CommentResourceIntegrationTest {
         .then()
         .log()
         .ifValidationFails(LogDetail.BODY)
-        .statusCode(204);
+        .statusCode(200)
+        .body("commentId", notNullValue())
+        .body("content", equalTo("any comment"))
+        .body("creationDate", notNullValue())
+        .body("author.authorId", equalTo("any"))
+        .body("author.name", equalTo("John Doe"))
+        .body("author.email", equalTo("email@email.com"))
+        .body("author.profilePicture", equalTo("http://image.com"));
 
     assertFalse(
         firestore.collection("posts").document("postId").get().get().toObject(PostModel.class)
