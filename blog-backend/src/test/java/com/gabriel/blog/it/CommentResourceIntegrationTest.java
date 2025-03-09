@@ -29,7 +29,7 @@ class CommentResourceIntegrationTest {
 
   @AfterEach
   void tearDown() throws InterruptedException {
-    deleteTestPosts();
+    clearTestData();
   }
 
   @Test
@@ -82,8 +82,80 @@ class CommentResourceIntegrationTest {
         .body("message", equalTo("Post not found"));
   }
 
-  private void deleteTestPosts() throws InterruptedException {
+  @Test
+  void shouldGetCommentsById() {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
+    firestore.collection("comments").document("commentId").set(Map.of(
+        "authorId", "any",
+        "content", "content",
+        "creationDate", timestamp,
+        "deleted", false));
+
+    firestore.collection("comments").document("commentId2").set(Map.of(
+        "authorId", "any",
+        "content", "content2",
+        "creationDate", timestamp,
+        "deleted", false));
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new String[] { "commentId", "commentId2" })
+        .post("/comments/by-ids")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("size()", equalTo(2))
+        .body("[0].commentId", notNullValue())
+        .body("[0].content", equalTo("content"))
+        .body("[0].creationDate", notNullValue())
+        .body("[0].author.authorId", equalTo("any"))
+        .body("[0].author.name", equalTo("John Doe"))
+        .body("[0].author.email", equalTo("email@email.com"))
+        .body("[0].author.profilePicture", equalTo("http://image.com"))
+        .body("[1].commentId", notNullValue())
+        .body("[1].content", equalTo("content2"))
+        .body("[0].creationDate", notNullValue())
+        .body("[0].author.authorId", equalTo("any"))
+        .body("[0].author.name", equalTo("John Doe"))
+        .body("[0].author.email", equalTo("email@email.com"))
+        .body("[0].author.profilePicture", equalTo("http://image.com"));
+  }
+
+  @Test
+  void shouldReturnEmptyIfNotFound() {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new String[] { "commentId", "commentId2" })
+        .post("/comments/by-ids")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("isEmpty()", equalTo(true));
+  }
+
+  @Test
+  void shouldReturnEmptyIfEmpty() {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .post("/comments/by-ids")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(200)
+        .body("isEmpty()", equalTo(true));
+  }
+
+
+  private void clearTestData() throws InterruptedException {
     firestore.collection("posts").listDocuments().forEach(DocumentReference::delete);
+    firestore.collection("comments").listDocuments().forEach(DocumentReference::delete);
     Thread.sleep(1000);
   }
 }

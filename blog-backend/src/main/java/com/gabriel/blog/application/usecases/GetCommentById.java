@@ -6,6 +6,7 @@ import com.gabriel.blog.application.responses.AuthorResponse;
 import com.gabriel.blog.application.responses.CommentResponse;
 import com.gabriel.blog.domain.entities.Comment;
 import com.gabriel.blog.domain.valueobjects.Id;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 /**
  * Use case to get a comment by its ID.
  */
+@ApplicationScoped
 public class GetCommentById {
 
   private final CommentRepository commentRepository;
