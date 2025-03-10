@@ -19,17 +19,17 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class GetCommentByIdTest {
+class GetCommentsByIdUseCaseTest {
 
   private CommentRepository commentRepository;
   private AuthorRepository authorRepository;
-  private GetCommentById getCommentById;
+  private GetCommentsByIdUseCase getCommentsByIdUseCase;
 
   @BeforeEach
   void setUp() {
     commentRepository = mock(CommentRepository.class);
     authorRepository = mock(AuthorRepository.class);
-    getCommentById = new GetCommentById(commentRepository, authorRepository);
+    getCommentsByIdUseCase = new GetCommentsByIdUseCase(commentRepository, authorRepository);
   }
 
   @Test
@@ -39,7 +39,8 @@ class GetCommentByIdTest {
     when(commentRepository.getCommentsById(anyList())).thenReturn(List.of(comment));
     when(authorRepository.findById(any(Id.class))).thenReturn(Optional.of(author));
 
-    final var responses = getCommentById.getCommentsById(List.of(comment.getId().getValue()));
+    final var responses =
+        getCommentsByIdUseCase.getCommentsById(List.of(comment.getId().getValue()));
 
     assertNotNull(responses);
     assertEquals(1, responses.size());
@@ -48,7 +49,7 @@ class GetCommentByIdTest {
 
   @Test
   void getCommentsByIdWithNullInput() {
-    final var responses = getCommentById.getCommentsById(null);
+    final var responses = getCommentsByIdUseCase.getCommentsById(null);
 
     assertNotNull(responses);
     assertTrue(responses.isEmpty());
@@ -60,7 +61,7 @@ class GetCommentByIdTest {
     when(commentRepository.getCommentsById(anyList())).thenReturn(List.of(comment));
     when(authorRepository.findById(any(Id.class))).thenReturn(Optional.empty());
 
-    final var responses = getCommentById.getCommentsById(List.of("commentId"));
+    final var responses = getCommentsByIdUseCase.getCommentsById(List.of("commentId"));
 
     assertNotNull(responses);
     assertTrue(responses.isEmpty());
@@ -70,7 +71,7 @@ class GetCommentByIdTest {
   void getCommentsByIdWithNonExistentComment() {
     when(commentRepository.getCommentsById(anyList())).thenReturn(List.of());
 
-    final var responses = getCommentById.getCommentsById(List.of("commentId"));
+    final var responses = getCommentsByIdUseCase.getCommentsById(List.of("commentId"));
 
     assertNotNull(responses);
     assertTrue(responses.isEmpty());
@@ -78,7 +79,7 @@ class GetCommentByIdTest {
 
   @Test
   void getCommentsByIdWithEmptyList() {
-    final var responses = getCommentById.getCommentsById(List.of());
+    final var responses = getCommentsByIdUseCase.getCommentsById(List.of());
 
     assertNotNull(responses);
     assertTrue(responses.isEmpty());
@@ -91,7 +92,7 @@ class GetCommentByIdTest {
     when(commentRepository.getCommentsById(anyList())).thenReturn(List.of(comment));
     when(authorRepository.findById(any(Id.class))).thenReturn(Optional.of(author));
 
-    final var responses = getCommentById.getCommentsById(new ArrayList<>() {{
+    final var responses = getCommentsByIdUseCase.getCommentsById(new ArrayList<>() {{
       add(null);
     }});
 
@@ -105,7 +106,7 @@ class GetCommentByIdTest {
     when(commentRepository.getCommentsById(anyList())).thenReturn(List.of(comment));
     when(authorRepository.findById(any(Id.class))).thenReturn(Optional.of(author));
 
-    final var responses = getCommentById.getCommentsById(List.of("validId", "invalidId"));
+    final var responses = getCommentsByIdUseCase.getCommentsById(List.of("validId", "invalidId"));
 
     assertNotNull(responses);
     assertEquals(1, responses.size());

@@ -17,16 +17,16 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class GetPostBySlugTest {
+class GetPostBySlugUseCaseTest {
 
   private PostRepository postRepository;
 
-  private GetPostBySlug getPostBySlug;
+  private GetPostBySlugUseCase getPostBySlugUseCase;
 
   @BeforeEach
   void setUp() {
     postRepository = mock(PostRepository.class);
-    getPostBySlug = new GetPostBySlug(postRepository);
+    getPostBySlugUseCase = new GetPostBySlugUseCase(postRepository);
   }
 
   @Test
@@ -34,7 +34,7 @@ class GetPostBySlugTest {
     when(postRepository.findBySlug(Slug.fromString("test-slug"))).thenReturn(
         Optional.of(PostFixture.post()));
 
-    final var result = getPostBySlug.getPostBySlug("test-slug");
+    final var result = getPostBySlugUseCase.getPostBySlug("test-slug");
 
     verify(postRepository).findBySlug(Slug.fromString("test-slug"));
     assertEquals(
@@ -46,7 +46,7 @@ class GetPostBySlugTest {
   @Test
   void shouldThrowExceptionWhenSlugIsNull() {
     final var exception = assertThrows(DomainException.class,
-        () -> getPostBySlug.getPostBySlug(null));
+        () -> getPostBySlugUseCase.getPostBySlug(null));
     assertEquals("Tried to create a Slug with a null value", exception.getMessage());
   }
 
@@ -55,7 +55,7 @@ class GetPostBySlugTest {
     when(postRepository.findBySlug(Slug.fromString("test-slug"))).thenReturn(Optional.empty());
 
     final var exception = assertThrows(NotFoundException.class,
-        () -> getPostBySlug.getPostBySlug("test-slug"));
+        () -> getPostBySlugUseCase.getPostBySlug("test-slug"));
     assertEquals("Post with slug test-slug not found", exception.getMessage());
   }
 

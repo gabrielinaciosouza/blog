@@ -7,8 +7,8 @@ import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
 import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
-import com.gabriel.blog.application.usecases.GetDeletedPosts;
-import com.gabriel.blog.application.usecases.GetPostBySlug;
+import com.gabriel.blog.application.usecases.GetDeletedPostsUseCase;
+import com.gabriel.blog.application.usecases.GetPostBySlugUseCase;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -30,30 +30,30 @@ import org.jboss.resteasy.reactive.RestPath;
 public class PostResource {
 
   private final CreatePostUseCase createPostUseCase;
-  private final GetPostBySlug getPostBySlug;
+  private final GetPostBySlugUseCase getPostBySlugUseCase;
   private final FindPostsUseCase findPostsUseCase;
   private final DeletePostUseCase deletePostUseCase;
-  private final GetDeletedPosts getDeletedPosts;
+  private final GetDeletedPostsUseCase getDeletedPostsUseCase;
 
   /**
    * Default constructor for the {@link PostResource} class.
    *
    * @param createPostUseCase The use case for creating a new post.
-   * @param getPostBySlug     The use case for retrieving a post by its slug.
+   * @param getPostBySlugUseCase     The use case for retrieving a post by its slug.
    * @param findPostsUseCase  The repository for managing post data.
    * @param deletePostUseCase The use case for deleting a post.
-   * @param getDeletedPosts   The use case for retrieving deleted posts.
+   * @param getDeletedPostsUseCase   The use case for retrieving deleted posts.
    */
   public PostResource(final CreatePostUseCase createPostUseCase,
-                      final GetPostBySlug getPostBySlug,
+                      final GetPostBySlugUseCase getPostBySlugUseCase,
                       final FindPostsUseCase findPostsUseCase,
                       final DeletePostUseCase deletePostUseCase,
-                      final GetDeletedPosts getDeletedPosts) {
+                      final GetDeletedPostsUseCase getDeletedPostsUseCase) {
     this.createPostUseCase = createPostUseCase;
-    this.getPostBySlug = getPostBySlug;
+    this.getPostBySlugUseCase = getPostBySlugUseCase;
     this.findPostsUseCase = findPostsUseCase;
     this.deletePostUseCase = deletePostUseCase;
-    this.getDeletedPosts = getDeletedPosts;
+    this.getDeletedPostsUseCase = getDeletedPostsUseCase;
   }
 
   /**
@@ -81,7 +81,7 @@ public class PostResource {
   @GET
   @Path("/{slug}")
   public PostResponse getPostBySlug(@RestPath final String slug) {
-    return getPostBySlug.getPostBySlug(slug);
+    return getPostBySlugUseCase.getPostBySlug(slug);
   }
 
   /**
@@ -122,6 +122,6 @@ public class PostResource {
   @GET
   @Path("/deleted")
   public List<PostResponse> getDeletedPosts() {
-    return getDeletedPosts.getDeletedPosts();
+    return getDeletedPostsUseCase.getDeletedPosts();
   }
 }

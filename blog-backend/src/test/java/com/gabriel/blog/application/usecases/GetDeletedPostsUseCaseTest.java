@@ -11,17 +11,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class GetDeletedPostsTest {
+class GetDeletedPostsUseCaseTest {
 
   private static final PostRepository.FindPostsParams params =
       new PostRepository.FindPostsParams(1, Integer.MAX_VALUE, null, null, true);
   private PostRepository postRepository;
-  private GetDeletedPosts getDeletedPosts;
+  private GetDeletedPostsUseCase getDeletedPostsUseCase;
 
   @BeforeEach
   void setUp() {
     postRepository = Mockito.mock(PostRepository.class);
-    getDeletedPosts = new GetDeletedPosts(postRepository);
+    getDeletedPostsUseCase = new GetDeletedPostsUseCase(postRepository);
   }
 
   @Test
@@ -29,7 +29,7 @@ class GetDeletedPostsTest {
     final var post = PostFixture.post();
     when(postRepository.findPosts(params)).thenReturn(List.of(post));
 
-    final var result = getDeletedPosts.getDeletedPosts();
+    final var result = getDeletedPostsUseCase.getDeletedPosts();
 
     assertEquals(1, result.size());
     assertEquals("any title", result.getFirst().title());
@@ -39,7 +39,7 @@ class GetDeletedPostsTest {
   void retrievesNoDeletedPostsWhenNoneExist() {
     when(postRepository.findPosts(params)).thenReturn(Collections.emptyList());
 
-    final var result = getDeletedPosts.getDeletedPosts();
+    final var result = getDeletedPostsUseCase.getDeletedPosts();
 
     assertEquals(0, result.size());
   }

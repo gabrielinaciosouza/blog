@@ -13,16 +13,16 @@ import jakarta.enterprise.context.ApplicationScoped;
  * <p>Created by Gabriel Inacio de Souza on February 9, 2025.</p>
  */
 @ApplicationScoped
-public class GetPostBySlug {
+public class GetPostBySlugUseCase {
 
   private final PostRepository postRepository;
 
   /**
-   * Constructs a new {@link GetPostBySlug} use case with the provided {@link PostRepository}.
+   * Constructs a new {@link GetPostBySlugUseCase} use case with the provided {@link PostRepository}.
    *
    * @param postRepository the repository used to retrieve the post
    */
-  public GetPostBySlug(final PostRepository postRepository) {
+  public GetPostBySlugUseCase(final PostRepository postRepository) {
     this.postRepository = postRepository;
   }
 

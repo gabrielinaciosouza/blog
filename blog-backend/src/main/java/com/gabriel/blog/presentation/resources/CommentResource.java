@@ -3,7 +3,7 @@ package com.gabriel.blog.presentation.resources;
 import com.gabriel.blog.application.requests.AddCommentRequest;
 import com.gabriel.blog.application.responses.CommentResponse;
 import com.gabriel.blog.application.usecases.AddCommentUseCase;
-import com.gabriel.blog.application.usecases.GetCommentById;
+import com.gabriel.blog.application.usecases.GetCommentsByIdUseCase;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -20,18 +20,18 @@ import java.util.List;
 public class CommentResource {
 
   private final AddCommentUseCase addCommentUseCase;
-  private final GetCommentById getCommentById;
+  private final GetCommentsByIdUseCase getCommentsByIdUseCase;
 
   /**
    * Constructs a new {@link CommentResource} with the provided use cases.
    *
    * @param addCommentUseCase the use case for adding comments
-   * @param getCommentById the use case for getting comments by ID
+   * @param getCommentsByIdUseCase the use case for getting comments by ID
    */
   public CommentResource(final AddCommentUseCase addCommentUseCase,
-                         final GetCommentById getCommentById) {
+                         final GetCommentsByIdUseCase getCommentsByIdUseCase) {
     this.addCommentUseCase = addCommentUseCase;
-    this.getCommentById = getCommentById;
+    this.getCommentsByIdUseCase = getCommentsByIdUseCase;
   }
 
   /**
@@ -48,6 +48,6 @@ public class CommentResource {
   @POST
   @Path("/by-ids")
   public List<CommentResponse> getCommentsById(final List<String> commentIds) {
-    return getCommentById.getCommentsById(commentIds);
+    return getCommentsByIdUseCase.getCommentsById(commentIds);
   }
 }

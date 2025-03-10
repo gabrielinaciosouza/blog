@@ -15,19 +15,19 @@ import java.util.Optional;
  * Use case to get a comment by its ID.
  */
 @ApplicationScoped
-public class GetCommentById {
+public class GetCommentsByIdUseCase {
 
   private final CommentRepository commentRepository;
   private final AuthorRepository authorRepository;
 
   /**
-   * Default constructor for the {@link GetCommentById} class.
+   * Default constructor for the {@link GetCommentsByIdUseCase} class.
    *
    * @param commentRepository the repository for managing comment data.
    * @param authorRepository  the repository for managing author data.
    */
-  public GetCommentById(final CommentRepository commentRepository,
-                        final AuthorRepository authorRepository) {
+  public GetCommentsByIdUseCase(final CommentRepository commentRepository,
+                                final AuthorRepository authorRepository) {
     this.commentRepository = commentRepository;
     this.authorRepository = authorRepository;
   }

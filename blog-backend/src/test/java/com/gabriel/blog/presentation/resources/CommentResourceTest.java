@@ -9,7 +9,7 @@ import com.gabriel.blog.application.requests.AddCommentRequest;
 import com.gabriel.blog.application.responses.AuthorResponse;
 import com.gabriel.blog.application.responses.CommentResponse;
 import com.gabriel.blog.application.usecases.AddCommentUseCase;
-import com.gabriel.blog.application.usecases.GetCommentById;
+import com.gabriel.blog.application.usecases.GetCommentsByIdUseCase;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,14 +18,14 @@ import org.junit.jupiter.api.Test;
 class CommentResourceTest {
 
   private AddCommentUseCase addCommentUseCase;
-  private GetCommentById getCommentById;
+  private GetCommentsByIdUseCase getCommentsByIdUseCase;
   private CommentResource commentResource;
 
   @BeforeEach
   void setUp() {
     addCommentUseCase = mock(AddCommentUseCase.class);
-    getCommentById = mock(GetCommentById.class);
-    commentResource = new CommentResource(addCommentUseCase, getCommentById);
+    getCommentsByIdUseCase = mock(GetCommentsByIdUseCase.class);
+    commentResource = new CommentResource(addCommentUseCase, getCommentsByIdUseCase);
   }
 
   @Test
@@ -55,11 +55,11 @@ class CommentResourceTest {
             new AuthorResponse("author id 2", "user2", "email2", "image2"))
     );
 
-    when(getCommentById.getCommentsById(commentIds)).thenReturn(expectedResponses);
+    when(getCommentsByIdUseCase.getCommentsById(commentIds)).thenReturn(expectedResponses);
 
     final var responses = commentResource.getCommentsById(commentIds);
 
-    verify(getCommentById).getCommentsById(commentIds);
+    verify(getCommentsByIdUseCase).getCommentsById(commentIds);
     assertEquals(expectedResponses, responses);
   }
 }
