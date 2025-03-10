@@ -2,24 +2,27 @@ import React from "react";
 import styles from "./postCard.module.css";
 import Post from "@/models/post";
 import Image from "next/image";
+import Link from "next/link";
 
 const PostCard = (post: Post) => {
     return (
-        <div className={styles.container}>
+        <Link href={`/posts/${post.slug}`}>
+            <div className={styles.container}>
 
-            <Image className={styles.image} src={post.coverImage} alt="Post Image" width={0}
-                height={0}
-                sizes="100vw"
-                role="img"
-            />
+                <Image className={styles.image} src={post.coverImage} alt="Post Image" width={0}
+                    height={0}
+                    sizes="100vw"
+                    role="img"
+                />
 
 
-            <div className={styles.contentWrapper}>
-                <div className={styles.date}>{post.creationDate}</div>
-                <h2 className={styles.title}>{post.title}</h2>
-                <p className={styles.content} dangerouslySetInnerHTML={{ __html: post.content }}></p>
+                <div className={styles.contentWrapper}>
+                    <div className={styles.date}>{post.creationDate}</div>
+                    <h2 className={styles.title}>{post.title}</h2>
+                    <p className={styles.content} dangerouslySetInnerHTML={{ __html: post.content }}></p>
+                </div>
             </div>
-        </div>
+        </Link>
     );
 };
 

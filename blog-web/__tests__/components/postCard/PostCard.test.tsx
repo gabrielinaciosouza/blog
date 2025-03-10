@@ -34,4 +34,10 @@ describe("PostCard Component", () => {
         const decodedImgSrc = decodeURIComponent(imgSrc as string);
         expect(decodedImgSrc).toContain("/logo2.png");
     });
+
+    it("should redirect to the post page when clicked", () => {
+        render(<PostCard {...post} />);
+        const postCard = screen.getByText("Sample Post");
+        expect(postCard.closest("a")).toHaveAttribute("href", "/posts/sample-post");
+    });
 });
