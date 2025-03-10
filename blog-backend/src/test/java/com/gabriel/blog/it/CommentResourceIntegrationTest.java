@@ -45,6 +45,8 @@ class CommentResourceIntegrationTest {
         "coverImage", "https://example.com/image.jpg",
         "deleted", false));
 
+    Thread.sleep(1000);
+
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
@@ -83,7 +85,7 @@ class CommentResourceIntegrationTest {
   }
 
   @Test
-  void shouldGetCommentsById() {
+  void shouldGetCommentsById() throws InterruptedException {
     final var timestamp = Timestamp.ofTimeSecondsAndNanos(
         CreationDateFixture.creationDate().getValue().getEpochSecond(),
         CreationDateFixture.creationDate().getValue().getNano());
@@ -98,6 +100,8 @@ class CommentResourceIntegrationTest {
         "content", "content2",
         "creationDate", timestamp,
         "deleted", false));
+
+    Thread.sleep(1000);
 
     given()
         .when()
@@ -118,11 +122,11 @@ class CommentResourceIntegrationTest {
         .body("[0].author.profilePicture", equalTo("http://image.com"))
         .body("[1].commentId", notNullValue())
         .body("[1].content", equalTo("content2"))
-        .body("[0].creationDate", notNullValue())
-        .body("[0].author.authorId", equalTo("any"))
-        .body("[0].author.name", equalTo("John Doe"))
-        .body("[0].author.email", equalTo("email@email.com"))
-        .body("[0].author.profilePicture", equalTo("http://image.com"));
+        .body("[1].creationDate", notNullValue())
+        .body("[1].author.authorId", equalTo("any"))
+        .body("[1].author.name", equalTo("John Doe"))
+        .body("[1].author.email", equalTo("email@email.com"))
+        .body("[1].author.profilePicture", equalTo("http://image.com"));
   }
 
   @Test
