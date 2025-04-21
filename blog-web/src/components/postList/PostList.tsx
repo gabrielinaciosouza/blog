@@ -16,19 +16,16 @@ const PostList = async () => {
                         totalCount > 0 && (<div className={styles.headerText}>Recent Stories</div>)
                     }
                     {
-                        totalCount > 6 && (<Link className={styles.button} href="/posts">See more</Link>)
+                        totalCount > 5 && (<Link className={styles.button} href="/posts">See more</Link>)
                     }
 
                 </div>
 
 
-                <div className={styles.grid}>
-                    {posts.slice(0, 6).map((post) => (
-                        <div key={post.postId}>
-                            <PostCard {...post} />
-                        </div>
+                <div className={styles.uniformList}>
+                    {posts.slice(0, 5).map((post) => (
+                        <PostCard key={post.postId} {...post} />
                     ))}
-
                 </div>
 
             </div>

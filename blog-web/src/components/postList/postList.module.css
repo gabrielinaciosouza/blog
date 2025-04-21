@@ -1,5 +1,6 @@
 .container {
     padding: 32px 0;
+    width: 100%;
 }
 
 .grid {
@@ -34,22 +35,64 @@
     transform: scale(1.05);
 }
 
+.uniformList {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    gap: 0;
+    padding: 8px 0;
+}
 
 .headerContainer {
     display: flex;
     justify-content: space-between;
 }
 
+.horizontalList {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0;
+    padding: 8px 0 8px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #e0e0e0 #fff;
+}
+
+.horizontalList::-webkit-scrollbar {
+    height: 6px;
+}
+.horizontalList::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 4px;
+}
+.horizontalList::-webkit-scrollbar-track {
+    background: #fff;
+}
+
+@media (max-width: 1280px) {
+    .uniformList {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 12px 0;
+        overflow-x: unset;
+        flex-wrap: unset;
+        justify-content: unset;
+        align-items: unset;
+    }
+}
 
 @media (max-width: 1024px) {
-    .grid {
+    .uniformList {
         grid-template-columns: repeat(3, 1fr); 
-        padding: 24px 0;
+        /* padding: 24px 0; */
     }
 }
 
 @media (max-width: 768px) {
-    .grid {
+    .uniformList {
         grid-template-columns: repeat(2, 1fr); 
         padding: 16px 0;
         gap: 16px;
@@ -68,6 +111,14 @@
         align-self: center;
         align-items: center;
         width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .uniformList {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 10px 0;
     }
 }
 
