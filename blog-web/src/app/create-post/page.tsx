@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./createPostPage.module.css";
 import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
 import { useModal } from "@/hooks/useModal";
 import { FaUpload, FaPlus, FaImage, FaEye } from "react-icons/fa";
 import PostCard from "@/components/postCard/PostCard";
@@ -15,6 +14,7 @@ import { useRouter } from "next/navigation";
 import useStorage from "@/hooks/useStorage";
 import useLoading from "@/hooks/useLoading";
 import Loading from "@/components/loading/Loading";
+import { TextEditor } from "@/components/textEditor/TextEditor";
 
 export default function CreatePostPage() {
     const [open, setOpen] = useState(false);
@@ -173,13 +173,7 @@ export default function CreatePostPage() {
                         </Button>
                     </div>
                 )}
-                <ReactQuill
-                    ref={quillRef}
-                    className={styles.textArea}
-                    value={content}
-                    onChange={setContent}
-                    placeholder="Write your story..."
-                />
+                <TextEditor content={content} setContent={setContent} quillRef={quillRef} placeholder="Write your story..."/>
             </div>
             <input
                 type="file"

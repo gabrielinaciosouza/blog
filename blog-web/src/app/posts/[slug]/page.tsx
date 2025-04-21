@@ -2,16 +2,22 @@ import React from "react";
 import styles from "./singlePost.module.css"
 import Image from "next/image";
 import { getPostBySlug } from "@/services/postService";
+import CommentSection from "@/components/commentSection/CommentSection";
 
 interface SinglePageProps {
     params: {
         slug: string;
     };
+    searchParams: {
+        show: boolean | null;
+    }
 }
 
-const SinglePage = async ({ params }: SinglePageProps) => {
+const SinglePage = async ({ params, searchParams } : SinglePageProps) => {
 
     const { slug } = await params;
+    const show = (await searchParams).show || false;
+
 
     try {
     const post = await getPostBySlug(slug);
@@ -39,6 +45,7 @@ const SinglePage = async ({ params }: SinglePageProps) => {
                     <div dangerouslySetInnerHTML={{ __html: post.content }} />
                 </div>
             </div>
+            <CommentSection commentList={post.comments} show={show} slug={post.slug}  />
         </div>
     )
     } catch (err) {

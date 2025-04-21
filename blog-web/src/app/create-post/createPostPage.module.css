@@ -20,14 +20,6 @@
     align-items: center;
 }
 
-.textArea {
-    width: 100%;
-    min-height: 400px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
 
 .addButton {
     border-color: #1a8917;

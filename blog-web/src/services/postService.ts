@@ -20,7 +20,7 @@ export const createPost = async (request: CreatePostRequest): Promise<Post> => {
         throw new Error(data.message);
     }
 
-    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage);
+    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage, data.comments);
 };
 
 export const getPostBySlug = async (slug: string): Promise<Post> => {
@@ -36,7 +36,7 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
 
     
 
-    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage);
+    return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage, data.comments);
 };
 
 export const getPosts = async (page: number, size: number): Promise<{posts: Post[], totalCount: number}> => {
