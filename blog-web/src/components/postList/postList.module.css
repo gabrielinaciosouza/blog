@@ -75,7 +75,7 @@
     .uniformList {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+        gap: 12px;
         padding: 12px 0;
         overflow-x: unset;
         flex-wrap: unset;
@@ -87,7 +87,6 @@
 @media (max-width: 1024px) {
     .uniformList {
         grid-template-columns: repeat(3, 1fr); 
-        /* padding: 24px 0; */
     }
 }
 
@@ -117,8 +116,14 @@
 @media (max-width: 700px) {
     .uniformList {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 8px;
         padding: 10px 0;
+    }
+}
+
+@media (max-width: 500px) {
+    .uniformList {
+        gap: 4px;
     }
 }
 
