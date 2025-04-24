@@ -38,7 +38,7 @@
 .uniformList {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: stretch;
     width: 100%;
     gap: 0;
@@ -93,8 +93,8 @@
 @media (max-width: 768px) {
     .uniformList {
         grid-template-columns: repeat(2, 1fr); 
-        padding: 16px 0;
-        gap: 16px;
+        padding: 10px 0;
+        gap: 8px;
     }
 
     .button {
@@ -113,17 +113,15 @@
     }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 640px) {
     .uniformList {
-        grid-template-columns: 1fr;
-        gap: 8px;
-        padding: 10px 0;
+        gap: 4px;
     }
 }
 
 @media (max-width: 500px) {
     .uniformList {
-        gap: 4px;
+        grid-template-columns: 1fr
     }
 }
 

@@ -8,10 +8,10 @@
     border: none;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
+    flex: 1 1 223px;
+    max-width: 223px;
+    min-width: 180px;
     width: 100%;
-    min-width: 0;
-    max-width: none;
-    flex: 1 1 0;
     padding: 12px 8px;
     margin: 0 8px;
 }
@@ -124,7 +124,7 @@
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 640px) {
    
     .cardImage {
         width: 100% !important;
