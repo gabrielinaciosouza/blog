@@ -92,6 +92,14 @@
     text-align: left;
 }
 
+@media screen and (max-width: 1024px) {
+    .container {
+        flex: 1 1 180px;
+        max-width: 180px;
+        min-width: 120px;
+    }
+    
+}
 @media screen and (max-width: 640px) {
  
     .image {
@@ -113,22 +121,16 @@
     .content {
         font-size: 0.9em;
     }
-}
 
-@media (max-width: 700px) {
-  
     .cardImage {
         width: 100% !important;
         height: auto !important;
         aspect-ratio: 223/125;
     }
-}
 
-@media (max-width: 640px) {
-   
-    .cardImage {
-        width: 100% !important;
-        height: auto !important;
-        aspect-ratio: 223/125;
+    .container {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: 100%;
     }
 }

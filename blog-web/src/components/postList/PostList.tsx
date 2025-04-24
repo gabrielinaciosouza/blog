@@ -9,31 +9,34 @@ const PostList = async () => {
         const { posts, totalCount } = await getPosts(1, 10);
         return (
             <div className={styles.container}>
-
-
+            
                 <div className={styles.headerContainer}>
                     {
                         totalCount > 0 && (<div className={styles.headerText}>Recent Stories</div>)
                     }
-                    {
-                        totalCount > 5 && (<Link className={styles.button} href="/posts">See more</Link>)
-                    }
-
                 </div>
 
-
+          
                 <div className={styles.uniformList}>
                     {posts.slice(0, 5).map((post) => (
                         <PostCard key={post.postId} {...post} />
                     ))}
                 </div>
 
+             
+                {totalCount > 5 && (
+                    <div className={styles.loadMoreSection}>
+                        <div className={styles.viewingText}>
+                            You are viewing 5 of {totalCount} Articles.
+                        </div>
+                        <Link className={styles.button} href="/posts">Load more</Link>
+                    </div>
+                )}
             </div>
         )
     } catch {
         return <></>
     }
-
 }
 
 export default PostList;
