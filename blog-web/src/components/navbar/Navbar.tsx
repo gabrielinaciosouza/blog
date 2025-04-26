@@ -2,7 +2,6 @@ import React from "react";
 import styles from "./navbar.module.css";
 import AnimatedImage from "@/components/animatedImage/AnimatedImage";
 import Link from "next/link";
-import AuthLinks from "@/components/authLinks/AuthLinks";
 import Divider from "@/components/divider/Divider";
 import AnimatedText from "@/components/animatedText/AnimatedText";
 
@@ -22,7 +21,6 @@ const Navbar: React.FC<NavbarProps> = ({ authStatus = "authenticated" }) => {
                     <li><Link href="/" className={styles.link}><AnimatedText>Homepage</AnimatedText></Link></li>
                     <li><Link href="/" className={styles.link}><AnimatedText>Contact</AnimatedText></Link></li>
                     <li><Link href="/" className={styles.link}><AnimatedText>About</AnimatedText></Link></li>
-                    <li><AuthLinks authStatus={authStatus} /></li>
                 </ul>
             </nav>
             <Divider />
