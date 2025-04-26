@@ -1,5 +1,6 @@
 .button {
-    background: linear-gradient(to right, #374a9b, #02c0fc);
+    background: var(--button-gradient);
+    color: var(--footerText);
     border-radius: 8px;
     border: none;
     color: #fcf9f9;

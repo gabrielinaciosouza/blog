@@ -58,9 +58,9 @@
     height: 280px;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid #fff;
+    border: 5px solid var(--white);
+    background: var(--black);
     box-shadow: 0 4px 24px rgba(2, 192, 252, 0.18), 0 2px 12px rgba(55, 74, 155, 0.10);
-    background: #222;
     display: block;
     transition: transform 0.2s cubic-bezier(.4,2,.6,1);
 }
@@ -109,12 +109,12 @@
 }
 
 .featuredBox {
-    background: linear-gradient(120deg, #02c0fc 0%, #374a9b 100%);
+    background: var(--featured-gradient);
+    box-shadow: var(--shadow);
     border-radius: 18px;
     padding: 32px 48px;
     width: 100%;
     margin: 48px auto 0 auto;
-    box-shadow: 0 8px 32px rgba(34, 60, 80, 0.18);
     display: flex;
     justify-content: flex-start;
     align-items: center;
