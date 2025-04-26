@@ -262,26 +262,28 @@ describe('AdminPage', () => {
             .mockResolvedValueOnce({
                 ok: true,
                 json: async () => ([{
-                        postId: "2",
-                        title: "title",
-                        content: "content",
-                        creationDate: "creationDate",
-                        slug: `slug-2`,
-                        coverImage: "cover-image"
-                    }])
-                }),
-            
+                    postId: "2",
+                    title: "title",
+                    content: "content",
+                    creationDate: "creationDate",
+                    slug: `slug-2`,
+                    coverImage: "cover-image"
+                }])
+            });
 
         render(<AdminPage />);
+
+       
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledTimes(2);
-            fireEvent.click(screen.getByText('Deleted Posts'));
+            expect(screen.getByText('Deleted Posts')).toBeInTheDocument();
         });
+
+        fireEvent.click(screen.getByText('Deleted Posts'));
 
         await waitFor(() => {
             expect(screen.getAllByText('slug-2')).toHaveLength(1);
         });
-       
     });
 
 });
