@@ -4,7 +4,7 @@ import Footer from '@/components/footer/Footer';
 
 describe('Footer', () => {
   it('should render the copyright text', () => {
-    const currentYear = 2025;
+    const currentYear = new Date().getFullYear();
     render(<Footer />);
     expect(screen.getByText(`© ${currentYear} Gabriel Inacio. All rights reserved.`)).toBeInTheDocument();
   });
