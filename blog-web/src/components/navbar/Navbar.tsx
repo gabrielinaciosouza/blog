@@ -5,11 +5,7 @@ import Link from "next/link";
 import Divider from "@/components/divider/Divider";
 import AnimatedText from "@/components/animatedText/AnimatedText";
 
-interface NavbarProps {
-    authStatus?: "authenticated" | "notauthenticated";
-}
-
-const Navbar: React.FC<NavbarProps> = ({ authStatus = "authenticated" }) => {
+const Navbar: React.FC = () => {
     return (
         <>
             <nav className={styles.container} aria-label="Main Navigation" role="navigation">

@@ -9,7 +9,7 @@ const Featured = () => (
         <AnimatedImage src="/profile-picture.png" alt="Gabriel's profile picture" width={160} height={160} className={styles.avatar} />
       </div>
       <div className={styles.textBlock}>
-        <div className={styles.greeting}>Hi, I'm Gabriel</div>
+        <div className={styles.greeting}>Hi, I&apos;m Gabriel</div>
         <div className={styles.subtitle}>A highly versatile and results-driven Senior Software Engineer with deep expertise in Java, Spring Boot, and Cloud (Azure & GCP). Passionate about building high-performance, scalable systems, I succeed in designing and developing solutions that handle intense data volumes while maintaining exceptional reliability and availability.</div>
       </div>
     </div>
