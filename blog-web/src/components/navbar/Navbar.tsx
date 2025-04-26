@@ -1,24 +1,27 @@
 import React from "react";
-import styles from "./navbar.module.css"
-import Image from "next/image";
+import styles from "./navbar.module.css";
+import AnimatedImage from "@/components/animatedImage/AnimatedImage";
 import Link from "next/link";
-import AuthLinks from "@/components/authLinks/AuthLinks";
+import Divider from "@/components/divider/Divider";
+import AnimatedText from "@/components/animatedText/AnimatedText";
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
     return (
-        <div className={styles.container}>
-            <div className={styles.logo}>
-                <Image src="/logo2.png" alt="logo2" width={48} height={48} className={styles.image}/>
-                <div className={styles.textLogo}>GABRIEL INACIO</div>
-            </div>
-            <div className={styles.links}>
-                <Link href="/" className={styles.link}>Homepage</Link>
-                <Link href="/" className={styles.link}>Contact</Link>
-                <Link href="/" className={styles.link}>About</Link>
-                <AuthLinks authStatus="authenticated"/>
-            </div>
-        </div>
-    )
-}
+        <>
+            <nav className={styles.container} aria-label="Main Navigation" role="navigation">
+                <div className={styles.logo}>
+                    <AnimatedImage src="/logo2.png" alt="logo2" width={48} height={48} className={styles.image} />
+                    <span className={styles.textLogo}><AnimatedText>GABRIEL INACIO</AnimatedText></span>
+                </div>
+                <ul className={styles.links}>
+                    <li><Link href="/" className={styles.link}><AnimatedText>Homepage</AnimatedText></Link></li>
+                    <li><Link href="/" className={styles.link}><AnimatedText>Contact</AnimatedText></Link></li>
+                    <li><Link href="/" className={styles.link}><AnimatedText>About</AnimatedText></Link></li>
+                </ul>
+            </nav>
+            <Divider />
+        </>
+    );
+};
 
 export default Navbar;

@@ -29,7 +29,11 @@ const customJestConfig = {
       lines: 90,
       statements: 90,
     }
-  }
+  },
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "loading.tsx$"
+  ],
 };
 
 module.exports = async () => ({

@@ -2,6 +2,26 @@
   --background: #ececec;
   --textColor: #141414;
   --softBg: #f3f3f3;
+  --primary: #374a9b;
+  --secondary: #02c0fc;
+  --white: #fff;
+  --black: #222;
+  --softTextColor: #555;
+  --footerText: #fcf9f9;
+  --divider-gradient: linear-gradient(90deg, #e0e0e0 0%, #bdbdbd 100%);
+  --button-gradient: linear-gradient(to right, var(--primary), var(--secondary));
+  --button-hover: #0056b3;
+  --iconButton: #007bff;
+  --iconButton-hover: #0056b3;
+  --cardImageBg: #f8f8f8;
+  --featured-gradient: linear-gradient(120deg, #02c0fc 0%, #374a9b 100%);
+  --shadow: 0 8px 32px rgba(34, 60, 80, 0.18);
+  --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-strong: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --border: #ddd;
+  --border-strong: #bdbdbd;
+  --modal-bg: rgba(0, 0, 0, 0.5);
+  --loading-spinner: #3498db;
 }
 
 * {

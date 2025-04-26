@@ -1,15 +1,6 @@
 .container {
     padding: 32px 0;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    padding: 32px 0;
-    justify-content: center;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .headerText {
@@ -18,10 +9,10 @@
 }
 
 .button {
-    background: linear-gradient(to right, #374a9b, #02c0fc);
+    background: var(--button-gradient);
     border-radius: 8px;
-    border: none;
-    color: #fcf9f9;
+    border: none;    
+    color: var(--footerText);
     padding: 12px 24px;
     text-align: center;
     text-decoration: none;
@@ -34,25 +25,83 @@
     transform: scale(1.05);
 }
 
+.uniformList {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+    gap: 0;
+    padding: 8px 0;
+}
 
 .headerContainer {
     display: flex;
     justify-content: space-between;
 }
 
+.horizontalList {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0;
+    padding: 8px 0 8px 0;
+    scrollbar-width: thin;
+    scrollbar-color: #e0e0e0 #fff;
+}
+
+.horizontalList::-webkit-scrollbar {
+    height: 6px;
+}
+.horizontalList::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 4px;
+}
+.horizontalList::-webkit-scrollbar-track {
+    background: #fff;
+}
+
+.loadMoreSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 32px;
+    gap: 16px;
+}
+
+.viewingText {
+    font-size: 16px;
+    color: var(--softTextColor);
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+
+@media (max-width: 1280px) {
+    .uniformList {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 12px 0;
+        overflow-x: unset;
+        flex-wrap: unset;
+        justify-content: unset;
+        align-items: unset;
+    }
+}
 
 @media (max-width: 1024px) {
-    .grid {
+    .uniformList {
         grid-template-columns: repeat(3, 1fr); 
-        padding: 24px 0;
     }
 }
 
 @media (max-width: 768px) {
-    .grid {
+    .uniformList {
         grid-template-columns: repeat(2, 1fr); 
-        padding: 16px 0;
-        gap: 16px;
+        padding: 10px 0;
+        gap: 6px;
     }
 
     .button {
@@ -71,23 +120,14 @@
     }
 }
 
-@media (max-width: 355px) {
-    .grid {
-        grid-template-columns: 1fr;
+@media (max-width: 640px) {
+    .uniformList {
+        gap: 4px;
     }
+}
 
-    .button {
-        padding: 10px 20px;
+@media (max-width: 500px) {
+    .uniformList {
+        grid-template-columns: 1fr
     }
-
-    .headerText {
-        font-size: 18px;
-    }
-
-    .headerContainer {
-        align-self: center;
-        align-items: center;
-    }
-
-
 }
