@@ -1,12 +1,12 @@
 import React from "react";
 import styles from "./featured.module.css";
-import Image from "next/image";
+import AnimatedImage from "@/components/animatedImage/AnimatedImage";
 
 const Featured = () => (
   <div className={styles.featuredBox}>
     <div className={styles.featuredRow}>
       <div className={styles.avatarContainer}>
-        <Image src="/profile-picture.png" alt="Gabriel's profile picture" width={160} height={160} className={styles.avatar} />
+        <AnimatedImage src="/profile-picture.png" alt="Gabriel's profile picture" width={160} height={160} className={styles.avatar} />
       </div>
       <div className={styles.textBlock}>
         <div className={styles.greeting}>Hi, I'm Gabriel</div>
