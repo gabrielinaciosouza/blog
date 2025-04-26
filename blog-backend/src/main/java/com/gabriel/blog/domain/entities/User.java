@@ -20,7 +20,7 @@ public class User extends AbstractEntity {
    * @param id the unique identifier of the entity; must not be {@code null}
    *           * @throws DomainException if {@code id} is {@code null}
    */
-  protected User(final Id id, final Email email, final Role role) {
+  public User(final Id id, final Email email, final Role role) {
     super(id);
     this.email = nonNull(email, "Tried to create a User with a null email");
     this.role = nonNull(role, "Tried to create a User with a null role");
