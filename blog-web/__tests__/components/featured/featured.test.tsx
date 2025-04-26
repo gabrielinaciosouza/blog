@@ -5,31 +5,16 @@ import Featured from '@/components/featured/Featured';
 describe('Featured', () => {
   it('should render the title', () => {
     render(<Featured />);
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === "Hey, I'm Gabriel! Unraveling Code, Stories & Big Ideas!🚀";
-    })).toBeInTheDocument();
+    expect(screen.getByText("Hi, I'm Gabriel")).toBeInTheDocument();
   });
 
-  it('should render the post title', () => {
+  it('should render the subtitle', () => {
     render(<Featured />);
-    expect(screen.getByText("🎯 Tech, Logic & Creativity - Why I Love Engineering")).toBeInTheDocument();
+    expect(screen.getByText(/highly versatile and results-driven Senior Software Engineer/i)).toBeInTheDocument();
   });
 
-  it('should render the post description', () => {
+  it('should render the image', () => {
     render(<Featured />);
-    expect(screen.getByText("Every bug has a lesson, every project has a story. Join me as I navigate the ever-evolving world of software engineering!")).toBeInTheDocument();
-  });
-
-  it('should render the About Me button', () => {
-    render(<Featured />);
-    expect(screen.getByText("About Me")).toBeInTheDocument();
-  });
-
-  it('should render the social media icons', () => {
-    render(<Featured />);
-    expect(screen.getByAltText("facebook")).toBeInTheDocument();
-    expect(screen.getByAltText("instagram")).toBeInTheDocument();
-    expect(screen.getByAltText("tiktok")).toBeInTheDocument();
-    expect(screen.getByAltText("youtube")).toBeInTheDocument();
+    expect(screen.getByAltText("Gabriel's profile picture")).toBeInTheDocument();
   });
 });

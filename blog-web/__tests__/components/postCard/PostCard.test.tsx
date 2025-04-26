@@ -18,20 +18,17 @@ describe("PostCard Component", () => {
         expect(screen.getByText("Sample Post")).toBeInTheDocument();
     });
 
-    it("should render the post creation date", () => {
+    it("should render the post image with correct src", () => {
         render(<PostCard {...post} />);
-        expect(screen.getByText("2025-01-01")).toBeInTheDocument();
+        const img = screen.getByAltText("Post Image");
+        expect(img).toBeInTheDocument();
+        // Next.js Image may wrap src, so check for substring
+        expect(img.getAttribute("src")).toContain("logo2.png");
     });
 
-    it("should render the post content", () => {
+    it("should link to the correct post page", () => {
         render(<PostCard {...post} />);
-        expect(screen.getByText("This is a sample post content.")).toBeInTheDocument();
-    });
-
-    it("should render the post image", () => {
-        render(<PostCard {...post} />);
-        const imgSrc = screen.getByRole("img").getAttribute("src");
-        const decodedImgSrc = decodeURIComponent(imgSrc as string);
-        expect(decodedImgSrc).toContain("/logo2.png");
+        const link = screen.getByRole("link");
+        expect(link).toHaveAttribute("href", "/posts/sample-post");
     });
 });
