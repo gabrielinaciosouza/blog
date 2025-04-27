@@ -13,4 +13,31 @@ services:
     ports:
       - "4443:4443"
     environment:
-      - STORAGE_EMULATOR_HOST=localhost:8081
+      - STORAGE_EMULATOR_HOST=localhost:9090
+
+  emulator:
+    build: # Can change this to a prebuilt image as well
+      dockerfile: Dockerfile
+      args:
+        - FIREBASE_VERSION=13.3.0 # Set to latest version
+    stop_grace_period: 1m
+    environment:
+      FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099"
+      FIREBASE_PROJECT: "test-project" # Can be set to a real project_id or a mock one
+      GCLOUD_PROJECT: "test-project" # Can be set to a real project_id or a mock one
+      FORCE_COLOR: 'true'
+      DATA_DIRECTORY: "data" # The directory where you will store data
+      CHOKIDAR_USEPOLLING: 'true'
+    healthcheck:
+      test: "netstat -an | grep -c 4000"
+      interval: 20s
+      timeout: 20s
+      retries: 10
+    ports:
+      - "4000:4001" # ui
+      - "9099:9100" # auth
+    volumes:
+      - ./firebase:/srv/firebase:rw
+      - ./cache:/root/.cache/:rw
+      - ~/.config/:/root/.config
+      - ./firebase/data:/srv/firebase/data:rw

@@ -21,7 +21,7 @@ import org.jboss.logging.Logger;
  * It contains methods to check user permissions and roles.
  */
 @ApplicationScoped
-public final class AuthenticationUseCase {
+public class AuthenticationUseCase {
 
   private static final Logger LOG = Logger.getLogger(AuthenticationUseCase.class);
   private final UserRepository userRepository;
