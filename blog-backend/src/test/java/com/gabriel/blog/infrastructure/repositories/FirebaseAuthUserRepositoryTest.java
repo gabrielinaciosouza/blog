@@ -85,10 +85,10 @@ class FirebaseAuthUserRepositoryTest {
   class Save {
     @Test
     void savesUserSuccessfully() throws Exception {
-      var user = new User(new Id("uid123"), new Email("user@example.com"), User.Role.USER,
+      final var userRecord = mock(UserRecord.class);
+      final var user = new User(new Id("uid123"), new Email("user@example.com"), User.Role.USER,
           new Name("Test User"),
           new Image("http://img"));
-      var userRecord = mock(UserRecord.class);
       when(userRecord.getUid()).thenReturn("uid123");
       when(userRecord.getCustomClaims()).thenReturn(new HashMap<>());
       when(firebaseAuth.createUser(any(UserRecord.CreateRequest.class))).thenReturn(userRecord);

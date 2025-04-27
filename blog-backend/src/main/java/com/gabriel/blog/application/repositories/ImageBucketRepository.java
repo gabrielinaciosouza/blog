@@ -1,14 +1,13 @@
 package com.gabriel.blog.application.repositories;
 
 import com.gabriel.blog.domain.valueobjects.Image;
-
 import java.util.Optional;
 
 /**
- * The {@link ImageBucketRepository} interface represents the repository for managing image storage buckets.
+ * The {@link ImageBucketRepository} interface represents the repository for managing image buckets.
  *
- * <p>This interface contains the methods for creating images in the storage bucket based on the specified
- * image data and metadata.</p>
+ * <p>This interface contains the methods for creating images in the storage bucket based
+ * on the specified image data and metadata.</p>
  *
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  */
@@ -23,9 +22,9 @@ public interface ImageBucketRepository {
   Image createImage(UploadImageParams params);
 
   /**
-   * The {@link BucketType} enum represents the different types of image storage buckets in the system.
+   * The {@link BucketType} enum represents the different types of image buckets in the system.
    *
-   * <p>This enum contains the different types of image storage buckets that can be used to store images
+   * <p>This enum contains the different types of image buckets that can be used to store images
    * in the system. Each bucket type has a unique name that identifies the bucket in the system.</p>
    *
    * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
@@ -55,9 +54,11 @@ public interface ImageBucketRepository {
   }
 
   /**
-   * The {@link UploadImageParams} record represents the parameters required to upload an image to a storage bucket.
+   * The {@link UploadImageParams} record represents the parameters required to upload an image
+   * to a storage bucket.
    *
-   * <p>This record contains the image data, file name, file MIME type, and bucket name required to upload an image
+   * <p>This record contains the image data, file name, file MIME type, and bucket name required to
+   * upload an image
    * to the storage bucket.</p>
    *
    * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>

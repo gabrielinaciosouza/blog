@@ -1,5 +1,8 @@
 package com.gabriel.blog.application.usecases;
 
+import static com.gabriel.blog.application.repositories.ImageBucketRepository.BucketType;
+import static com.gabriel.blog.application.repositories.ImageBucketRepository.UploadImageParams;
+
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.qualifiers.RandomGenerator;
 import com.gabriel.blog.application.repositories.ImageBucketRepository;
@@ -7,12 +10,8 @@ import com.gabriel.blog.application.requests.UploadImageRequest;
 import com.gabriel.blog.application.responses.ImageResponse;
 import com.gabriel.blog.application.services.IdGenerator;
 import jakarta.enterprise.context.ApplicationScoped;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
-import static com.gabriel.blog.application.repositories.ImageBucketRepository.BucketType;
-import static com.gabriel.blog.application.repositories.ImageBucketRepository.UploadImageParams;
 
 /**
  * The {@link UploadImageUseCase} class represents the use case for uploading images to a storage
@@ -33,7 +32,7 @@ public class UploadImageUseCase {
   /**
    * Creates a new {@link UploadImageUseCase} with the specified image bucket repository.
    *
-   * @param imageBucketRepository the image bucket repository to use for managing image storage buckets.
+   * @param imageBucketRepository the image bucket repository to use for managing image buckets.
    */
   public UploadImageUseCase(final ImageBucketRepository imageBucketRepository,
                             @RandomGenerator final IdGenerator idGenerator) {
@@ -57,7 +56,8 @@ public class UploadImageUseCase {
             request.fileData(),
             fileName,
             request.fileMimeType(),
-                BucketType.getBucketType(request.bucketName()).orElseThrow(() -> new ValidationException("Invalid bucket name"))));
+            BucketType.getBucketType(request.bucketName())
+                .orElseThrow(() -> new ValidationException("Invalid bucket name"))));
 
     return new ImageResponse(image.toString(), fileName);
   }

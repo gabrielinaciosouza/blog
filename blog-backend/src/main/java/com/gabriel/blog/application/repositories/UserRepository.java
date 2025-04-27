@@ -28,7 +28,6 @@ public interface UserRepository {
    * Saves a new user to the repository.
    *
    * @param user the {@link User} to save; must not be {@code null}.
-   * @return the saved {@link User}.
    */
   void save(User user);
 }
