@@ -4,14 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Test;
-
 import com.gabriel.blog.domain.exceptions.DomainException;
 import com.gabriel.blog.fixtures.EmailFixture;
 import com.gabriel.blog.fixtures.IdFixture;
 import com.gabriel.blog.fixtures.ImageFixture;
 import com.gabriel.blog.fixtures.NameFixture;
 import com.gabriel.blog.fixtures.UserFixture;
+import org.junit.jupiter.api.Test;
 
 class UserTest {
 
@@ -36,17 +35,18 @@ class UserTest {
 
   @Test
   void shouldCreateValidUser() {
-    assertDoesNotThrow(() -> new User(IdFixture.withId("123"), EmailFixture.email(), User.Role.USER, NameFixture.name(),
+    assertDoesNotThrow(() -> new User(IdFixture.withId("123"), EmailFixture.email(), User.Role.USER,
+        NameFixture.name(),
         ImageFixture.image()));
   }
 
   @Test
   void shouldCreateCorrectToString() {
     assertEquals(
-        "User {\"email\":\"Email {\\\"email\\\":\\\"default@example.com\\\"}\"," +
-            "\"name\":\"Name {\\\"value\\\":\\\"Default User\\\"}\"," +
-            "\"pictureUrl\":\"http:\\/\\/default.img\",\"role\":\"USER\"," +
-            "\"id\":\"Id {\\\"value\\\":\\\"default-id\\\"}\"}",
+        "User {\"email\":\"Email {\\\"email\\\":\\\"default@example.com\\\"}\","
+            + "\"name\":\"Name {\\\"value\\\":\\\"Default User\\\"}\","
+            + "\"pictureUrl\":\"http:\\/\\/default.img\",\"role\":\"USER\","
+            + "\"id\":\"Id {\\\"value\\\":\\\"default-id\\\"}\"}",
         UserFixture.DEFAULT_USER.toString());
   }
 }

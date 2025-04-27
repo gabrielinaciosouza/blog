@@ -7,13 +7,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.UserRepository;
 import com.gabriel.blog.application.services.TokenService;
@@ -22,6 +15,11 @@ import com.gabriel.blog.domain.valueobjects.Email;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Name;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 class AuthenticationUseCaseTest {
 
@@ -39,7 +37,8 @@ class AuthenticationUseCaseTest {
   @Test
   void shouldAuthenticateExistingUser() {
     final String idToken = "valid-token";
-    final var decodedToken = new TokenService.DecodedToken("123", "test@example.com", "Test User", "http://img");
+    final var decodedToken =
+        new TokenService.DecodedToken("123", "test@example.com", "Test User", "http://img");
     final var email = new Email("test@example.com");
     final var existingUser = new User(new Id("123"), email, User.Role.USER, new Name("Test User"),
         new Image("http://img"));
@@ -61,7 +60,8 @@ class AuthenticationUseCaseTest {
   @Test
   void shouldCreateUserIfNotFound() {
     final String idToken = "new-token";
-    final var decodedToken = new TokenService.DecodedToken("456", "new@example.com", "New User", null);
+    final var decodedToken =
+        new TokenService.DecodedToken("456", "new@example.com", "New User", null);
     final var email = new Email("new@example.com");
 
     when(tokenService.decode(idToken)).thenReturn(decodedToken);

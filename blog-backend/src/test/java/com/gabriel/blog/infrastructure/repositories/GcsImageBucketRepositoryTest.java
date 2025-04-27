@@ -1,17 +1,17 @@
 package com.gabriel.blog.infrastructure.repositories;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.gabriel.blog.application.repositories.ImageBucketRepository;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class GcsImageBucketRepositoryTest {
 
@@ -33,7 +33,7 @@ class GcsImageBucketRepositoryTest {
     final var fileData = "fileData".getBytes();
     final var fileMimeType = "image/jpeg";
     final var params =
-            new ImageBucketRepository.UploadImageParams(fileData, fileName, fileMimeType, bucketType);
+        new ImageBucketRepository.UploadImageParams(fileData, fileName, fileMimeType, bucketType);
     final var bucket = mock(Bucket.class);
     final var blob = mock(com.google.cloud.storage.Blob.class);
 
@@ -58,7 +58,7 @@ class GcsImageBucketRepositoryTest {
     final var fileData = "fileData".getBytes();
     final var fileMimeType = "image/jpeg";
     final var params =
-            new ImageBucketRepository.UploadImageParams(fileData, fileName, fileMimeType, bucketType);
+        new ImageBucketRepository.UploadImageParams(fileData, fileName, fileMimeType, bucketType);
     final var bucket = mock(Bucket.class);
     final var blob = mock(com.google.cloud.storage.Blob.class);
 

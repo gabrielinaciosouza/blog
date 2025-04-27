@@ -1,11 +1,5 @@
 package com.gabriel.blog.application.usecases;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Optional;
-
-import org.jboss.logging.Logger;
-
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.UserRepository;
 import com.gabriel.blog.application.responses.AuthenticationResponse;
@@ -15,9 +9,12 @@ import com.gabriel.blog.domain.valueobjects.Email;
 import com.gabriel.blog.domain.valueobjects.Id;
 import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Name;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
+import org.jboss.logging.Logger;
 
 /**
  * This class is responsible for handling authorization-related use cases.
@@ -33,8 +30,7 @@ public final class AuthenticationUseCase {
   /**
    * Constructs a new {@link AuthenticationUseCase} with the specified
    * {@link UserRepository} and {@link TokenService}.
-   * 
-   * 
+   *
    * @param userRepository the repository that handles user operations; must not
    *                       be {@code null}.
    * @param tokenService   the service that handles token operations; must not be
@@ -42,18 +38,17 @@ public final class AuthenticationUseCase {
    */
   @Inject
   public AuthenticationUseCase(final UserRepository userRepository,
-      final TokenService tokenService) {
+                               final TokenService tokenService) {
     this.userRepository = userRepository;
     this.tokenService = tokenService;
   }
 
   /**
    * Authenticates a user based on their Google ID token.
-   * 
+   *
    * @param idToken the ID token received from Google; must not be {@code null} or
    *                empty.
-   * @return an {@link AuthenticationResponse} indicating the authorization
-   *         status.
+   * @return an {@link AuthenticationResponse} indicating the authorization status.
    */
   public AuthenticationResponse authenticateWithGoogle(final String idToken) {
     if (idToken == null || idToken.isEmpty()) {
