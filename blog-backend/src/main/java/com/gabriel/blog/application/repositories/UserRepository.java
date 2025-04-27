@@ -30,5 +30,5 @@ public interface UserRepository {
    * @param user the {@link User} to save; must not be {@code null}.
    * @return the saved {@link User}.
    */
-  User create(Email user);
+  void save(User user);
 }

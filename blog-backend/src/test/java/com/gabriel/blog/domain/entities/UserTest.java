@@ -4,48 +4,49 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.gabriel.blog.domain.exceptions.DomainException;
-import com.gabriel.blog.domain.valueobjects.Email;
-import com.gabriel.blog.fixtures.IdFixture;
 import org.junit.jupiter.api.Test;
+
+import com.gabriel.blog.domain.exceptions.DomainException;
+import com.gabriel.blog.fixtures.EmailFixture;
+import com.gabriel.blog.fixtures.IdFixture;
+import com.gabriel.blog.fixtures.ImageFixture;
+import com.gabriel.blog.fixtures.NameFixture;
+import com.gabriel.blog.fixtures.UserFixture;
 
 class UserTest {
 
   @Test
-  void shouldThrowDomainExceptionWhenIdIsNull() {
-    final var exception = assertThrows(DomainException.class,
-        () -> new User(null, new Email("user@example.com"), User.Role.USER));
+  void shouldThrowDomainException() {
+    var exception = assertThrows(DomainException.class,
+        () -> UserFixture.UserBuilder.anUser().withId(null).build());
     assertEquals("Tried to create an Entity with a null id", exception.getMessage());
-  }
 
-  @Test
-  void shouldThrowDomainExceptionWhenEmailIsNull() {
-    final var exception = assertThrows(DomainException.class,
-        () -> new User(IdFixture.withId("123"), null, User.Role.USER));
+    exception = assertThrows(DomainException.class,
+        () -> UserFixture.UserBuilder.anUser().withEmail(null).build());
     assertEquals("Tried to create a User with a null email", exception.getMessage());
-  }
 
-  @Test
-  void shouldThrowDomainExceptionWhenRoleIsNull() {
-    final var exception = assertThrows(DomainException.class,
-        () -> new User(IdFixture.withId("123"), new Email("user@example.com"), null));
+    exception = assertThrows(DomainException.class,
+        () -> UserFixture.UserBuilder.anUser().withRole(null).build());
     assertEquals("Tried to create a User with a null role", exception.getMessage());
+
+    exception = assertThrows(DomainException.class,
+        () -> UserFixture.UserBuilder.anUser().withName(null).build());
+    assertEquals("Tried to create a User with a null name", exception.getMessage());
   }
 
   @Test
   void shouldCreateValidUser() {
-    assertDoesNotThrow(() ->
-        new User(IdFixture.withId("123"), new Email("valid@example.com"), User.Role.USER));
+    assertDoesNotThrow(() -> new User(IdFixture.withId("123"), EmailFixture.email(), User.Role.USER, NameFixture.name(),
+        ImageFixture.image()));
   }
 
   @Test
   void shouldCreateCorrectToString() {
-    final var user =
-        new User(IdFixture.withId("123"), new Email("user@example.com"), User.Role.USER);
     assertEquals(
-        "User {\"email\":\"Email {\\\"email\\\":\\\"user@example.com\\\"}\","
-            + "\"role\":\"USER\","
-            + "\"id\":\"Id {\\\"value\\\":\\\"123\\\"}\"}",
-        user.toString());
+        "User {\"email\":\"Email {\\\"email\\\":\\\"default@example.com\\\"}\"," +
+            "\"name\":\"Name {\\\"value\\\":\\\"Default User\\\"}\"," +
+            "\"pictureUrl\":\"http:\\/\\/default.img\",\"role\":\"USER\"," +
+            "\"id\":\"Id {\\\"value\\\":\\\"default-id\\\"}\"}",
+        UserFixture.DEFAULT_USER.toString());
   }
 }
