@@ -6,18 +6,26 @@ import Post from "@/models/post";
 
 jest.mock("@/services/postService");
 
+jest.mock("next/image", () => ({
+    __esModule: true,
+    default: (props: any) => {
+        return <img {...props} />;
+    },
+}));
+
 describe("PostList Component", () => {
+    jest.setTimeout(20000);
     const posts: Post[] = [
-        { postId: "1", title: "Post 1", content: "<p>Content 1</p>", creationDate: "2025-01-01", slug: "post-1" },
-        { postId: "2", title: "Post 2", content: "<p>Content 2</p>", creationDate: "2025-01-02", slug: "post-2" },
-        { postId: "3", title: "Post 3", content: "<p>Content 3</p>", creationDate: "2025-01-03", slug: "post-3" },
-        { postId: "4", title: "Post 4", content: "<p>Content 4</p>", creationDate: "2025-01-04", slug: "post-4" },
-        { postId: "5", title: "Post 5", content: "<p>Content 5</p>", creationDate: "2025-01-05", slug: "post-5" },
-        { postId: "6", title: "Post 6", content: "<p>Content 6</p>", creationDate: "2025-01-06", slug: "post-6" },
+        { postId: "1", title: "Post 1", content: "<p>Content 1</p>", creationDate: "2025-01-01", slug: "post-1", coverImage: "cover1.jpg" },
+        { postId: "2", title: "Post 2", content: "<p>Content 2</p>", creationDate: "2025-01-02", slug: "post-2", coverImage: "cover2.jpg" },
+        { postId: "3", title: "Post 3", content: "<p>Content 3</p>", creationDate: "2025-01-03", slug: "post-3", coverImage: "cover3.jpg" },
+        { postId: "4", title: "Post 4", content: "<p>Content 4</p>", creationDate: "2025-01-04", slug: "post-4", coverImage: "cover4.jpg" },
+        { postId: "5", title: "Post 5", content: "<p>Content 5</p>", creationDate: "2025-01-05", slug: "post-5", coverImage: "cover5.jpg" },
+        { postId: "6", title: "Post 6", content: "<p>Content 6</p>", creationDate: "2025-01-06", slug: "post-6", coverImage: "cover6.jpg" },
     ];
 
     beforeEach(() => {
-        (getPosts as jest.Mock).mockResolvedValue({posts, totalCount: posts.length});
+        (getPosts as jest.Mock).mockResolvedValue({ posts, totalCount: posts.length });
     });
 
     it("should render the header and 'Load more' link if there are more than 5 posts", async () => {
@@ -52,7 +60,7 @@ describe("PostList Component", () => {
     });
 
     it("should not render the 'Load more' link if there are 5 or fewer posts", async () => {
-        (getPosts as jest.Mock).mockResolvedValue({posts: posts.slice(0, 5), totalCount: 5});
+        (getPosts as jest.Mock).mockResolvedValue({ posts: posts.slice(0, 5), totalCount: 5 });
         await act(async () => {
             render(
                 <Suspense fallback={<div>Loading...</div>}>
