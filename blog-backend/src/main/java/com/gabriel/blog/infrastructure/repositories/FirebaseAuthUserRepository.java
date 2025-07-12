@@ -10,6 +10,7 @@ import com.gabriel.blog.infrastructure.exceptions.RepositoryException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 import org.jboss.logging.Logger;
 
@@ -20,6 +21,7 @@ import org.jboss.logging.Logger;
  *
  * <p>Created by Gabriel Inacio de Souza on April 26, 2025.</p>
  */
+@ApplicationScoped
 public class FirebaseAuthUserRepository implements UserRepository {
 
   private static final Logger LOG = Logger.getLogger(FirebaseAuthUserRepository.class);
