@@ -2,6 +2,7 @@ package com.gabriel.blog.infrastructure.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +49,7 @@ class FirebaseAuthUserRepositoryTest {
       when(userRecord.getUid()).thenReturn("uid123");
       when(userRecord.getDisplayName()).thenReturn("Test User");
       when(userRecord.getPhotoUrl()).thenReturn("http://img");
-      Map<String, Object> claims = new HashMap<>();
+      final Map<String, Object> claims = new HashMap<>();
       claims.put("role", "USER");
       when(userRecord.getCustomClaims()).thenReturn(claims);
       when(firebaseAuth.getUserByEmail(email.getEmail())).thenReturn(userRecord);
@@ -56,7 +57,7 @@ class FirebaseAuthUserRepositoryTest {
       Optional<User> result = repository.findByEmail(email);
 
       assertTrue(result.isPresent());
-      User user = result.get();
+      final User user = result.get();
       assertEquals("uid123", user.getId().getValue());
       assertEquals(email, user.getEmail());
       assertEquals(User.Role.USER, user.getRole());
@@ -78,6 +79,52 @@ class FirebaseAuthUserRepositoryTest {
       var email = new Email("error@example.com");
       when(firebaseAuth.getUserByEmail(email.getEmail())).thenThrow(new RuntimeException("fail"));
       assertThrows(RepositoryException.class, () -> repository.findByEmail(email));
+    }
+
+    @Test
+    void mapsRoleFromCustomClaims() throws Exception {
+      final var email = new Email("roleuser@example.com");
+      final var userRecord = mock(UserRecord.class);
+      when(userRecord.getUid()).thenReturn("uid456");
+      when(userRecord.getDisplayName()).thenReturn("Role User");
+      when(userRecord.getPhotoUrl()).thenReturn("http://img2");
+      final Map<String, Object> claims = new HashMap<>();
+      claims.put("role", "admin");
+      when(userRecord.getCustomClaims()).thenReturn(claims);
+      when(firebaseAuth.getUserByEmail(email.getEmail())).thenReturn(userRecord);
+
+      final Optional<User> result = repository.findByEmail(email);
+
+      assertTrue(result.isPresent());
+      final User user = result.get();
+      assertEquals(User.Role.ADMIN, user.getRole());
+      assertEquals("uid456", user.getId().getValue());
+      assertEquals("Role User", user.getName().getValue());
+      assertEquals("roleuser@example.com", user.getEmail().getEmail());
+      assertEquals("http://img2", user.getPictureUrl().getValue().toString());
+    }
+
+    @Test
+    void returnsUserDefaultImageWhenPhotoUrlIsBlankOrNull() throws Exception {
+      final var email = new Email("noimage@example.com");
+      final var userRecord = mock(UserRecord.class);
+      when(userRecord.getUid()).thenReturn("uid789");
+      when(userRecord.getDisplayName()).thenReturn("No Image User");
+      when(userRecord.getPhotoUrl()).thenReturn("");
+      final Map<String, Object> claims = new HashMap<>();
+      claims.put("role", "user");
+      when(userRecord.getCustomClaims()).thenReturn(claims);
+      when(firebaseAuth.getUserByEmail(email.getEmail())).thenReturn(userRecord);
+
+      final Optional<User> result = repository.findByEmail(email);
+
+      assertTrue(result.isPresent());
+      final User user = result.get();
+      assertEquals("uid789", user.getId().getValue());
+      assertEquals("No Image User", user.getName().getValue());
+      assertEquals("noimage@example.com", user.getEmail().getEmail());
+      assertEquals(User.Role.USER, user.getRole());
+      assertNotNull(user.getPictureUrl().getValue());
     }
   }
 

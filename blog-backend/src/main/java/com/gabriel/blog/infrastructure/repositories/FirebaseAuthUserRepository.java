@@ -1,5 +1,7 @@
 package com.gabriel.blog.infrastructure.repositories;
 
+import static java.util.function.Predicate.not;
+
 import com.gabriel.blog.application.repositories.UserRepository;
 import com.gabriel.blog.domain.entities.User;
 import com.gabriel.blog.domain.valueobjects.Email;
@@ -48,9 +50,12 @@ public class FirebaseAuthUserRepository implements UserRepository {
       return Optional.of(new User(
           new Id(firebaseUser.getUid()),
           email,
-          User.Role.valueOf(role),
+          User.Role.valueOf(role.toUpperCase()),
           new Name(firebaseUser.getDisplayName()),
-          new Image(firebaseUser.getPhotoUrl())));
+          Optional.ofNullable(firebaseUser.getPhotoUrl())
+              .filter(not(String::isBlank))
+              .map(Image::new)
+              .orElse(null)));
     } catch (final FirebaseAuthException e) {
       LOG.info("User not found", e);
       return Optional.empty();
