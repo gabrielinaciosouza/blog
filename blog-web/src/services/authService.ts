@@ -14,7 +14,7 @@ export const continueWithGoogle = async (idToken: string): Promise<AuthResponse>
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.message || data.error || "Failed to continue with Google");
+        throw new Error(data.message);
     }
 
     return new AuthResponse(
