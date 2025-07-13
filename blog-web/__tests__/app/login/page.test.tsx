@@ -36,6 +36,32 @@ describe("LoginPage", () => {
         });
     });
 
+    it("shows alert if no user is returned from Google sign-in", async () => {
+        const { signInWithPopup } = require("@/services/firebase");
+        signInWithPopup.mockImplementationOnce(() => Promise.resolve({ user: null }));
+        window.alert = jest.fn();
+        render(<LoginPage />);
+        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        await waitFor(() => {
+            expect(window.alert).toHaveBeenCalledWith("Google sign-in failed");
+        });
+    });
+
+    it("shows alert if /api/continue-with-google response is not ok", async () => {
+        const { signInWithPopup } = require("@/services/firebase");
+        signInWithPopup.mockImplementationOnce(() => Promise.resolve({ user: { getIdToken: jest.fn(() => Promise.resolve("mock-id-token")) } }));
+        global.fetch = jest.fn(() => Promise.resolve({
+            ok: false,
+            json: () => Promise.resolve({ message: "Failed to continue with Google" })
+        })) as any;
+        window.alert = jest.fn();
+        render(<LoginPage />);
+        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        await waitFor(() => {
+            expect(window.alert).toHaveBeenCalledWith("Google sign-in failed");
+        });
+    });
+
     it("shows alert on error", async () => {
         const { signInWithPopup } = require("@/services/firebase");
         signInWithPopup.mockImplementationOnce(() => Promise.reject(new Error("Google sign-in failed")));

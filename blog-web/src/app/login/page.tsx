@@ -40,11 +40,11 @@ export default function LoginPage() {
             });
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.message || "Failed to continue with Google");
+                throw new Error(error.message);
             }
             router.back();
         } catch (err: any) {
-            alert(err?.message || "Google sign-in failed");
+            alert("Google sign-in failed");
         }
     };
     return (
