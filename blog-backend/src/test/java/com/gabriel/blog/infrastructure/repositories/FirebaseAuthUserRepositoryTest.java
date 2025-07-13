@@ -54,7 +54,7 @@ class FirebaseAuthUserRepositoryTest {
       when(userRecord.getCustomClaims()).thenReturn(claims);
       when(firebaseAuth.getUserByEmail(email.getEmail())).thenReturn(userRecord);
 
-      Optional<User> result = repository.findByEmail(email);
+      final Optional<User> result = repository.findByEmail(email);
 
       assertTrue(result.isPresent());
       final User user = result.get();
@@ -67,16 +67,16 @@ class FirebaseAuthUserRepositoryTest {
 
     @Test
     void returnsEmptyWhenUserNotFound() throws Exception {
-      var email = new Email("notfound@example.com");
+      final var email = new Email("notfound@example.com");
       when(firebaseAuth.getUserByEmail(email.getEmail()))
           .thenThrow(new FirebaseAuthException(ErrorCode.NOT_FOUND, "msg", null, null, null));
-      Optional<User> result = repository.findByEmail(email);
+      final Optional<User> result = repository.findByEmail(email);
       assertTrue(result.isEmpty());
     }
 
     @Test
     void throwsRepositoryExceptionOnOtherErrors() throws Exception {
-      var email = new Email("error@example.com");
+      final var email = new Email("error@example.com");
       when(firebaseAuth.getUserByEmail(email.getEmail())).thenThrow(new RuntimeException("fail"));
       assertThrows(RepositoryException.class, () -> repository.findByEmail(email));
     }
@@ -126,6 +126,55 @@ class FirebaseAuthUserRepositoryTest {
       assertEquals(User.Role.USER, user.getRole());
       assertNotNull(user.getPictureUrl().getValue());
     }
+
+    @Test
+    void returnsUserWithDefaultRoleWhenRoleIsNullOrBlankOrStringNull() throws Exception {
+      final var email = new Email("defaultrole@example.com");
+      final var userRecord = mock(UserRecord.class);
+      when(userRecord.getUid()).thenReturn("uid999");
+      when(userRecord.getDisplayName()).thenReturn("Test User");
+      when(userRecord.getPhotoUrl()).thenReturn("http://img");
+      // Test with role = null
+      final Map<String, Object> claimsNull = new HashMap<>();
+      claimsNull.put("role", null);
+      when(userRecord.getCustomClaims()).thenReturn(claimsNull);
+      when(firebaseAuth.getUserByEmail(email.getEmail())).thenReturn(userRecord);
+      final Optional<User> resultNull = repository.findByEmail(email);
+      assertTrue(resultNull.isPresent());
+      assertEquals(User.Role.USER, resultNull.get().getRole());
+      // Test with role = ""
+      claimsNull.put("role", "");
+      final Optional<User> resultBlank = repository.findByEmail(email);
+      assertTrue(resultBlank.isPresent());
+      assertEquals(User.Role.USER, resultBlank.get().getRole());
+      // Test with role = "null"
+      claimsNull.put("role", "null");
+      final Optional<User> resultStringNull = repository.findByEmail(email);
+      assertTrue(resultStringNull.isPresent());
+      assertEquals(User.Role.USER, resultStringNull.get().getRole());
+    }
+
+    @Test
+    void returnsUserWithUnknownUserNameWhenDisplayNameIsNullOrBlank() throws Exception {
+      final var email = new Email("unknownname@example.com");
+      final var userRecord = mock(UserRecord.class);
+      when(userRecord.getUid()).thenReturn("uid888");
+      when(userRecord.getPhotoUrl()).thenReturn("http://img");
+      final Map<String, Object> claims = new HashMap<>();
+      claims.put("role", "user");
+      when(userRecord.getCustomClaims()).thenReturn(claims);
+      // Test with displayName = null
+      when(userRecord.getDisplayName()).thenReturn(null);
+      when(firebaseAuth.getUserByEmail(email.getEmail())).thenReturn(userRecord);
+      final Optional<User> resultNull = repository.findByEmail(email);
+      assertTrue(resultNull.isPresent());
+      assertEquals("Unknown User", resultNull.get().getName().getValue());
+      // Test with displayName = ""
+      when(userRecord.getDisplayName()).thenReturn("");
+      final Optional<User> resultBlank = repository.findByEmail(email);
+      assertTrue(resultBlank.isPresent());
+      assertEquals("Unknown User", resultBlank.get().getName().getValue());
+    }
   }
 
   @Nested
@@ -149,7 +198,7 @@ class FirebaseAuthUserRepositoryTest {
 
     @Test
     void throwsRepositoryExceptionOnError() throws Exception {
-      var user = new User(new Id("uid123"), new Email("user@example.com"), User.Role.USER,
+      final var user = new User(new Id("uid123"), new Email("user@example.com"), User.Role.USER,
           new Name("Test User"),
           new Image("http://img"));
       when(firebaseAuth.createUser(any(UserRecord.CreateRequest.class))).thenThrow(

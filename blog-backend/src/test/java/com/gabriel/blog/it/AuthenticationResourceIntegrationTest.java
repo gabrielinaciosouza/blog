@@ -82,7 +82,10 @@ class AuthenticationResourceIntegrationTest {
         .statusCode(200)
         .body("authToken", notNullValue())
         .body("userId", equalTo(userUid))
-        .body("role", equalTo("USER"));
+        .body("role", equalTo("USER"))
+        .body("name", equalTo("Test User"))
+        .body("email", equalTo("test@email.com"))
+        .body("pictureUrl", notNullValue());
   }
 
   @Test
@@ -111,4 +114,3 @@ class AuthenticationResourceIntegrationTest {
         .body("message", equalTo("ID token must not be null or empty"));
   }
 }
-

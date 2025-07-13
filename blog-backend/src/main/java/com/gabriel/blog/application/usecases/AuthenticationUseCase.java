@@ -67,7 +67,11 @@ public final class AuthenticationUseCase {
     return new AuthenticationResponse(
         token,
         user.getId().getValue(),
-        user.getRole().toString());
+        user.getRole().toString(),
+        user.getName().getValue(),
+        user.getEmail().getEmail(),
+        user.getPictureUrl().getValue().toString()
+    );
   }
 
   private User createAndSaveUser(final TokenService.DecodedToken decodedToken) {

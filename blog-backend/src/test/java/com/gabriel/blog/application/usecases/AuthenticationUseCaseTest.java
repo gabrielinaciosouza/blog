@@ -53,6 +53,9 @@ class AuthenticationUseCaseTest {
     assertEquals("generated-token", response.authToken());
     assertEquals("123", response.userId());
     assertEquals("USER", response.role());
+    assertEquals("Test User", response.name());
+    assertEquals("test@example.com", response.email());
+    assertEquals("http://img", response.pictureUrl());
     verify(userRepository).findByEmail(email);
     verify(userRepository, never()).save(ArgumentMatchers.any());
   }
@@ -74,6 +77,9 @@ class AuthenticationUseCaseTest {
     assertEquals("new-token", response.authToken());
     assertEquals("456", response.userId());
     assertEquals("USER", response.role());
+    assertEquals("New User", response.name());
+    assertEquals("new@example.com", response.email());
+    assertNotNull(response.pictureUrl());
     verify(userRepository).save(ArgumentMatchers.any(User.class));
   }
 

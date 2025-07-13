@@ -50,8 +50,16 @@ public class FirebaseAuthUserRepository implements UserRepository {
       return Optional.of(new User(
           new Id(firebaseUser.getUid()),
           email,
-          User.Role.valueOf(role.toUpperCase()),
-          new Name(firebaseUser.getDisplayName()),
+          Optional.ofNullable(role)
+              .filter(not(String::isBlank))
+              .filter(not("null"::equalsIgnoreCase))
+              .map(String::toUpperCase)
+              .map(User.Role::valueOf)
+              .orElse(User.Role.USER),
+          Optional.ofNullable(firebaseUser.getDisplayName())
+              .filter(not(String::isBlank))
+              .map(Name::new)
+              .orElse(new Name("Unknown User")),
           Optional.ofNullable(firebaseUser.getPhotoUrl())
               .filter(not(String::isBlank))
               .map(Image::new)

@@ -9,6 +9,9 @@ package com.gabriel.blog.application.responses;
 public record AuthenticationResponse(
     String authToken,
     String userId,
-    String role
+    String role,
+    String name,
+    String email,
+    String pictureUrl
 ) {
 }
