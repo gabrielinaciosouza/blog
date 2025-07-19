@@ -5,7 +5,11 @@ import styles from "./login.module.css";
 import Button from "@/components/button/Button";
 import AnimatedImage from "@/components/animatedImage/AnimatedImage";
 import AuthInput from "@/components/authInput/AuthInput";
-import { auth, googleProvider, signInWithPopup } from "@/services/firebase";
+import { auth, googleProvider, signInWithPopup, signInWithEmail } from "@/services/firebase";
+import Modal from "@/components/modal/Modal";
+import Loading from "@/components/loading/Loading";
+import useLoading from "@/hooks/useLoading";
+import { useModal } from "@/hooks/useModal";
 import { useRouter } from "next/navigation";
 import Divider from "@/components/divider/Divider";
 
@@ -31,15 +35,11 @@ export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const [loading, setLoading] = React.useState(false);
-    const [error, setError] = React.useState<string | null>(null);
+    const { isLoading, startLoading, stopLoading } = useLoading();
+    const { modalState, openModal, closeModal } = useModal();
 
-    const handleGoogleLogin = async () => {
+    const handleIdTokenFlow = async (idToken: string) => {
         try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-            if (!user) throw new Error("No user returned from Google sign-in");
-            const idToken = await user.getIdToken();
             const response = await fetch("/api/continue-with-google", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -51,34 +51,45 @@ export default function LoginPage() {
             }
             router.back();
         } catch (err: any) {
-            alert("Google sign-in failed");
+            openModal(err.message || "Sign in failed", closeModal);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        startLoading();
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            if (!user) throw new Error("No user returned from Google sign-in");
+            const idToken = await user.getIdToken();
+            await handleIdTokenFlow(idToken);
+        } catch (err: any) {
+            openModal(err.message || "Google sign-in failed", closeModal);
+        } finally {
+            stopLoading();
         }
     };
 
     const handleEmailSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
+        startLoading();
         try {
-            const response = await fetch("/api/continue-with-email", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message);
-            }
-            router.back();
+            const result = await signInWithEmail(email, password);
+            const user = result.user;
+            if (!user) throw new Error("No user returned from email sign-in");
+            const idToken = await user.getIdToken();
+            await handleIdTokenFlow(idToken);
         } catch (err: any) {
-            setError(err.message || "Sign in failed");
+            openModal(err.message || "Sign in failed", closeModal);
         } finally {
-            setLoading(false);
+            stopLoading();
         }
     };
 
     return (
         <div className={styles.bgWrap}>
+            {isLoading && <Loading />}
+            <Modal isOpen={modalState.isOpen} content={modalState.content} onClose={closeModal} />
             <div className={styles.centeredCard}>
                 <AnimatedImage src="/logo2.png" alt="Gabriel's Blog Logo" width={56} height={56} className={styles.logo} />
                 <h1 className={styles.title}>Welcome</h1>
@@ -91,8 +102,8 @@ export default function LoginPage() {
                         onChange={e => setEmail(e.target.value)}
                         placeholder="Enter your email"
                         autoComplete="email"
-                        error={error && error.toLowerCase().includes("email") ? error : undefined}
-                        disabled={loading}
+                        error={modalState.isOpen && typeof modalState.content === 'string' && modalState.content.toLowerCase().includes("email") ? modalState.content : undefined}
+                        disabled={isLoading}
                     />
                     <AuthInput
                         type="password"
@@ -101,21 +112,20 @@ export default function LoginPage() {
                         onChange={e => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         autoComplete="current-password"
-                        error={error && error.toLowerCase().includes("password") ? error : undefined}
-                        disabled={loading}
+                        error={modalState.isOpen && typeof modalState.content === 'string' && modalState.content.toLowerCase().includes("password") ? modalState.content : undefined}
+                        disabled={isLoading}
                     />
                     <Button
                         className={styles.emailBtn}
                         ariaLabel="Sign in or Sign up with Email"
-                        disabled={loading}
+                        disabled={isLoading}
                         onClick={() => { }}
                     >
-                        {loading ? "Signing in..." : "Continue with Email"}
+                        {isLoading ? "Signing in..." : "Continue with Email"}
                     </Button>
                 </form>
                 <Divider />
-                {error && <div className={styles.error}>{error}</div>}
-                <Button onClick={handleGoogleLogin} className={styles.googleBtn} ariaLabel="Sign in or Sign up with Google">
+                <Button onClick={handleGoogleLogin} className={styles.googleBtn} ariaLabel="Sign in or Sign up with Google" disabled={isLoading}>
                     <GoogleIcon />
                     Continue with Google
                 </Button>

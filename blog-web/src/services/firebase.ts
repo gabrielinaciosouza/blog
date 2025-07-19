@@ -32,12 +32,6 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
 export const googleProvider = new GoogleAuthProvider();
 export { signInWithPopup };
 
-// Email/password sign-up helper
-export async function signUpWithEmail(email: string, password: string) {
-    return createUserWithEmailAndPassword(auth, email, password);
-}
-
-// Email/password sign-in helper
 export async function signInWithEmail(email: string, password: string) {
     return signInWithEmailAndPassword(auth, email, password);
 }

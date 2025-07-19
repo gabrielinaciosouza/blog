@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "local": "set NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true && next dev --turbopack",
+    "local": "cross-env NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -27,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "identity-obj-proxy": "^3.0.0",
