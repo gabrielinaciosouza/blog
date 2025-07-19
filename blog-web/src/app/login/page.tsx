@@ -4,8 +4,10 @@ import styles from "./login.module.css";
 
 import Button from "@/components/button/Button";
 import AnimatedImage from "@/components/animatedImage/AnimatedImage";
+import AuthInput from "@/components/authInput/AuthInput";
 import { auth, googleProvider, signInWithPopup } from "@/services/firebase";
 import { useRouter } from "next/navigation";
+import Divider from "@/components/divider/Divider";
 
 
 
@@ -27,6 +29,11 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
     const router = useRouter();
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+
     const handleGoogleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
@@ -47,12 +54,67 @@ export default function LoginPage() {
             alert("Google sign-in failed");
         }
     };
+
+    const handleEmailSignIn = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch("/api/continue-with-email", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message);
+            }
+            router.back();
+        } catch (err: any) {
+            setError(err.message || "Sign in failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className={styles.bgWrap}>
             <div className={styles.centeredCard}>
                 <AnimatedImage src="/logo2.png" alt="Gabriel's Blog Logo" width={56} height={56} className={styles.logo} />
                 <h1 className={styles.title}>Welcome</h1>
-                <p className={styles.subtitle}>Sign in or create your account to access <b>Gabriel's Blog</b></p>
+                <p className={styles.subtitle}>Sign in to access <b>Gabriel's Blog</b></p>
+                <form onSubmit={handleEmailSignIn} className={styles.emailForm} style={{ marginBottom: 16 }}>
+                    <AuthInput
+                        type="email"
+                        label="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        autoComplete="email"
+                        error={error && error.toLowerCase().includes("email") ? error : undefined}
+                        disabled={loading}
+                    />
+                    <AuthInput
+                        type="password"
+                        label="Password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        autoComplete="current-password"
+                        error={error && error.toLowerCase().includes("password") ? error : undefined}
+                        disabled={loading}
+                    />
+                    <Button
+                        className={styles.emailBtn}
+                        ariaLabel="Sign in or Sign up with Email"
+                        disabled={loading}
+                        onClick={() => { }}
+                    >
+                        {loading ? "Signing in..." : "Continue with Email"}
+                    </Button>
+                </form>
+                <Divider />
+                {error && <div className={styles.error}>{error}</div>}
                 <Button onClick={handleGoogleLogin} className={styles.googleBtn} ariaLabel="Sign in or Sign up with Google">
                     <GoogleIcon />
                     Continue with Google

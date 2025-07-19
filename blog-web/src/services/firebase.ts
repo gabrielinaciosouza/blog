@@ -1,10 +1,10 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, GoogleAuthProvider, signInWithPopup, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-// Your web app's Firebase configuration (now using environment variables)
+
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -15,12 +15,29 @@ const firebaseConfig = {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-// Auth and Google provider setup
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
 export const auth = getAuth();
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
+    connectAuthEmulator(auth, "http://localhost:9099");
+    connectFirestoreEmulator(db, "localhost", 8080);
+    connectStorageEmulator(storage, "localhost", 9199);
+}
+
+
 export const googleProvider = new GoogleAuthProvider();
 export { signInWithPopup };
+
+// Email/password sign-up helper
+export async function signUpWithEmail(email: string, password: string) {
+    return createUserWithEmailAndPassword(auth, email, password);
+}
+
+// Email/password sign-in helper
+export async function signInWithEmail(email: string, password: string) {
+    return signInWithEmailAndPassword(auth, email, password);
+}

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "local": "set NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true && next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

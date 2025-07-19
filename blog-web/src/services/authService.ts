@@ -26,3 +26,28 @@ export const continueWithGoogle = async (idToken: string): Promise<AuthResponse>
         data.pictureUrl
     );
 };
+
+export async function continueWithEmail(email: string, password: string): Promise<AuthResponse> {
+    const response = await fetch(`${SERVER_URL}/auth/email`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Email sign-in failed');
+    }
+
+    return new AuthResponse(
+        data.authToken,
+        data.userId,
+        data.role,
+        data.name,
+        data.email,
+        data.pictureUrl
+    );
+}
