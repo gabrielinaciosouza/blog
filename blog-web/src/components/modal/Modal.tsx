@@ -13,7 +13,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, content, onClose }) => {
 
     return (
         <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
+            <div className={styles.modalContent} role="dialog" aria-modal="true">
                 {content}
                 <Button className={styles.closeModalButton} onClick={onClose}>
                     close

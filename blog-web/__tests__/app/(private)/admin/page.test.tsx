@@ -73,7 +73,14 @@ describe('AdminPage', () => {
         render(<AdminPage />);
 
         await waitFor(() => {
-            expect(screen.findAllByText('PostTile')).resolves.toHaveLength(2);
+            expect(screen.getByText('active-post-1')).toBeInTheDocument();
+        });
+
+        // Switch to Deleted Posts tab
+        fireEvent.click(screen.getByText('Deleted Posts'));
+
+        await waitFor(() => {
+            expect(screen.getByText('deleted-post-1')).toBeInTheDocument();
         });
 
         expect(global.fetch).toHaveBeenCalledTimes(2);

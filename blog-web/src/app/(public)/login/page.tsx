@@ -51,7 +51,7 @@ export default function LoginPage() {
             }
             router.back();
         } catch (err: any) {
-            openModal(err.message || "Sign in failed", closeModal);
+            openModal("Sign in failed", closeModal);
         }
     };
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
             const idToken = await user.getIdToken();
             await handleIdTokenFlow(idToken);
         } catch (err: any) {
-            openModal(err.message || "Google sign-in failed", closeModal);
+            openModal("Google sign-in failed", closeModal);
         } finally {
             stopLoading();
         }
@@ -80,7 +80,7 @@ export default function LoginPage() {
             const idToken = await user.getIdToken();
             await handleIdTokenFlow(idToken);
         } catch (err: any) {
-            openModal(err.message || "Sign in failed", closeModal);
+            openModal(err?.message || "Sign in failed", closeModal);
         } finally {
             stopLoading();
         }
