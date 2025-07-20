@@ -10,8 +10,12 @@ const Navbar: React.FC = () => {
         <>
             <nav className={styles.container} aria-label="Main Navigation" role="navigation">
                 <div className={styles.logo}>
-                    <AnimatedImage src="/logo2.png" alt="logo2" width={48} height={48} className={styles.image} />
-                    <span className={styles.textLogo}><AnimatedText>GABRIEL INACIO</AnimatedText></span>
+                    <Link href="/">
+                        <AnimatedImage src="/logo2.png" alt="logo2" width={48} height={48} className={styles.image} />
+                    </Link>
+                    <Link href="/" className={styles.textLogo}>
+                        <AnimatedText>Gabriel's Blog</AnimatedText>
+                    </Link>
                 </div>
                 <ul className={styles.links}>
                     <li><Link href="/" className={styles.link}><AnimatedText>Homepage</AnimatedText></Link></li>

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import Navbar from '@/components/navbar/Navbar';
 
 describe('Navbar', () => {
- 
+
   it('should render the nav element with role navigation', () => {
     render(<Navbar />);
     const nav = screen.getByRole('navigation', { name: /main navigation/i });
@@ -17,7 +17,7 @@ describe('Navbar', () => {
 
   it('should render the text logo', () => {
     render(<Navbar />);
-    expect(screen.getByText("GABRIEL INACIO")).toBeInTheDocument();
+    expect(screen.getByText("Gabriel's Blog")).toBeInTheDocument();
   });
 
   it('should render the links as list items', () => {
