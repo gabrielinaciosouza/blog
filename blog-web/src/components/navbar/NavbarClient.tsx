@@ -10,8 +10,8 @@ export default function NavbarClient({ isAdmin }: { isAdmin: boolean }) {
     const handleMenuClick = () => setOpen(false);
 
     return (
-        <header className="w-full border-b shadow-sm">
-            <nav className="fixed left-0 right-0 top-0 z-50 bg-black text-white flex flex-wrap items-center justify-between py-3 px-4 sm:px-8 gap-2 w-full" aria-label="Main Navigation" role="navigation">
+        <header className="w-full">
+            <nav className="fixed left-0 right-0 top-0 z-50 bg-background text-white flex flex-wrap items-center justify-between py-3 px-4 sm:px-8 gap-2 w-full border-b border-border" aria-label="Main Navigation" role="navigation">
                 <Link href="/" className="flex items-center gap-2 min-w-0 flex-shrink">
                     <div className="flex items-center gap-2 min-w-0 flex-shrink transition-transform duration-300 hover:scale-105 hover:shadow-primary/40">
                         <img src="/logo2.png" alt="Logo" className="h-10 w-10 rounded-full bg-black" />
@@ -63,6 +63,7 @@ export default function NavbarClient({ isAdmin }: { isAdmin: boolean }) {
                     </Sheet>
                 </div>
             </nav>
+            <div className="w-full h-px bg-border" />
         </header>
     );
 }
