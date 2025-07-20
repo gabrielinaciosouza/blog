@@ -10,10 +10,10 @@ const iconProps = {
 const Footer = () => {
     const currentYear = new Date().getFullYear();
     return (
-        <footer className="w-full px-4 py-6 bg-background border-t border-border">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <footer className="w-full h-16 px-4 bg-background border-t border-border flex items-center z-40">
+            <div className="flex w-full items-center justify-between">
                 <span className="text-sm text-muted-foreground">© {currentYear} Gabriel Inacio. All rights reserved.</span>
-                <div className="flex gap-4">
+                <div className="flex gap-4 justify-end">
                     <Link href="/" aria-label="Facebook">
                         <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
                             <SiFacebook {...iconProps} />

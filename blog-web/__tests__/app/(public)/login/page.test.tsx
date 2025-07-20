@@ -29,7 +29,7 @@ describe("LoginPage", () => {
         const { signInWithPopup } = require("@/services/firebase");
         global.fetch = jest.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) })) as any;
         render(<LoginPage />);
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Google/i }));
         await waitFor(() => {
             expect(signInWithPopup).toHaveBeenCalled();
             expect(global.fetch).toHaveBeenCalledWith(
@@ -47,9 +47,9 @@ describe("LoginPage", () => {
         const { signInWithEmail } = require("@/services/firebase");
         global.fetch = jest.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) })) as any;
         render(<LoginPage />);
-        fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: "test@email.com" } });
-        fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: "password123" } });
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Email/i }));
+        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "test@email.com" } });
+        fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password123" } });
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Email/i }));
         await waitFor(() => {
             expect(signInWithEmail).toHaveBeenCalledWith("test@email.com", "password123");
             expect(global.fetch).toHaveBeenCalledWith(
@@ -67,7 +67,7 @@ describe("LoginPage", () => {
         const { signInWithPopup } = require("@/services/firebase");
         signInWithPopup.mockImplementationOnce(() => Promise.reject(new Error("Google sign-in failed")));
         render(<LoginPage />);
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Google/i }));
         await waitFor(() => {
             expect(screen.getByText(/Google sign-in failed/i)).toBeInTheDocument();
         });
@@ -77,9 +77,9 @@ describe("LoginPage", () => {
         const { signInWithEmail } = require("@/services/firebase");
         signInWithEmail.mockImplementationOnce(() => Promise.reject(new Error("Email sign-in failed")));
         render(<LoginPage />);
-        fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: "test@email.com" } });
-        fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: "password123" } });
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Email/i }));
+        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "test@email.com" } });
+        fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password123" } });
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Email/i }));
         await waitFor(() => {
             // Check for error message in any rendered element
             expect(screen.getAllByText(/Email sign-in failed|Sign in failed/i).length).toBeGreaterThan(0);
@@ -90,7 +90,7 @@ describe("LoginPage", () => {
         const { signInWithPopup } = require("@/services/firebase");
         signInWithPopup.mockImplementationOnce(() => Promise.resolve({ user: null }));
         render(<LoginPage />);
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Google/i }));
         await waitFor(() => {
             expect(screen.getByText(/Google sign-in failed/i)).toBeInTheDocument();
         });
@@ -100,9 +100,9 @@ describe("LoginPage", () => {
         const { signInWithEmail } = require("@/services/firebase");
         signInWithEmail.mockImplementationOnce(() => Promise.resolve({ user: null }));
         render(<LoginPage />);
-        fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: "test@email.com" } });
-        fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: "password123" } });
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Email/i }));
+        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "test@email.com" } });
+        fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password123" } });
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Email/i }));
         await waitFor(() => {
             expect(screen.getAllByText(/No user returned from email sign-in/i).length).toBeGreaterThan(0);
         });
@@ -116,7 +116,7 @@ describe("LoginPage", () => {
             json: () => Promise.resolve({ message: "Failed to continue with Google" })
         })) as any;
         render(<LoginPage />);
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Google/i }));
         await waitFor(() => {
             expect(screen.getByText(/Sign in failed/i)).toBeInTheDocument();
         });
@@ -126,7 +126,7 @@ describe("LoginPage", () => {
         const { signInWithPopup } = require("@/services/firebase");
         signInWithPopup.mockImplementationOnce(() => Promise.reject({ message: "Custom Google error" }));
         render(<LoginPage />);
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Google/i }));
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Google/i }));
         await waitFor(() => {
             expect(screen.getByText(/Google sign-in failed/i)).toBeInTheDocument();
         });
@@ -136,9 +136,9 @@ describe("LoginPage", () => {
         const { signInWithEmail } = require("@/services/firebase");
         signInWithEmail.mockImplementationOnce(() => Promise.reject({ message: "Custom Email error" }));
         render(<LoginPage />);
-        fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: "test@email.com" } });
-        fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: "password123" } });
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Email/i }));
+        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "test@email.com" } });
+        fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password123" } });
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Email/i }));
         await waitFor(() => {
             expect(screen.getAllByText(/Custom Email error/i).length).toBeGreaterThan(0);
         });
@@ -149,9 +149,9 @@ describe("LoginPage", () => {
         // Simulate error object without a message property
         signInWithEmail.mockImplementationOnce(() => Promise.reject({}));
         render(<LoginPage />);
-        fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: "test@email.com" } });
-        fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: "password123" } });
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Email/i }));
+        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "test@email.com" } });
+        fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password123" } });
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Email/i }));
         await waitFor(() => {
             expect(screen.getAllByText(/Sign in failed/i).length).toBeGreaterThan(0);
         });
@@ -161,9 +161,9 @@ describe("LoginPage", () => {
         const { signInWithEmail } = require("@/services/firebase");
         signInWithEmail.mockImplementationOnce(() => Promise.reject({ message: "Password is too weak" }));
         render(<LoginPage />);
-        fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: "test@email.com" } });
-        fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: "123" } });
-        fireEvent.click(screen.getByRole("button", { name: /Continue with Email/i }));
+        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "test@email.com" } });
+        fireEvent.change(screen.getByLabelText("Password"), { target: { value: "123" } });
+        fireEvent.click(screen.getByRole("button", { name: /Sign in or Sign up with Email/i }));
         await waitFor(() => {
             const passwordInput = screen.getByLabelText(/Password/i);
             const passwordGroup = passwordInput.closest(".inputGroup") || passwordInput.parentElement?.parentElement;
