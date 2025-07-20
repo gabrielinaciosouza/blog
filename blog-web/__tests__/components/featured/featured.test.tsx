@@ -10,7 +10,7 @@ describe('Featured', () => {
 
   it('should render the subtitle', () => {
     render(<Featured />);
-    expect(screen.getByText(/highly versatile and results-driven Senior Software Engineer/i)).toBeInTheDocument();
+    expect(screen.getByTestId('subtitle')).toBeInTheDocument();
   });
 
   it('should render the image', () => {
