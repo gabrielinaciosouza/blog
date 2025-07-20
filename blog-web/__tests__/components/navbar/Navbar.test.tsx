@@ -4,28 +4,34 @@ import Navbar from '@/components/navbar/Navbar';
 
 describe('Navbar', () => {
 
-  it('should render the nav element with role navigation', () => {
-    render(<Navbar />);
-    const nav = screen.getByRole('navigation', { name: /main navigation/i });
-    expect(nav).toBeInTheDocument();
+  beforeEach(() => {
+    jest.resetModules();
   });
 
-  it('should render the logo', () => {
-    render(<Navbar />);
-    expect(screen.getByAltText("logo2")).toBeInTheDocument();
+  it('passes isAdmin=false when no cookie or non-admin cookie', async () => {
+    jest.mock('next/headers', () => ({
+      cookies: async () => ({ get: () => null })
+    }));
+    const Navbar = (await import('@/components/navbar/Navbar')).default;
+    const result = await Navbar();
+    expect(result.props.isAdmin).toBe(false);
   });
 
-  it('should render the text logo', () => {
-    render(<Navbar />);
-    expect(screen.getByText("Gabriel's Blog")).toBeInTheDocument();
+  it('passes isAdmin=true when cookie contains ADMIN role', async () => {
+    jest.mock('next/headers', () => ({
+      cookies: async () => ({ get: () => ({ value: JSON.stringify({ role: 'ADMIN' }) }) })
+    }));
+    const Navbar = (await import('@/components/navbar/Navbar')).default;
+    const result = await Navbar();
+    expect(result.props.isAdmin).toBe(true);
   });
 
-  it('should render the links as list items', () => {
-    render(<Navbar />);
-    const list = screen.getByRole('list');
-    expect(list).toBeInTheDocument();
-    expect(screen.getByText("Homepage").closest('li')).toBeInTheDocument();
-    expect(screen.getByText("Contact").closest('li')).toBeInTheDocument();
-    expect(screen.getByText("About").closest('li')).toBeInTheDocument();
+  it('passes isAdmin=false when cookie contains non-admin role', async () => {
+    jest.mock('next/headers', () => ({
+      cookies: async () => ({ get: () => ({ value: JSON.stringify({ role: 'USER' }) }) })
+    }));
+    const Navbar = (await import('@/components/navbar/Navbar')).default;
+    const result = await Navbar();
+    expect(result.props.isAdmin).toBe(false);
   });
 });

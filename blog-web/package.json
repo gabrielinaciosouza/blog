@@ -11,6 +11,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
@@ -18,16 +19,17 @@
     "clsx": "^2.1.1",
     "firebase": "^11.10.0",
     "lucide-react": "^0.525.0",
+    "next": "15.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
     "react-quill-new": "^3.3.3",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.7",
-    "next": "15.4.2"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -48,9 +50,8 @@
     "tailwindcss": "^4.1.11",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "whatwg-fetch": "^3.6.20",
-    "@tailwindcss/postcss": "^4",
     "tw-animate-css": "^1.3.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "whatwg-fetch": "^3.6.20"
   }
 }

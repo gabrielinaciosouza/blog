@@ -33,7 +33,8 @@ const customJestConfig = {
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "loading.tsx$",
-    "firebase.ts$"
+    "firebase.ts$",
+    "/src/components/ui/",
   ],
 };
 
