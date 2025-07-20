@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import Posts from "@/app/posts/page";
+import Posts from "@/app/(public)/posts/page";
 
 jest.mock("@/components/postCard/PostCard", () => () => <div>PostCard</div>);
 jest.mock("@/components/pagination/Pagination", () => () => <div>Pagination</div>);
@@ -61,7 +61,7 @@ describe("Posts Component", () => {
     it("should correctly determine pagination states", async () => {
         const response = JSON.stringify({
             posts: Array.from({ length: 9 }, (_, i) => ({
-                postId: i + 1, 
+                postId: i + 1,
                 title: `Sample ${i + 1}`,
                 content: "Sample content",
             })),

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import AdminPage from '@/app/admin/page';
+import AdminPage from '@/app/(private)/admin/page';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import useLoading from '@/hooks/useLoading';
@@ -273,7 +273,7 @@ describe('AdminPage', () => {
 
         render(<AdminPage />);
 
-       
+
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledTimes(2);
             expect(screen.getByText('Deleted Posts')).toBeInTheDocument();

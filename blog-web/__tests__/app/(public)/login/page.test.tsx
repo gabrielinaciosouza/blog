@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import LoginPage from "@/app/login/page";
+import LoginPage from "@/app/(public)/login/page";
 
 jest.mock("@/components/button/Button", () => (props: any) => <button {...props}>{props.children}</button>);
 jest.mock("@/components/animatedImage/AnimatedImage", () => (props: any) => <img {...props} />);

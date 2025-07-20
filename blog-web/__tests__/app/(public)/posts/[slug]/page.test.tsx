@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import SinglePage from '@/app/posts/[slug]/page';
+import SinglePage from '@/app/(public)/posts/[slug]/page';
 import { getPostBySlug } from '@/services/postService';
 
 jest.mock('@/services/postService');
@@ -14,6 +14,7 @@ describe('SinglePage', () => {
             content: '<p>This is the content of the post.</p>',
             creationDate: '2021-12-12T00:00:00Z',
             slug: 'test-title',
+            coverImage: '/test-image.jpg',
         };
 
         mockedGetPostBySlug.mockResolvedValueOnce(post);

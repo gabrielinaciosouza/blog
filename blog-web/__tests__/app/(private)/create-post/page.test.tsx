@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import CreatePostPage from '@/app/create-post/page';
+import CreatePostPage from '@/app/(private)/create-post/page';
 import useLoading from '@/hooks/useLoading';
 import { useRouter } from 'next/navigation';
 import userEvent from '@testing-library/user-event';
@@ -49,7 +49,7 @@ describe('CreatePostPage', () => {
   });
 
   afterEach(() => {
-    
+
     jest.clearAllMocks();
   });
 
@@ -223,7 +223,7 @@ describe('CreatePostPage', () => {
     await user.click(plusButton);
     const input = screen.getByRole('coverImageUpload') as HTMLInputElement;
     await user.upload(input, file);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Failed to upload image')).toBeInTheDocument();
     });
