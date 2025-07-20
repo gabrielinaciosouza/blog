@@ -13,8 +13,10 @@ export default function NavbarClient({ isAdmin }: { isAdmin: boolean }) {
         <header className="w-full border-b shadow-sm">
             <nav className="fixed left-0 right-0 top-0 z-50 bg-black text-white flex flex-wrap items-center justify-between py-3 px-4 sm:px-8 gap-2 w-full" aria-label="Main Navigation" role="navigation">
                 <Link href="/" className="flex items-center gap-2 min-w-0 flex-shrink">
-                    <img src="/logo2.png" alt="Logo" className="h-10 w-10 rounded-full bg-black" />
-                    <span className="font-semibold text-lg tracking-normal truncate">Gabriel's Blog</span>
+                    <div className="flex items-center gap-2 min-w-0 flex-shrink transition-transform duration-300 hover:scale-105 hover:shadow-primary/40">
+                        <img src="/logo2.png" alt="Logo" className="h-10 w-10 rounded-full bg-black" />
+                        <span className="font-semibold text-lg tracking-normal truncate">Gabriel's Blog</span>
+                    </div>
                 </Link>
                 <div className="hidden md:flex items-center gap-1 sm:gap-2 overflow-x-auto">
                     <Link href="/">
