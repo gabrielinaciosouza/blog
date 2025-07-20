@@ -5,7 +5,8 @@ import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 
 const kanitBlack = Kanit({
-    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin']
 });
 
 export const metadata: Metadata = {
@@ -21,13 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${kanitBlack.className}`}>
-      <div className="container">
+        <div className="container">
           <div className="wrapper">
-              <Navbar/>
-              {children}
-              <Footer/>
+            <Navbar />
+            {children}
+            <Footer />
           </div>
-      </div>
+        </div>
       </body>
     </html>
   );
