@@ -65,9 +65,6 @@ export default function CreatePostPage() {
             }
         } catch (error) {
             message = (error as Error).message;
-            if (contentImageInputRef.current) {
-                contentImageInputRef.current.value = "";
-            }
         } finally {
             openModal(message, () => { });
         }
@@ -173,12 +170,11 @@ export default function CreatePostPage() {
             </div>
             <div className="border rounded p-2 bg-background mt-4">
                 <div className="flex gap-2 mb-2">
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleBold().run()}><b>B</b></Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleItalic().run()}><i>I</i></Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleUnderline().run()}><u>U</u></Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleBold().run()}><b>Bold</b></Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleItalic().run()}><i>Italic</i></Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleUnderline().run()}><u>Underline</u></Button>
                     <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().setLink({ href: prompt('Enter link URL') || '' }).run()}>Link</Button>
                     <Button type="button" size="sm" variant="outline" onClick={async () => {
-                        if (!editor) return;
                         const input = document.createElement('input');
                         input.type = 'file';
                         input.accept = 'image/*';
