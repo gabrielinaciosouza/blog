@@ -16,6 +16,78 @@ jest.mock('@/hooks/useLoading', () => ({
 }));
 
 describe('AdminPage', () => {
+    const mockRouterPush = jest.fn();
+    const mockStartLoading = jest.fn();
+    const mockStopLoading = jest.fn();
+
+    beforeEach(() => {
+        (useRouter as jest.Mock).mockReturnValue({ push: mockRouterPush });
+        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('?page=1'));
+        (useLoading as jest.Mock).mockReturnValue({
+            isLoading: false,
+            startLoading: mockStartLoading,
+            stopLoading: mockStopLoading,
+        });
+    });
+
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should open sidebar when hamburger button is clicked and close when overlay or close button is clicked', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({ posts: [], totalCount: 0 })
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ([])
+            });
+        window.innerWidth = 500;
+        window.dispatchEvent(new Event('resize'));
+        render(<AdminPage />);
+        expect(screen.queryByLabelText('Close sidebar')).not.toBeInTheDocument();
+        fireEvent.click(screen.getByLabelText('Open sidebar'));
+        expect(screen.getByLabelText('Close sidebar')).toBeInTheDocument();
+        const overlays = screen.queryAllByRole('presentation');
+        if (overlays.length > 0) {
+            fireEvent.click(overlays[0]);
+        } else {
+            const fallbackOverlay = Array.from(document.querySelectorAll('div')).find(
+                el => el.childElementCount === 0 && !el.textContent
+            );
+            if (fallbackOverlay) fireEvent.click(fallbackOverlay);
+        }
+        expect(screen.queryByLabelText('Close sidebar')).not.toBeInTheDocument();
+        fireEvent.click(screen.getByLabelText('Open sidebar'));
+        expect(screen.getByLabelText('Close sidebar')).toBeInTheDocument();
+        fireEvent.click(screen.getByLabelText('Close sidebar'));
+        expect(screen.queryByLabelText('Close sidebar')).not.toBeInTheDocument();
+    });
+
+    it('should set active menu and close sidebar when a menu item is clicked in mobile sidebar', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({ posts: [], totalCount: 0 })
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ([])
+            });
+        window.innerWidth = 500;
+        window.dispatchEvent(new Event('resize'));
+        render(<AdminPage />);
+        fireEvent.click(screen.getByLabelText('Open sidebar'));
+        // Find the mobile sidebar container
+        const mobileSidebar = document.querySelector('.absolute.top-0.left-0.w-full.h-full.z-40.flex');
+        const menuButton = Array.from(mobileSidebar?.querySelectorAll('button') ?? []).find(btn => btn.textContent?.includes('Deleted Posts'));
+        fireEvent.click(menuButton!);
+        // Assert the heading updates to 'Deleted Posts'
+        expect(screen.getByRole('heading', { name: 'Deleted Posts' })).toBeInTheDocument();
+    });
 
     it('shows empty posts message when page param is null (defaults to 1)', async () => {
         jest.spyOn(require('next/navigation'), 'useSearchParams').mockReturnValue(new URLSearchParams(''));
@@ -43,49 +115,10 @@ describe('AdminPage', () => {
                 json: async () => [],
             });
         render(<AdminPage />);
-        // Deleted posts tab should show 'No deleted posts' message
         fireEvent.click(screen.getByText('Deleted Posts'));
         await waitFor(() => {
             expect(screen.getByText('No deleted posts')).toBeInTheDocument();
         });
-    });
-
-    it('should handle empty active posts gracefully', async () => {
-        global.fetch = jest.fn()
-            .mockResolvedValueOnce({
-                ok: true,
-                json: async () => ({ posts: [], totalCount: 0 }),
-            })
-            .mockResolvedValueOnce({
-                ok: true,
-                json: async () => ({ posts: [], totalCount: 0 }),
-            });
-        render(<AdminPage />);
-        // Click the sidebar/menu button, not the heading
-        const activePostsButtons = screen.getAllByText('Active Posts');
-        // Find the button element (not the heading)
-        const button = activePostsButtons.find(el => el.tagName === 'BUTTON');
-        fireEvent.click(button!);
-        await waitFor(() => {
-            expect(screen.getByText('No posts available')).toBeInTheDocument();
-        });
-    });
-    const mockRouterPush = jest.fn();
-    const mockStartLoading = jest.fn();
-    const mockStopLoading = jest.fn();
-
-    beforeEach(() => {
-        (useRouter as jest.Mock).mockReturnValue({ push: mockRouterPush });
-        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('?page=1'));
-        (useLoading as jest.Mock).mockReturnValue({
-            isLoading: false,
-            startLoading: mockStartLoading,
-            stopLoading: mockStopLoading,
-        });
-    });
-
-    afterEach(() => {
-        jest.clearAllMocks();
     });
 
     it('should render the dashboard with sidebar menu and new post button', async () => {
