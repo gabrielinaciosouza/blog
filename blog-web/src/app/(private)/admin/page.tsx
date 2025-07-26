@@ -1,15 +1,15 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import styles from './admin.module.css';
 import PostTile from '@/components/postTile/PostTile';
+import AdminDashboard from './AdminDashboard';
 import Post from '@/models/post';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Button from '@/components/button/Button';
-import useLoading from '@/hooks/useLoading';
-import Loading from '@/components/loading/Loading';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Loader2 } from 'lucide-react';
 import Pagination from '@/components/pagination/Pagination';
-import Tabs from '@/components/tabs/Tabs';
+import useLoading from '@/hooks/useLoading';
 
 const AdminPage = () => {
     const router = useRouter();
@@ -57,11 +57,11 @@ const AdminPage = () => {
     };
 
     useEffect(() => {
-       
+
         fetchData();
     },
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [page, startLoading, stopLoading]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [page, startLoading, stopLoading]);
 
     const handleDelete = async (slug: string) => {
         try {
@@ -92,59 +92,21 @@ const AdminPage = () => {
     const hasPrev = page > 1;
     const hasNext = page < totalPages;
 
-    const tabs = [
-        {
-            label: 'Active Posts',
-            content: (
-                <>
-                    {posts.length > 0 ? (
-                        <>
-                            {posts.map(post => (
-                                <PostTile
-                                    key={post.postId}
-                                    post={post}
-                                    onDelete={() => handleDelete(post.slug)}
-                                />
-                            ))}
-                            {totalCount > pageSize &&
-                                <Pagination page={page} hasPrev={hasPrev} hasNext={hasNext} />}
-                        </>
-                    ) : (
-                        <div>No posts available</div>
-                    )}
-                </>
-            )
-        },
-        {
-            label: 'Deleted Posts',
-            content: (
-                <>
-                    {deletedPosts.length > 0 ? (
-                        <>
-                            {deletedPosts.map(post => (
-                                <PostTile
-                                    key={post.postId}
-                                    post={post}
-                                />
-                            ))}
-                        </>
-                    ) : (
-                        <div>No deleted posts</div>
-                    )}
-                </>
-            )
-        }
-    ];
+
 
     return (
-        <div className={styles.adminContainer}>
-            <div className={styles.header}>
-                <div className={styles.title}>Dashboard</div>
-                <Button onClick={handleCreateNewPost}>New Post</Button>
-            </div>
-            {isLoading && (<Loading />)}
-            <Tabs tabs={tabs} />
-        </div>
+        <AdminDashboard
+            posts={posts}
+            deletedPosts={deletedPosts}
+            isLoading={isLoading}
+            handleDelete={handleDelete}
+            handleCreateNewPost={handleCreateNewPost}
+            page={page}
+            hasPrev={hasPrev}
+            hasNext={hasNext}
+            totalCount={totalCount}
+            pageSize={pageSize}
+        />
     );
 };
 

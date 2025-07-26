@@ -85,7 +85,6 @@ export default function LoginPage() {
         }
     };
 
-    // Helper: check if modalState.content includes 'password' (case-insensitive)
     const passwordError =
         typeof modalState.content === "string" &&
             modalState.content.toLowerCase().includes("password")
