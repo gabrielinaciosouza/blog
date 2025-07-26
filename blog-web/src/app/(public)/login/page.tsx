@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import styles from "./login.module.css";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +14,7 @@ import Image from "next/image";
 
 
 const GoogleIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.googleIcon} aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <g clipPath="url(#clip0_17_40)">
             <path d="M47.5 24.5C47.5 22.6 47.3 20.8 47 19H24V29.5H37.4C36.7 33.1 34.1 36.1 30.7 37.9V44.1H38.2C43.1 39.7 47.5 32.9 47.5 24.5Z" fill="#4285F4" />
             <path d="M24 48C30.6 48 36.2 45.8 40.2 42.2L32.7 36C30.6 37.4 27.7 38.3 24 38.3C17.7 38.3 12.2 34.1 10.3 28.6H2.5V34.9C6.5 42.1 14.6 48 24 48Z" fill="#34A853" />
