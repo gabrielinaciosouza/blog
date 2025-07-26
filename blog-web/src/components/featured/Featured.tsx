@@ -9,7 +9,7 @@ const Highlight = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Featured = () => (
-  <Card className="max-w-5xl mx-auto mt-24 p-0 bg-black rounded-2xl shadow-xl border border-border text-white">
+  <Card className="max-w-5xl mx-auto mt-8 p-0 bg-black rounded-2xl shadow-xl border border-border text-white">
     <CardContent className="flex flex-col md:flex-row items-center gap-10 p-10">
       <div className="flex flex-col items-center gap-4">
         <div className="group flex flex-col items-center">

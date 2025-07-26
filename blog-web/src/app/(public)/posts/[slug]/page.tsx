@@ -10,7 +10,7 @@ interface SinglePageProps {
 }
 
 const SinglePage = async ({ params }: SinglePageProps) => {
-    const { slug } = params;
+    const { slug } = await params;
     try {
         const post = await getPostBySlug(slug);
         return (
@@ -36,7 +36,7 @@ const SinglePage = async ({ params }: SinglePageProps) => {
                 )}
                 {/* Overlay content on top of the faded image */}
                 <section
-                    className="relative w-full max-w-5xl mx-auto px-8 flex flex-col items-start z-10"
+                    className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-8 flex flex-col items-start z-10"
                     style={{ minHeight: '420px', justifyContent: 'flex-end', display: 'flex', paddingBottom: '2rem', paddingTop: '0', marginTop: '10rem' }}
                 >
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-0 drop-shadow-xl">
@@ -54,7 +54,7 @@ const SinglePage = async ({ params }: SinglePageProps) => {
                     </div>
                 </section>
                 {/* Main content below the header */}
-                <section className="relative w-full max-w-5xl mx-auto px-8 pb-16 z-10" style={{ marginTop: '3rem' }}>
+                <section className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-8 pb-16 z-10" style={{ marginTop: '3rem' }}>
                     <article className="prose prose-lg prose-zinc dark:prose-invert max-w-none text-foreground rounded-xl shadow-xl p-8 -mt-16 bg-transparent">
                         <div dangerouslySetInnerHTML={{ __html: post.content }} />
                     </article>

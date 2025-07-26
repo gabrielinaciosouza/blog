@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./posts.module.css"
 import PostCard from "@/components/postCard/PostCard"
 import Post from "@/models/post";
 import Pagination from "@/components/pagination/Pagination";
@@ -37,9 +36,11 @@ const Posts = async ({ searchParams }: { searchParams: { page: number | null } }
                         <h2 className="text-2xl font-bold text-primary text-center">Recent Stories</h2>
                     </div>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-6 w-full max-w-6xl px-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-full sm:max-w-3xl md:max-w-5xl lg:max-w-6xl px-2 sm:px-4 md:px-8 min-w-0">
                     {posts.map((post) => (
-                        <PostCard key={post.postId} {...post} />
+                        <div key={post.postId} className="w-full h-full">
+                            <PostCard {...post} />
+                        </div>
                     ))}
                 </div>
                 <div className="mt-8 flex flex-col items-center">
