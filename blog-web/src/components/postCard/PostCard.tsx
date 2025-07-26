@@ -21,7 +21,6 @@ function formatDate(dateStr: string) {
 }
 
 const PostCard = (post: Post) => {
-    // Truncate plain text extracted from HTML
     const plainText = stripHtml(post.content);
     const truncated = plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
     return (

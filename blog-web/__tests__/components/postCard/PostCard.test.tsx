@@ -46,4 +46,18 @@ describe("PostCard Component", () => {
         const link = screen.getByRole("link");
         expect(link).toHaveAttribute("href", "/posts/sample-post");
     });
+
+    it("should render empty content", () => {
+        const postWithNullContent = {
+            postId: "2",
+            title: "Long Content Post",
+            creationDate: "2025-01-02",
+            content: null,
+            slug: "long-content-post",
+            coverImage: "/logo2.png",
+        };
+        // @ts-expect-error
+        render(<PostCard {...postWithNullContent} />);
+        expect(screen.queryByText("Long Content Post")).toBeInTheDocument();
+    });
 });

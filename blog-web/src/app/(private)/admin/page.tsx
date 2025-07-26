@@ -1,14 +1,9 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import PostTile from '@/components/postTile/PostTile';
 import AdminDashboard from './AdminDashboard';
 import Post from '@/models/post';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Loader2 } from 'lucide-react';
-import Pagination from '@/components/pagination/Pagination';
+import { useRouter, useSearchParams } from 'next/navigation'
 import useLoading from '@/hooks/useLoading';
 
 const AdminPage = () => {
