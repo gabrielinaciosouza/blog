@@ -4,13 +4,13 @@ import styles from "./login.module.css";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import AnimatedImage from "@/components/animatedImage/AnimatedImage";
 import { auth, googleProvider, signInWithPopup, signInWithEmail } from "@/services/firebase";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Loading from "@/components/loading/Loading";
 import useLoading from "@/hooks/useLoading";
 import { useModal } from "@/hooks/useModal";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 
 
@@ -103,7 +103,7 @@ export default function LoginPage() {
                 </DialogContent>
             </Dialog>
             <div className="w-full max-w-md mx-auto p-6 rounded-xl shadow-lg bg-card flex flex-col items-center gap-4">
-                <AnimatedImage src="/logo2.png" alt="Gabriel's Blog Logo" width={56} height={56} className="mb-2" />
+                <Image src="/logo2.png" alt="Gabriel's Blog Logo" width={56} height={56} className="mb-2" />
                 <h1 className="text-2xl font-bold text-primary mb-1">Welcome</h1>
                 <p className="text-muted-foreground text-center mb-2">Sign in to access <b>Gabriel's Blog</b></p>
                 <form onSubmit={handleEmailSignIn} className="w-full flex flex-col gap-4 mb-2">

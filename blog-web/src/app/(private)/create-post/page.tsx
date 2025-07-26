@@ -1,43 +1,45 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./createPostPage.module.css";
-import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
 import { useModal } from "@/hooks/useModal";
 import { FaUpload, FaPlus, FaImage, FaEye } from "react-icons/fa";
 import PostCard from "@/components/postCard/PostCard";
 import Post from "@/models/post";
-import Modal from "@/components/modal/Modal";
-import Button from "@/components/button/Button";
 import CreatePostRequest from "@/models/create-post-request";
 import { useRouter } from "next/navigation";
 import useStorage from "@/hooks/useStorage";
 import useLoading from "@/hooks/useLoading";
 import Loading from "@/components/loading/Loading";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 export default function CreatePostPage() {
-    const [open, setOpen] = useState(false);
+    React.useEffect(() => {
+        const style = document.createElement('style');
+        style.innerHTML = `.ProseMirror:focus { outline: none !important; border-color: transparent !important; box-shadow: none !important; }`;
+        document.head.appendChild(style);
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
+
     const [title, setTitle] = useStorage("draft-title", "");
     const [content, setContent] = useStorage("draft-content", "");
     const [coverImage, setCoverImage] = useStorage<string | null>("draft-coverImage", null);
-
 
     const { modalState, openModal, closeModal } = useModal();
     const { isLoading, startLoading, stopLoading } = useLoading();
     const router = useRouter();
 
-    const titleRef = useRef<HTMLTextAreaElement>(null);
-    const quillRef = useRef<ReactQuill>(null);
+    const titleRef = useRef<HTMLInputElement>(null);
     const contentImageInputRef = useRef<HTMLInputElement>(null);
     const postImageInputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        if (titleRef.current) {
-            titleRef.current.style.height = "auto";
-            titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
-        }
-    }, [title]);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
         let message = "Image not uploaded";
@@ -100,22 +102,21 @@ export default function CreatePostPage() {
         }
     };
 
+    const editor = useEditor({
+        extensions: [StarterKit, Underline, Link, Image],
+        content: content,
+        onUpdate: ({ editor }) => {
+            setContent(editor.getHTML());
+        },
+        immediatelyRender: false,
+    });
+
     const insertImageToEditor = (imageUrl: string | undefined) => {
-        if (quillRef.current && imageUrl) {
-            const editor = quillRef.current.getEditor();
-            editor.focus();
-            const range = editor.getSelection();
-            if (range) {
-                editor.insertEmbed(range.index, "image", imageUrl);
-            }
+        if (editor && imageUrl) {
+            editor.chain().focus().setImage({ src: imageUrl }).run();
         }
     };
 
-    const handleImageInsert = () => {
-        if (contentImageInputRef.current) {
-            contentImageInputRef.current.click();
-        }
-    };
 
     const post: Post = {
         postId: "",
@@ -127,25 +128,38 @@ export default function CreatePostPage() {
     };
 
     return (
-        <div className={styles.container}>
+        <div className="max-w-2xl mx-auto p-6 space-y-6">
             {isLoading && <Loading />}
-            <Modal isOpen={modalState.isOpen} content={modalState.content} onClose={closeModal} />
-            <textarea
+            <Dialog open={modalState.isOpen} onOpenChange={closeModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Notification</DialogTitle>
+                        <DialogDescription>
+                            {typeof modalState.content === "string" ? modalState.content : modalState.content}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={closeModal}>Close</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            <Input
                 ref={titleRef}
-                className={styles.input}
                 placeholder="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                rows={1}
+                className="mb-4"
             />
-            <div className={styles.imageUpload}>
+            {/* Cover Image Upload Button */}
+            <div className="mb-4 flex gap-2">
+                <Button variant="outline" onClick={() => postImageInputRef.current?.click()} aria-label="Upload Cover Image">
+                    <FaUpload /> Cover Image
+                </Button>
                 <input
                     type="file"
-                    id="postImage"
-                    role="coverImageUpload"
                     ref={postImageInputRef}
-                    className={styles.imageInput}
                     accept="image/*"
+                    style={{ display: "none" }}
                     onChange={async (e) => {
                         const url = await handleImageUpload(e, "cover-images");
                         if (url) {
@@ -153,54 +167,45 @@ export default function CreatePostPage() {
                         }
                     }}
                 />
+                <Button variant="outline" onClick={() => openModal(<PostCard {...post} />, () => { })} aria-label="Preview">
+                    <FaEye /> Preview
+                </Button>
             </div>
-            <div className={styles.editor}>
-                <div className={styles.editorButtons}>
-                    <Button onClick={() => setOpen(!open)} className={styles.addButton} ariaLabel="Plus">
-                        <FaPlus />
+            <div className="border rounded p-2 bg-background mt-4">
+                <div className="flex gap-2 mb-2">
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleBold().run()}><b>B</b></Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleItalic().run()}><i>I</i></Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleUnderline().run()}><u>U</u></Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().setLink({ href: prompt('Enter link URL') || '' }).run()}>Link</Button>
+                    <Button type="button" size="sm" variant="outline" onClick={async () => {
+                        if (!editor) return;
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = async (e: any) => {
+                            const fileInput = e.target as HTMLInputElement;
+                            if (fileInput.files && fileInput.files[0]) {
+                                const fakeEvent = { target: fileInput } as React.ChangeEvent<HTMLInputElement>;
+                                const url = await handleImageUpload(fakeEvent, "content-images");
+                                if (url) {
+                                    insertImageToEditor(url);
+                                }
+                            }
+                        };
+                        input.click();
+                    }} aria-label="Upload Content Image">
+                        <FaImage />
                     </Button>
                 </div>
-                {open && (
-                    <div className={styles.add}>
-                        <Button onClick={handleImageInsert} className={styles.addButton} ariaLabel="Image">
-                            <FaImage />
-                        </Button>
-                        <Button onClick={() => openModal(<PostCard {...post} />, () => { })} className={styles.button} ariaLabel="Preview">
-                            <FaEye />
-                        </Button>
-                        <Button className={styles.uploadButton} onClick={() => postImageInputRef.current?.click()} ariaLabel="Upload Image">
-                            <FaUpload />
-                        </Button>
-                    </div>
-                )}
-                <ReactQuill
-                    ref={quillRef}
-                    className={styles.textArea}
-                    value={content}
-                    onChange={setContent}
-                    placeholder="Write your story..."
-                />
+                <EditorContent editor={editor} className="min-h-[180px] outline-none focus:outline-none" />
             </div>
-            <input
-                type="file"
-                ref={contentImageInputRef}
-                className={styles.imageInput}
-                accept="image/*"
-                role="contentImageUpload"
-                onChange={async (e) => {
-                    const url = await handleImageUpload(e, "content-images");
-                    if (url) {
-                        insertImageToEditor(url);
-                    }
-                }}
-            />
             <Button
                 onClick={handlePublish}
-                className={styles.publishButton}
                 disabled={isLoading}
+                className="w-full mt-4"
             >
                 Publish
             </Button>
         </div>
     );
-};
+}

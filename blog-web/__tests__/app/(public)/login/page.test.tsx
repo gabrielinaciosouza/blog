@@ -2,8 +2,6 @@ import React from "react";
 import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import LoginPage from "@/app/(public)/login/page";
 
-jest.mock("@/components/button/Button", () => (props: any) => <button {...props}>{props.children}</button>);
-jest.mock("@/components/animatedImage/AnimatedImage", () => (props: any) => <img {...props} />);
 jest.mock("next/navigation", () => ({ useRouter: () => ({ back: jest.fn() }) }));
 jest.mock("@/services/firebase", () => ({
     auth: {},
