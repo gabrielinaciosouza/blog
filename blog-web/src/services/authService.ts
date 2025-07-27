@@ -29,23 +29,23 @@ export const continueWithGoogle = async (idToken: string): Promise<AuthResponse>
     );
 };
 
-export const validateAuthResponse = (authResponse: string): AuthResponse | NextResponse => {
+export const validateAuthResponse = (authResponse: string): AuthResponse => {
     try {
         const parsedAuthResponse = JSON.parse(authResponse) as AuthResponse;
         const jwtDecoded = jwtDecode(parsedAuthResponse.authToken);
         if (!jwtDecoded || typeof jwtDecoded !== 'object' || !('exp' in jwtDecoded)) {
-            return NextResponse.json({ message: "Invalid token" }, { status: 400 });
+            throw new Error("Invalid JWT token");
         }
         const exp = jwtDecoded.exp as number;
         if (Date.now() / 1000 > exp) {
-            return NextResponse.json({ message: "Token expired" }, { status: 401 });
+            throw new Error("Token expired");
         }
 
         if (parsedAuthResponse.role !== 'ADMIN') {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+            throw new Error("Unauthorized");
         }
         return parsedAuthResponse;
     } catch {
-        return NextResponse.json({ message: "Invalid auth response" }, { status: 400 });
+        throw new Error("Invalid auth response");
     }
 }

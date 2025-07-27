@@ -13,12 +13,6 @@ export const GET = async (req: Request) => {
 
         const validatedAuthResponse = validateAuthResponse(authResponse);
 
-        console.log(validatedAuthResponse);
-
-        if (validatedAuthResponse instanceof NextResponse) {
-            return validatedAuthResponse;
-        }
-
         const posts = await getDeletedPosts(validatedAuthResponse);
 
         return NextResponse.json(posts, { status: 200 });
