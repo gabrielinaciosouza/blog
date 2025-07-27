@@ -25,8 +25,8 @@ jest.mock('next/server', () => ({
         },
         headers: {
             get: jest.fn().mockImplementation(key => {
-                if (key === 'authResponse') {
-                    return JSON.stringify(new AuthResponse(
+                if (key === 'cookie') {
+                    return "authResponse=" + JSON.stringify(new AuthResponse(
                         'validAuthToken',
                         'userId123',
                         'ADMIN',

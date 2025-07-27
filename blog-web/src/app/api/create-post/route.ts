@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost } from '@/services/postService';
 import { validateAuthResponse } from '@/services/authService';
+import { parse } from 'cookie';
 
 export async function POST(req: NextRequest) {
     try {
-        const authResponse = req.headers.get('authResponse');
+        const cookie = req.headers.get('cookie');
 
-        if (!authResponse) {
+        if (!cookie) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        const validatedAuthResponse = validateAuthResponse(authResponse);
+        const cookies = parse(cookie)
+        if (!cookies.authResponse) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+        const validatedAuthResponse = validateAuthResponse(cookies.authResponse);
 
         if (!req.body) {
             return NextResponse.json({ error: 'Request body is null' }, { status: 400 });

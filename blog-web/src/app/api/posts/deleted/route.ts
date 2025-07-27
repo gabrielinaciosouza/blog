@@ -2,16 +2,21 @@
 import { getDeletedPosts } from "@/services/postService";
 import { NextResponse } from "next/server";
 import { validateAuthResponse } from "@/services/authService";
+import { parse } from "cookie";
 
 export const GET = async (req: Request) => {
     try {
-        const authResponse = req.headers.get('authResponse');
+        const cookie = req.headers.get('cookie');
 
-        if (!authResponse) {
+        if (!cookie) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        const validatedAuthResponse = validateAuthResponse(authResponse);
+        const cookies = parse(cookie)
+        if (!cookies.authResponse) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+        const validatedAuthResponse = validateAuthResponse(cookies.authResponse);
 
         const posts = await getDeletedPosts(validatedAuthResponse);
 
