@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { middleware } from '../src/middleware';
+import AuthResponse from '@/models/auth-response';
 
 describe('middleware', () => {
     const createRequest = (cookieValue?: string) => {
@@ -15,11 +16,14 @@ describe('middleware', () => {
         } as unknown as NextRequest;
     };
 
-    // Helper to create a valid JWT with exp
     function createJwt(exp: number) {
         const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
         const payload = Buffer.from(JSON.stringify({ exp })).toString('base64');
         return `${header}.${payload}.signature`;
+    }
+
+    function createAuthResponse(authToken: string) {
+        return new AuthResponse(authToken, "userId", "ADMIN", "name", "email", "pictureUrl");
     }
 
     it('redirects if no token', () => {
@@ -30,15 +34,16 @@ describe('middleware', () => {
 
     it('redirects if token is expired', () => {
         const expiredJwt = createJwt(Math.floor(Date.now() / 1000) - 10);
-        const res = middleware(createRequest(expiredJwt));
+        const res = middleware(createRequest(JSON.stringify(createAuthResponse(expiredJwt))));
         expect(res.status).toBe(307);
         expect(res.headers.get('location')).toBe('http://localhost/');
     });
 
     it('allows if token is valid', () => {
         const validJwt = createJwt(Math.floor(Date.now() / 1000) + 1000);
-        const res = middleware(createRequest(validJwt));
-        expect(res.status).toBe(200); // NextResponse.next() returns status 200
+        const authResponse = createAuthResponse(validJwt);
+        const res = middleware(createRequest(JSON.stringify(authResponse)));
+        expect(res.status).toBe(200);
     });
 
     it('redirects if token is malformed', () => {
