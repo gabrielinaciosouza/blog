@@ -33,9 +33,7 @@ export const validateAuthResponse = (authResponse: string): AuthResponse => {
     try {
         const parsedAuthResponse = JSON.parse(authResponse) as AuthResponse;
         const jwtDecoded = jwtDecode(parsedAuthResponse.authToken);
-        if (!jwtDecoded || typeof jwtDecoded !== 'object' || !('exp' in jwtDecoded)) {
-            throw new Error("Invalid JWT token");
-        }
+
         const exp = jwtDecoded.exp as number;
         if (Date.now() / 1000 > exp) {
             throw new Error("Token expired");
@@ -45,7 +43,8 @@ export const validateAuthResponse = (authResponse: string): AuthResponse => {
             throw new Error("Unauthorized");
         }
         return parsedAuthResponse;
-    } catch {
-        throw new Error("Invalid auth response");
+    } catch (err: Error | any) {
+        console.error("Error validating auth response:", err);
+        throw new Error(err.message);
     }
 }
