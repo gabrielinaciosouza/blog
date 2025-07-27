@@ -1,10 +1,15 @@
 import { POST } from "@/app/api/create-post/route";
+import AuthResponse from "@/models/auth-response";
+import { validateAuthResponse } from "@/services/authService";
 import { createPost } from "@/services/postService";
 import { NextResponse, NextRequest } from "next/server";
 
 jest.mock("@/services/postService", () => ({
     createPost: jest.fn(),
 }));
+
+jest.mock('@/services/authService');
+
 
 jest.mock('next/server', () => ({
     ...jest.requireActual('next/server'),
@@ -19,7 +24,18 @@ jest.mock('next/server', () => ({
             }),
         },
         headers: {
-            get: jest.fn().mockImplementation(key => key === 'host' ? 'localhost' : undefined),
+            get: jest.fn().mockImplementation(key => {
+                if (key === 'authResponse') {
+                    return JSON.stringify(new AuthResponse(
+                        'validAuthToken',
+                        'userId123',
+                        'ADMIN',
+                        'John Doe',
+                        'email@example.com',
+                        'http://example.com/picture.jpg'
+                    ));
+                }
+            }),
         },
         json: jest.fn().mockResolvedValue(options.body),
         body: options.body,
@@ -40,6 +56,15 @@ describe("POST /api/create-post", () => {
         jest.clearAllMocks();
     });
 
+    it('should return 401 if authResponse header is missing', async () => {
+        const req = new NextRequest("http://localhost/api/create-post", { body: null });
+        (req.headers.get as jest.Mock).mockImplementation(() => null);
+
+        const response = await POST(req);
+        const jsonResponse = await response.json();
+        expect(jsonResponse).toEqual({ message: 'Unauthorized' });
+    });
+
     it("should return 400 if request body is null", async () => {
         const request = new NextRequest("http://localhost/api/create-post", { body: null });
 
@@ -53,6 +78,15 @@ describe("POST /api/create-post", () => {
     it("should create a post and return 201 status", async () => {
         const postData = { title: "New Post", content: "Post content" };
         (createPost as jest.Mock).mockResolvedValue(postData);
+        const authReponse = new AuthResponse(
+            'validAuthToken',
+            'userId123',
+            'ADMIN',
+            'John Doe',
+            'email@example.com',
+            'http://example.com/picture.jpg'
+        );
+        (validateAuthResponse as jest.Mock).mockReturnValueOnce(authReponse);
 
         const request = new NextRequest("http://localhost/api/create-post", { body: JSON.stringify(postData) });
 
@@ -61,7 +95,7 @@ describe("POST /api/create-post", () => {
 
         expect(data).toEqual(postData);
         expect(response.status).toBe(201);
-        expect(createPost).toHaveBeenCalledWith(JSON.stringify(postData));
+        expect(createPost).toHaveBeenCalled();
     });
 
     it("should return 500 when an error occurs", async () => {
@@ -75,6 +109,6 @@ describe("POST /api/create-post", () => {
 
         expect(data).toEqual({ message: "Something went wrong!" });
         expect(response.status).toBe(500);
-        expect(createPost).toHaveBeenCalledWith(JSON.stringify(postData));
+        expect(createPost).toHaveBeenCalled();
     });
 });

@@ -1,6 +1,7 @@
 import { createPost, deletePost, getDeletedPosts, getPostBySlug, getPosts, POSTS_PATH } from '@/services/postService';
 import CreatePostRequest from '@/models/create-post-request';
 import Post from '@/models/post';
+import AuthResponse from '@/models/auth-response';
 
 global.fetch = jest.fn();
 
@@ -25,17 +26,27 @@ describe('postService', () => {
         coverImage: 'cover-image-1'
       };
 
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+
       (fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue(postResponse),
       });
 
-      const result = await createPost(postRequest);
+      const result = await createPost(authResponse, postRequest);
 
       expect(fetch).toHaveBeenCalledWith(expect.any(String), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authResponse.authToken}`,
         },
         body: JSON.stringify(postRequest),
       });
@@ -56,13 +67,22 @@ describe('postService', () => {
         coverImage: 'cover-image-1'
       };
 
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+
       const errorMessage = 'Failed to publish post';
       (fetch as jest.Mock).mockResolvedValue({
         ok: false,
         json: jest.fn().mockResolvedValue({ message: errorMessage }),
       });
 
-      await expect(createPost(postRequest)).rejects.toThrow(errorMessage);
+      await expect(createPost(authResponse, postRequest)).rejects.toThrow(errorMessage);
     });
   });
 
@@ -157,12 +177,22 @@ describe('postService', () => {
         json: jest.fn().mockResolvedValue(mockDeletedPosts),
       });
 
-      const result = await getDeletedPosts();
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+
+      const result = await getDeletedPosts(authResponse);
 
       expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/deleted/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authResponse.authToken}`,
         },
       });
       expect(result).toEqual(mockDeletedPosts.map(post => new Post(post.postId, post.title, post.content, post.creationDate, post.slug, post.coverImage)));
@@ -175,7 +205,16 @@ describe('postService', () => {
         json: jest.fn().mockResolvedValue({ message: errorMessage }),
       });
 
-      await expect(getDeletedPosts()).rejects.toThrow(errorMessage);
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+
+      await expect(getDeletedPosts(authResponse)).rejects.toThrow(errorMessage);
     });
   });
 

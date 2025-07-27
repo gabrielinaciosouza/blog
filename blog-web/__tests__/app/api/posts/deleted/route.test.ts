@@ -56,7 +56,6 @@ describe('GET /api/posts/deleted', () => {
 
     it('should return 401 if authResponse header is missing', async () => {
         const req = new NextRequest('http://localhost/api/posts/deleted');
-        // Override the mock for this test to return null
         (req.headers.get as jest.Mock).mockImplementation(() => null);
 
         const response = await GET(req);
