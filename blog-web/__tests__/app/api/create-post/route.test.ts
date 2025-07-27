@@ -56,9 +56,22 @@ describe("POST /api/create-post", () => {
         jest.clearAllMocks();
     });
 
-    it('should return 401 if authResponse header is missing', async () => {
+    it('should return 401 if cookie is missing', async () => {
         const req = new NextRequest("http://localhost/api/create-post", { body: null });
         (req.headers.get as jest.Mock).mockImplementation(() => null);
+
+        const response = await POST(req);
+        const jsonResponse = await response.json();
+        expect(jsonResponse).toEqual({ message: 'Unauthorized' });
+    });
+
+    it('should return 401 if authResponse header is missing', async () => {
+        const req = new NextRequest("http://localhost/api/create-post", { body: null });
+        (req.headers.get as jest.Mock).mockImplementation(key => {
+            if (key === 'cookie') {
+                return "any=" + JSON.stringify({ some: 'value' });
+            }
+        });
 
         const response = await POST(req);
         const jsonResponse = await response.json();

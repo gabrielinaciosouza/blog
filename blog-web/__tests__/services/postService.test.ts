@@ -224,10 +224,23 @@ describe('postService', () => {
         ok: true,
       });
 
-      await deletePost('test-title');
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+
+      await deletePost(authResponse, 'test-title');
 
       expect(fetch).toHaveBeenCalledWith(`${POSTS_PATH}/test-title`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authResponse.authToken}`
+        }
       });
     });
 
@@ -238,7 +251,16 @@ describe('postService', () => {
         json: jest.fn().mockResolvedValue({ message: errorMessage }),
       });
 
-      await expect(deletePost('non-existent-post')).rejects.toThrow(errorMessage);
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+
+      await expect(deletePost(authResponse, 'non-existent-post')).rejects.toThrow(errorMessage);
     });
   });
 

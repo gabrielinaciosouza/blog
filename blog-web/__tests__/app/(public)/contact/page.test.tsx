@@ -27,4 +27,16 @@ describe("ContactPage", () => {
         fireEvent.click(copyButton);
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith("your@email.com");
     });
+
+    it("selects email input on focus and click", () => {
+        render(<ContactPage />);
+        const emailInput = screen.getByDisplayValue("your@email.com") as HTMLInputElement;
+        // Mock select method
+        emailInput.select = jest.fn();
+        fireEvent.focus(emailInput);
+        expect(emailInput.select).toHaveBeenCalled();
+        (emailInput.select as jest.Mock).mockClear();
+        fireEvent.click(emailInput);
+        expect(emailInput.select).toHaveBeenCalled();
+    });
 });

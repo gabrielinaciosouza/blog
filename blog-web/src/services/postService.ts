@@ -77,9 +77,13 @@ export const getDeletedPosts = async (auth: AuthResponse): Promise<Post[]> => {
     return data;
 }
 
-export const deletePost = async (slug: string): Promise<void> => {
+export const deletePost = async (authResponse: AuthResponse, slug: string): Promise<void> => {
     const response = await fetch(`${POSTS_PATH}/${slug}`, {
         method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authResponse.authToken}`
+        }
     });
 
     if (!response.ok) {
