@@ -1,11 +1,15 @@
 import React from "react";
 import Link from "next/link";
-import { SiFacebook, SiInstagram, SiYoutube, SiTiktok } from "react-icons/si";
+import { SiLinkedin, SiGithub, SiYoutube } from "react-icons/si";
 
 const iconProps = {
     size: 18,
     className: "text-muted-foreground"
 };
+
+const linkedinUrl = process.env.LINKEDIN_URL || "https://linkedin.com";
+const githubUrl = process.env.GITHUB_URL || "https://github.com";
+const youtubeUrl = process.env.YOUTUBE_URL || "https://youtube.com";
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -14,22 +18,17 @@ const Footer = () => {
             <div className="flex w-full items-center justify-between">
                 <span className="text-sm text-muted-foreground">© {currentYear} Gabriel Inacio. All rights reserved.</span>
                 <div className="flex gap-4 justify-end">
-                    <Link href="/" aria-label="Facebook">
+                    <Link href={linkedinUrl} aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
                         <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
-                            <SiFacebook {...iconProps} />
+                            <SiLinkedin {...iconProps} />
                         </span>
                     </Link>
-                    <Link href="/" aria-label="Instagram">
+                    <Link href={githubUrl} aria-label="Github" target="_blank" rel="noopener noreferrer">
                         <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
-                            <SiInstagram {...iconProps} />
+                            <SiGithub {...iconProps} />
                         </span>
                     </Link>
-                    <Link href="/" aria-label="Tiktok">
-                        <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
-                            <SiTiktok {...iconProps} />
-                        </span>
-                    </Link>
-                    <Link href="/" aria-label="Youtube">
+                    <Link href={youtubeUrl} aria-label="Youtube" target="_blank" rel="noopener noreferrer">
                         <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
                             <SiYoutube {...iconProps} />
                         </span>

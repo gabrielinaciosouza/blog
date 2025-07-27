@@ -12,9 +12,8 @@ describe("ContactPage", () => {
         render(<ContactPage />);
         expect(screen.getByDisplayValue("your@email.com")).toBeInTheDocument();
         expect(screen.getByText("LinkedIn")).toBeInTheDocument();
-        expect(screen.getByText("Instagram")).toBeInTheDocument();
-        expect(screen.getByText("TikTok")).toBeInTheDocument();
-        expect(screen.getByText("Facebook")).toBeInTheDocument();
+        expect(screen.getByText("Github")).toBeInTheDocument();
+        expect(screen.getByText("Youtube")).toBeInTheDocument();
     });
 
     it("copies email to clipboard when Copy button is clicked", () => {
