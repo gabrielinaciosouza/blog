@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
 
-const Highlight = ({ children }: { children: React.ReactNode }) => (
+export const Highlight = ({ children }: { children: React.ReactNode }) => (
   <span className="bg-gradient-to-r from-primary/20 to-secondary/20 px-1 rounded text-primary font-semibold">{children}</span>
 );
 

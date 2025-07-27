@@ -12,7 +12,7 @@ const email = process.env.CONTACT_EMAIL || "your@email.com";
 export default function ContactPage() {
     return (
         <div className="flex justify-center items-center min-h-[60vh] bg-background">
-            <Card className="max-w-md w-full shadow-lg">
+            <Card className="max-w-md w-full shadow-lg mx-4 md:mx-8">
                 <CardHeader>
                     <h1 className="text-3xl font-bold text-center mb-2">Let's get in touch!</h1>
                 </CardHeader>
