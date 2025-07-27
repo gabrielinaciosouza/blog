@@ -1,3 +1,4 @@
+import AuthResponse from "@/models/auth-response";
 import CreatePostRequest from "@/models/create-post-request";
 import Post from "@/models/post";
 
@@ -5,11 +6,12 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3000
 export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080";
 export const POSTS_PATH = `${SERVER_URL}/posts`;
 
-export const createPost = async (request: CreatePostRequest): Promise<Post> => {
+export const createPost = async (authResponse: AuthResponse, request: CreatePostRequest): Promise<Post> => {
     const response = await fetch(`${POSTS_PATH}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${authResponse.authToken}`
         },
         body: JSON.stringify(request),
     });
@@ -57,11 +59,12 @@ export const getPosts = async (page: number, size: number): Promise<{ posts: Pos
     return data;
 }
 
-export const getDeletedPosts = async (): Promise<Post[]> => {
+export const getDeletedPosts = async (auth: AuthResponse): Promise<Post[]> => {
     const response = await fetch(`${POSTS_PATH}/deleted/`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${auth.authToken}`
         }
     });
 

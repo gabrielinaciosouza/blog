@@ -1,9 +1,25 @@
+
 import { getDeletedPosts } from "@/services/postService";
 import { NextResponse } from "next/server";
+import { validateAuthResponse } from "@/services/authService";
 
-export const GET = async () => {
+export const GET = async (req: Request) => {
     try {
-        const posts = await getDeletedPosts();
+        const authResponse = req.headers.get('authResponse');
+
+        if (!authResponse) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        const validatedAuthResponse = validateAuthResponse(authResponse);
+
+        console.log(validatedAuthResponse);
+
+        if (validatedAuthResponse instanceof NextResponse) {
+            return validatedAuthResponse;
+        }
+
+        const posts = await getDeletedPosts(validatedAuthResponse);
 
         return NextResponse.json(posts, { status: 200 });
     } catch (err) {
