@@ -44,9 +44,6 @@ export const validateAuthResponse = (authResponse: string): AuthResponse => {
         return parsedAuthResponse;
     } catch (err) {
         console.error("Error validating auth response:", err);
-        if (err instanceof Error) {
-            throw new Error(err.message);
-        }
         throw new Error("Unknown error");
     }
 }
