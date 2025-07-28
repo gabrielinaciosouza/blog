@@ -2,6 +2,7 @@ services:
   firebase-emulators:
     build:
       context: .
+      dockerfile: Dockerfile.firebase
     container_name: firebase-emulators
     working_dir: /app
     ports:
