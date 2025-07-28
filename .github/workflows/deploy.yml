@@ -35,7 +35,15 @@ jobs:
       - name: Build native Quarkus app with Gradle
         run: ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
 
-      - name: Build and deploy to Cloud Run
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }} .
+
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}
+
+      - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: '${{ secrets.SERVICE_NAME }}'
