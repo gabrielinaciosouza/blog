@@ -7,7 +7,7 @@ services:
     working_dir: /app
     ports:
       - "9099:9099"   # Auth
-      - "8083:8083"   # Firestore (changed to avoid conflict with your app)
+      - "8083:8083"   # Firestore
       - "9199:9199"   # Storage
       - "4000:4000"   # Emulator UI
 

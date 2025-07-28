@@ -10,4 +10,12 @@ RUN apt-get update && \
 
 WORKDIR /app
 
+# Copy firebase.json and any emulator config files
+COPY firebase.json ./
+COPY firestore.rules ./
+COPY storage.rules ./
+
+# Expose emulator ports
+EXPOSE 9099 9199 8083 4000
+
 CMD ["firebase", "emulators:start", "--only", "auth,firestore,storage", "--project", "test-project"]
