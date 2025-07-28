@@ -6,6 +6,9 @@ import PostList from '@/components/postList/PostList';
 
 jest.mock('@/components/featured/Featured');
 jest.mock('@/components/postList/PostList');
+jest.mock('@/services/firebase', () => ({
+  getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
 
 const MockFeatured = Featured as jest.MockedFunction<typeof Featured>;
 const MockPostList = PostList as jest.MockedFunction<typeof PostList>;

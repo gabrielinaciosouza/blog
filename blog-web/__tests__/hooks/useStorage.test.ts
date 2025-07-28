@@ -2,9 +2,24 @@ import { renderHook, act } from '@testing-library/react';
 import useStorage from '@/hooks/useStorage';
 
 describe('useStorage', () => {
+
     beforeEach(() => {
         localStorage.clear();
         jest.clearAllMocks();
+    });
+
+    it('returns initialValue if window.localStorage is missing', () => {
+        const originalLocalStorage = window.localStorage;
+        Object.defineProperty(window, 'localStorage', {
+            value: undefined,
+            configurable: true,
+        });
+        const { result } = renderHook(() => useStorage('testKey', 'initialValue'));
+        expect(result.current[0]).toBe('initialValue');
+        Object.defineProperty(window, 'localStorage', {
+            value: originalLocalStorage,
+            configurable: true,
+        });
     });
 
     it('should initialize with the value from localStorage if available', () => {

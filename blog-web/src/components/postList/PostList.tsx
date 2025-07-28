@@ -1,42 +1,40 @@
 import React from "react";
-import styles from "./postList.module.css"
 import PostCard from "../postCard/PostCard";
 import Link from "next/link";
 import { getPosts } from "@/services/postService";
+import { Button } from "@/components/ui/button";
 
 const PostList = async () => {
     try {
         const { posts, totalCount } = await getPosts(1, 10);
         return (
-            <div className={styles.container}>
-            
-                <div className={styles.headerContainer}>
-                    {
-                        totalCount > 0 && (<div className={styles.headerText}>Recent Stories</div>)
-                    }
-                </div>
-
-          
-                <div className={styles.uniformList}>
-                    {posts.slice(0, 5).map((post) => (
+            <section className="w-full mt-12 flex flex-col items-center">
+                {totalCount > 0 && (
+                    <div className="mb-6 w-full flex justify-center">
+                        <h2 className="text-2xl font-bold text-primary text-center">Recent Stories</h2>
+                    </div>
+                )}
+                <div className="flex flex-row flex-wrap gap-4 justify-center items-stretch w-full">
+                    {posts.slice(0, 6).map((post) => (
                         <PostCard key={post.postId} {...post} />
                     ))}
                 </div>
-
-             
-                {totalCount > 5 && (
-                    <div className={styles.loadMoreSection}>
-                        <div className={styles.viewingText}>
-                            You are viewing 5 of {totalCount} Articles.
+                {totalCount > 6 && (
+                    <div className="mt-8 flex flex-col items-center">
+                        <div className="mb-2 text-sm text-muted-foreground text-center">
+                            You are viewing 6 of {totalCount} Articles.
                         </div>
-                        <Link className={styles.button} href="/posts">Load more</Link>
+                        <Link href="/posts">
+                            <Button variant="secondary" className="px-6 py-3 text-base font-semibold">Load more</Button>
+                        </Link>
                     </div>
                 )}
-            </div>
-        )
+            </section>
+        );
     } catch {
-        return <></>
+        return <></>;
     }
-}
+};
+
 
 export default PostList;

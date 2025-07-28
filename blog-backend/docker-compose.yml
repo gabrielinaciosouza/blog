@@ -1,11 +1,15 @@
 services:
-  firestore-emulator:
-    image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
-    command: gcloud beta emulators firestore start --host-port=0.0.0.0:8082
+  firebase-emulators:
+    build:
+      context: .
+      dockerfile: Dockerfile.firebase
+    container_name: firebase-emulators
+    working_dir: /app
     ports:
-      - "8082:8082"
-    environment:
-      - FIRESTORE_PROJECT_ID=test-project
+      - "9099:9099"   # Auth
+      - "8083:8083"   # Firestore
+      - "9199:9199"   # Storage
+      - "4000:4000"   # Emulator UI
 
   storage-emulator:
     image: fsouza/fake-gcs-server:1.45.2

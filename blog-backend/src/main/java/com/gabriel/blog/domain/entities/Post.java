@@ -21,7 +21,7 @@ import java.time.Instant;
 public class Post extends AbstractEntity {
 
   private static final Image DEFAULT_IMAGE = new Image(
-      "https://media.licdn.com/dms/image/v2/D4D03AQFYx_k72IBkLg/profile-displayphoto-shrink_800_800/B4DZRGBk.9HYAc-/0/1736341607395?e=1745452800&v=beta&t=lWzoy4ZaGd3a4LDrxBNEA0_sderdTDQKL41lVFvtWug");
+      "https://image.api.playstation.com/vulcan/img/rnd/202011/0204/jvMomz0n9Be5mRKU8VP9Jl2A.png");
 
   private final Title title;
   private final Content content;

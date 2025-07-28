@@ -1,8 +1,14 @@
 import { GET } from '@/app/api/posts/deleted/route';
 import { getDeletedPosts } from '@/services/postService';
+import { validateAuthResponse } from '@/services/authService';
 import { NextRequest, NextResponse } from 'next/server';
+import AuthResponse from '@/models/auth-response';
 
 jest.mock('@/services/postService');
+jest.mock('@/services/authService');
+jest.mock('@/services/firebase', () => ({
+    getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
 
 jest.mock('next/server', () => ({
     ...jest.requireActual('next/server'),
@@ -17,7 +23,18 @@ jest.mock('next/server', () => ({
             }),
         },
         headers: {
-            get: jest.fn().mockImplementation(key => key === 'host' ? 'localhost' : undefined),
+            get: jest.fn().mockImplementation(key => {
+                if (key === 'cookie') {
+                    return "authResponse=" + JSON.stringify(new AuthResponse(
+                        'validAuthToken',
+                        'userId123',
+                        'ADMIN',
+                        'John Doe',
+                        'email@example.com',
+                        'http://example.com/picture.jpg'
+                    ));
+                }
+            }),
         },
         json: jest.fn().mockResolvedValue({
             posts: [],
@@ -40,6 +57,28 @@ describe('GET /api/posts/deleted', () => {
         jest.clearAllMocks();
     });
 
+    it('should return 401 if cookie is missing', async () => {
+        const req = new NextRequest('http://localhost/api/posts/deleted');
+        (req.headers.get as jest.Mock).mockImplementation(() => null);
+
+        const response = await GET(req);
+        const jsonResponse = await response.json();
+        expect(jsonResponse).toEqual({ message: 'Unauthorized' });
+    });
+
+    it('should return 401 if authResponse header is missing', async () => {
+        const req = new NextRequest('http://localhost/api/posts/deleted');
+        (req.headers.get as jest.Mock).mockImplementation(key => {
+            if (key === 'cookie') {
+                return "any=" + JSON.stringify({ some: 'value' });
+            }
+        });
+
+        const response = await GET(req);
+        const jsonResponse = await response.json();
+        expect(jsonResponse).toEqual({ message: 'Unauthorized' });
+    });
+
     it('should return the list of deleted posts', async () => {
         const req = new NextRequest('http://localhost/api/posts/deleted');
         const posts = [
@@ -48,6 +87,16 @@ describe('GET /api/posts/deleted', () => {
         ];
 
         (getDeletedPosts as jest.Mock).mockResolvedValueOnce(posts);
+        (validateAuthResponse as jest.Mock).mockReturnValueOnce(new AuthResponse(
+            'validAuthToken',
+            'userId123',
+            'ADMIN',
+            'John Doe',
+            'email@example.com',
+            'http://example.com/picture.jpg'
+        ));
+
+
 
         const response = await GET(req);
 

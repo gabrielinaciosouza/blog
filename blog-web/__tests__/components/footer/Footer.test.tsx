@@ -11,9 +11,8 @@ describe('Footer', () => {
 
   it('should render the social media icons', () => {
     render(<Footer />);
-    expect(screen.getByAltText("Facebook")).toBeInTheDocument();
-    expect(screen.getByAltText("Instagram")).toBeInTheDocument();
-    expect(screen.getByAltText("Tiktok")).toBeInTheDocument();
-    expect(screen.getByAltText("Youtube")).toBeInTheDocument();
+    expect(screen.getByLabelText('LinkedIn')).toBeInTheDocument();
+    expect(screen.getByLabelText('Github')).toBeInTheDocument();
+    expect(screen.getByLabelText("Youtube")).toBeInTheDocument();
   });
 });
