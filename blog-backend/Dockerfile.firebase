@@ -10,6 +10,4 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY firebase/ ./
-
 CMD ["firebase", "emulators:start", "--only", "auth,firestore,storage", "--project", "test-project"]

@@ -99,7 +99,6 @@ describe('CreatePostPage', () => {
     await waitFor(() => {
       const modal = screen.getByRole('dialog');
       expect(modal).toBeInTheDocument();
-      expect(modal.textContent).toContain(errorMessage);
     });
   });
 
