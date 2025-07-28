@@ -38,7 +38,7 @@ class AuthenticationUseCaseTest {
   void shouldAuthenticateExistingUser() {
     final String idToken = "valid-token";
     final var decodedToken =
-        new TokenService.DecodedToken("123", "test@example.com", "Test User", "http://img");
+        new TokenService.DecodedToken("123", "test@example.com", "Test User", "http://img", "USER");
     final var email = new Email("test@example.com");
     final var existingUser = new User(new Id("123"), email, User.Role.USER, new Name("Test User"),
         new Image("http://img"));
@@ -64,7 +64,7 @@ class AuthenticationUseCaseTest {
   void shouldCreateUserIfNotFound() {
     final String idToken = "new-token";
     final var decodedToken =
-        new TokenService.DecodedToken("456", "new@example.com", "New User", null);
+        new TokenService.DecodedToken("456", "new@example.com", "New User", null, "USER");
     final var email = new Email("new@example.com");
 
     when(tokenService.decode(idToken)).thenReturn(decodedToken);

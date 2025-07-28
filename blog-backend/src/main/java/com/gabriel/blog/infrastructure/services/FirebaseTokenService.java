@@ -41,7 +41,8 @@ public class FirebaseTokenService implements TokenService {
           decodedToken.getUid(),
           decodedToken.getEmail(),
           decodedToken.getName(),
-          decodedToken.getPicture());
+          decodedToken.getPicture(),
+          decodedToken.getClaims().getOrDefault("role", "USER").toString());
     } catch (final Exception e) {
       LOG.error("Failed to decode token", e);
       throw new ServiceException("Failed to decode token", e);

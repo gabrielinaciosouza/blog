@@ -9,6 +9,7 @@ import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
 import com.gabriel.blog.application.usecases.GetDeletedPosts;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
+import com.gabriel.blog.presentation.filters.Secured;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -66,6 +67,7 @@ public class PostResource {
    */
   @POST
   @ResponseStatus(201)
+  @Secured
   public PostResponse create(final CreatePostRequest request) {
     return createPostUseCase.create(request);
   }
@@ -108,6 +110,7 @@ public class PostResource {
   @DELETE
   @Path("/{slug}")
   @ResponseStatus(204)
+  @Secured
   public void deletePost(@RestPath final String slug) {
     deletePostUseCase.deletePost(slug);
   }
@@ -121,6 +124,7 @@ public class PostResource {
    */
   @GET
   @Path("/deleted")
+  @Secured
   public List<PostResponse> getDeletedPosts() {
     return getDeletedPosts.getDeletedPosts();
   }

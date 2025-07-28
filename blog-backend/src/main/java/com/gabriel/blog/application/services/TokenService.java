@@ -37,7 +37,8 @@ public interface TokenService {
       String id,
       String email,
       String name,
-      String pictureUrl) {
+      String pictureUrl,
+      String role) {
 
   }
 }
