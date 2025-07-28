@@ -15,11 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - name: Set up GraalVM JDK 21
+        uses: actions/setup-graalvm@v1
         with:
-          distribution: 'temurin'
           java-version: '21'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
 
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
