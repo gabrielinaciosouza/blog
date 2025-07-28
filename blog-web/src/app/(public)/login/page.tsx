@@ -48,7 +48,7 @@ export default function LoginPage() {
                 throw new Error(error.message);
             }
             router.back();
-        } catch (err: any) {
+        } catch {
             openModal("Sign in failed", closeModal);
         }
     };
@@ -61,7 +61,7 @@ export default function LoginPage() {
             if (!user) throw new Error("No user returned from Google sign-in");
             const idToken = await user.getIdToken();
             await handleIdTokenFlow(idToken);
-        } catch (err: any) {
+        } catch {
             openModal("Google sign-in failed", closeModal);
         } finally {
             stopLoading();
@@ -77,8 +77,9 @@ export default function LoginPage() {
             if (!user) throw new Error("No user returned from email sign-in");
             const idToken = await user.getIdToken();
             await handleIdTokenFlow(idToken);
-        } catch (err: any) {
-            openModal(err?.message || "Sign in failed", closeModal);
+        } catch (err: unknown) {
+            const message = err && typeof err === 'object' && 'message' in err ? (err as { message?: string }).message : "Sign in failed";
+            openModal(message || "Sign in failed", closeModal);
         } finally {
             stopLoading();
         }
@@ -104,7 +105,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md mx-auto p-6 rounded-xl shadow-lg bg-card flex flex-col items-center gap-4">
                 <Image src="/logo2.png" alt="Gabriel's Blog Logo" width={56} height={56} className="mb-2" />
                 <h1 className="text-2xl font-bold text-primary mb-1">Welcome</h1>
-                <p className="text-muted-foreground text-center mb-2">Sign in to access <b>Gabriel's Blog</b></p>
+                <p className="text-muted-foreground text-center mb-2">Sign in to access <b>Gabriel&apos;s Blog</b></p>
                 <form onSubmit={handleEmailSignIn} className="w-full flex flex-col gap-4 mb-2">
                     <div className="flex flex-col gap-2">
                         <label htmlFor="email" className="text-sm font-medium text-muted-foreground">Email</label>

@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import { Highlight } from "@/components/featured/Featured";
 
 export default function AboutPage() {
@@ -8,11 +9,14 @@ export default function AboutPage() {
                 <CardContent>
                     <div className="flex flex-col md:flex-row gap-12 items-start">
                         <div className="group">
-                            <img
+                            <Image
                                 src="/profile-picture.png"
                                 alt="Gabriel Inacio profile"
+                                width={224}
+                                height={224}
                                 className="w-40 h-40 md:w-56 md:h-56 object-cover border-4 border-primary shadow-md rounded-full flex-shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-primary/40"
                                 style={{ maxHeight: '14rem' }}
+                                priority
                             />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -51,8 +55,8 @@ export default function AboutPage() {
                                 <p>
                                     This blog is my way of sharing what I learn in the trenches — from{" "}
                                     <Highlight>system architecture</Highlight> and{" "}
-                                    <Highlight>cloud-native development</Highlight> to day-to-day lessons from real engineering work. If you're into{" "}
-                                    <Highlight>thoughtful, real-world software discussions</Highlight>, you're in the right place.
+                                    <Highlight>cloud-native development</Highlight> to day-to-day lessons from real engineering work. If you&apos;re into{" "}
+                                    <Highlight>thoughtful, real-world software discussions</Highlight>, you&apos;re in the right place.
                                 </p>
                             </div>
                         </div>

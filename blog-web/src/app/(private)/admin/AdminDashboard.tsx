@@ -1,8 +1,8 @@
 import React from "react";
+import Image from "next/image";
 import Post from "@/models/post";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import PostTile from "@/components/postTile/PostTile";
 import { Loader2 } from "lucide-react";
 
@@ -32,13 +32,7 @@ export default function AdminDashboard({
     isLoading,
     handleDelete,
     handleCreateNewPost,
-    page,
-    hasPrev,
-    hasNext,
-    totalCount,
-    pageSize,
 }: AdminDashboardProps) {
-    const router = useRouter();
     const [activeMenu, setActiveMenu] = React.useState("Active Posts");
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
@@ -48,7 +42,7 @@ export default function AdminDashboard({
 
             <aside className="hidden xl:flex flex-col w-64 flex-shrink-0 bg-card border-r border-border p-6 gap-2 rounded-xl rounded-tr-none rounded-br-none">
                 <div className="mb-8 flex items-center gap-2">
-                    <img src="/profile-picture.png" alt="Admin" className="w-12 h-12 rounded-full border border-border shadow-sm" />
+                    <Image src="/profile-picture.png" alt="Admin" width={48} height={48} className="w-12 h-12 rounded-full border border-border shadow-sm" />
                     <div>
                         <h1 className="text-lg font-semibold text-foreground">Admin</h1>
                         <p className="text-muted-foreground text-xs">Gabriel</p>
@@ -85,7 +79,7 @@ export default function AdminDashboard({
                             <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         </button>
                         <div className="mb-8 flex items-center gap-2">
-                            <img src="/profile-picture.png" alt="Admin" className="w-12 h-12 rounded-full border border-border shadow-sm" />
+                            <Image src="/profile-picture.png" alt="Admin" width={48} height={48} className="w-12 h-12 rounded-full border border-border shadow-sm" />
                             <div>
                                 <h1 className="text-lg font-semibold text-foreground">Admin</h1>
                                 <p className="text-muted-foreground text-xs">Gabriel</p>

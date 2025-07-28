@@ -14,7 +14,7 @@ export default function ContactPage() {
         <div className="flex justify-center items-center min-h-[60vh] bg-background">
             <Card className="max-w-md w-full shadow-lg mx-4 md:mx-8">
                 <CardHeader>
-                    <h1 className="text-3xl font-bold text-center mb-2">Let's get in touch!</h1>
+                    <h1 className="text-3xl font-bold text-center mb-2">Let&apos;s get in touch!</h1>
                 </CardHeader>
                 <CardContent>
                     <p className="mb-6 text-muted-foreground text-center">

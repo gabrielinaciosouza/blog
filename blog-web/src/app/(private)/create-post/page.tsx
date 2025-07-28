@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import { useModal } from "@/hooks/useModal";
-import { FaUpload, FaPlus, FaImage, FaEye } from "react-icons/fa";
+import { FaUpload, FaImage, FaEye } from "react-icons/fa";
 import PostCard from "@/components/postCard/PostCard";
 import Post from "@/models/post";
 import CreatePostRequest from "@/models/create-post-request";
@@ -38,7 +38,6 @@ export default function CreatePostPage() {
     const router = useRouter();
 
     const titleRef = useRef<HTMLInputElement>(null);
-    const contentImageInputRef = useRef<HTMLInputElement>(null);
     const postImageInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
@@ -178,8 +177,9 @@ export default function CreatePostPage() {
                         const input = document.createElement('input');
                         input.type = 'file';
                         input.accept = 'image/*';
-                        input.onchange = async (e: any) => {
-                            const fileInput = e.target as HTMLInputElement;
+                        input.onchange = async (e: unknown) => {
+                            if (!(e && typeof e === 'object' && 'target' in e && (e as { target?: unknown }).target instanceof HTMLInputElement)) return;
+                            const fileInput = (e as { target: HTMLInputElement }).target;
                             if (fileInput.files && fileInput.files[0]) {
                                 const fakeEvent = { target: fileInput } as React.ChangeEvent<HTMLInputElement>;
                                 const url = await handleImageUpload(fakeEvent, "content-images");

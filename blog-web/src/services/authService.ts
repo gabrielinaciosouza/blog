@@ -2,7 +2,6 @@ export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8
 
 import AuthResponse from "@/models/auth-response";
 import { jwtDecode } from "jwt-decode";
-import { NextResponse } from "next/server";
 
 export const continueWithGoogle = async (idToken: string): Promise<AuthResponse> => {
     const response = await fetch(`${SERVER_URL}/auth/google`, {
@@ -43,8 +42,11 @@ export const validateAuthResponse = (authResponse: string): AuthResponse => {
             throw new Error("Unauthorized");
         }
         return parsedAuthResponse;
-    } catch (err: Error | any) {
+    } catch (err) {
         console.error("Error validating auth response:", err);
-        throw new Error(err.message);
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        }
+        throw new Error("Unknown error");
     }
 }

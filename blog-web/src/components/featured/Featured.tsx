@@ -15,7 +15,6 @@ const Featured = () => (
         <div className="group flex flex-col items-center">
           <Avatar className="w-40 h-40 border-4 border-primary shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-primary/40 mb-6">
             <AvatarImage src="/profile-picture.png" alt="Gabriel's profile picture" />
-            <img src="/profile-picture.png" alt="Gabriel's profile picture" style={{ display: 'none' }} />
             <AvatarFallback>G</AvatarFallback>
           </Avatar>
           <Badge
@@ -28,7 +27,7 @@ const Featured = () => (
         <Separator className="w-16 bg-muted mt-4" />
       </div>
       <div className="flex-1 text-center md:text-left">
-        <h2 className="text-3xl font-extrabold mb-3 text-primary">Hi, I'm Gabriel</h2>
+        <h2 className="text-3xl font-extrabold mb-3 text-primary">Hi, I&apos;m Gabriel</h2>
         <p className="text-muted-foreground text-lg leading-relaxed" data-testid="subtitle">
           A highly versatile and results-driven <Highlight>Senior Software Engineer</Highlight> with deep expertise in <Highlight>Java</Highlight>, <Highlight>Spring Boot</Highlight>, and <Highlight>Cloud (Azure &amp; GCP)</Highlight>. Passionate about building <Highlight>high-performance</Highlight>, <Highlight>scalable systems</Highlight>, I succeed in designing and developing solutions that handle <Highlight>intense data volumes</Highlight> while maintaining exceptional <Highlight>reliability</Highlight> and <Highlight>availability</Highlight>.
         </p>

@@ -1,7 +1,6 @@
 import AuthResponse from "@/models/auth-response";
 import CreatePostRequest from "@/models/create-post-request";
 import Post from "@/models/post";
-import { get } from "http";
 import { getIdTokenByCustomToken } from "./firebase";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3000";
