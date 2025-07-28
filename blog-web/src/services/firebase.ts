@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
-import { signInWithCustomToken, signInWithEmailAndPassword } from "firebase/auth";
+// Line 5 removed as the functions are already imported on line 2.
 
 
 const firebaseConfig = {
