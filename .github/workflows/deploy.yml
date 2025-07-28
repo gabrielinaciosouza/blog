@@ -31,9 +31,11 @@ jobs:
 
       - name: Build native Quarkus app with Gradle
         run: |
-            ./gradlew build -Dquarkus.package.type=native \
+            ./gradlew build -Dquarkus.native.enabled=true \
             -Dquarkus.native.container-build=true \
+            -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 \
             -Dquarkus.native.additional-build-args="--initialize-at-run-time=org.apache.commons.logging.impl.Log4JLogger,org.apache.commons.logging.impl.LogFactoryImpl" \
+            -Dquarkus.package.jar.enabled=false \
             -x test
 
       - name: Build Docker image
