@@ -2,6 +2,21 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import NavbarClient from "@/components/navbar/NavbarClient";
 
+jest.mock('next/image', () => (props: any) => {
+    // eslint-disable-next-line jsx-a11y/alt-text
+    return <img {...props} />;
+});
+
+jest.mock('@radix-ui/react-avatar', () => {
+    const React = require('react');
+    return {
+        __esModule: true,
+        Root: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+        Image: ({ alt, src, ...props }: any) => <img alt={alt} src={src || '/profile-picture.png'} data-testid="avatar-image" {...props} />, // AvatarImage
+        Fallback: () => null,
+    };
+});
+
 describe("NavbarClient", () => {
     beforeAll(() => {
         // Mock window.location.href to prevent navigation errors in jsdom
