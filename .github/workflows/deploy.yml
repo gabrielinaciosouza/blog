@@ -1,0 +1,60 @@
+name: Deploy to Cloud Run (Gradle)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure Docker to use gcloud as a credential helper
+        run: gcloud auth configure-docker --quiet
+
+      - name: Set execute permissions for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build native Quarkus app with Gradle
+        run: |
+            ./gradlew build -Dquarkus.package.type=native \
+            -Dquarkus.native.container-build=true \
+            -Dquarkus.native.additional-build-args="--initialize-at-run-time=org.apache.commons.logging.impl.Log4JLogger,org.apache.commons.logging.impl.LogFactoryImpl" \
+            -x test
+
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }} .
+
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: '${{ secrets.SERVICE_NAME }}'
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.SERVICE_NAME }}
+          region: europe-central2
+          platform: managed
+          allow-unauthenticated: true
