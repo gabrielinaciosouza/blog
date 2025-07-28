@@ -6,6 +6,9 @@ import AuthResponse from '@/models/auth-response';
 
 jest.mock('@/services/postService');
 jest.mock('@/services/authService');
+jest.mock('@/services/firebase', () => ({
+    getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
 
 jest.mock('next/server', () => ({
     ...jest.requireActual('next/server'),

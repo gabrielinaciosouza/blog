@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithCustomToken, signInWithEmailAndPassword } from "firebase/auth";
 
 
 const firebaseConfig = {
@@ -34,4 +34,9 @@ export { signInWithPopup };
 
 export async function signInWithEmail(email: string, password: string) {
     return signInWithEmailAndPassword(auth, email, password);
+}
+
+export async function getIdTokenByCustomToken(customToken: string) {
+    const userCredential = await signInWithCustomToken(auth, customToken);
+    return userCredential.user.getIdToken();
 }

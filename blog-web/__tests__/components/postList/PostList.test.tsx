@@ -13,6 +13,10 @@ jest.mock("next/image", () => ({
     },
 }));
 
+jest.mock('@/services/firebase', () => ({
+    getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
+
 describe("PostList Component", () => {
     jest.setTimeout(20000);
     const posts: Post[] = [

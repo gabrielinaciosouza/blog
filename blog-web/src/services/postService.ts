@@ -1,17 +1,21 @@
 import AuthResponse from "@/models/auth-response";
 import CreatePostRequest from "@/models/create-post-request";
 import Post from "@/models/post";
+import { get } from "http";
+import { getIdTokenByCustomToken } from "./firebase";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3000";
 export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080";
 export const POSTS_PATH = `${SERVER_URL}/posts`;
 
 export const createPost = async (authResponse: AuthResponse, request: CreatePostRequest): Promise<Post> => {
+    const idToken = await getIdTokenByCustomToken(authResponse.authToken);
+
     const response = await fetch(`${POSTS_PATH}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${authResponse.authToken}`
+            "Authorization": `Bearer ${idToken}`
         },
         body: JSON.stringify(request),
     });
@@ -60,11 +64,12 @@ export const getPosts = async (page: number, size: number): Promise<{ posts: Pos
 }
 
 export const getDeletedPosts = async (auth: AuthResponse): Promise<Post[]> => {
+    const idToken = await getIdTokenByCustomToken(auth.authToken);
     const response = await fetch(`${POSTS_PATH}/deleted/`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${auth.authToken}`
+            "Authorization": `Bearer ${idToken}`
         }
     });
 
@@ -78,11 +83,13 @@ export const getDeletedPosts = async (auth: AuthResponse): Promise<Post[]> => {
 }
 
 export const deletePost = async (authResponse: AuthResponse, slug: string): Promise<void> => {
+    const idToken = await getIdTokenByCustomToken(authResponse.authToken);
+
     const response = await fetch(`${POSTS_PATH}/${slug}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${authResponse.authToken}`
+            "Authorization": `Bearer ${idToken}`
         }
     });
 

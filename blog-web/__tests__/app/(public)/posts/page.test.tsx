@@ -4,6 +4,9 @@ import Posts from "@/app/(public)/posts/page";
 
 jest.mock("@/components/postCard/PostCard", () => () => <div>PostCard</div>);
 jest.mock("@/components/pagination/Pagination", () => () => <div>Pagination</div>);
+jest.mock('@/services/firebase', () => ({
+    getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
 
 global.fetch = jest.fn();
 

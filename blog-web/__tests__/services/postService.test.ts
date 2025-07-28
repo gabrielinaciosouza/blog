@@ -4,6 +4,9 @@ import Post from '@/models/post';
 import AuthResponse from '@/models/auth-response';
 
 global.fetch = jest.fn();
+jest.mock('@/services/firebase', () => ({
+  getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
 
 describe('postService', () => {
   beforeEach(() => {
@@ -46,7 +49,7 @@ describe('postService', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authResponse.authToken}`,
+          'Authorization': 'Bearer fake-token',
         },
         body: JSON.stringify(postRequest),
       });
@@ -192,7 +195,7 @@ describe('postService', () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authResponse.authToken}`,
+          'Authorization': 'Bearer fake-token',
         },
       });
       expect(result).toEqual(mockDeletedPosts.map(post => new Post(post.postId, post.title, post.content, post.creationDate, post.slug, post.coverImage)));
@@ -239,7 +242,7 @@ describe('postService', () => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authResponse.authToken}`
+          'Authorization': 'Bearer fake-token',
         }
       });
     });

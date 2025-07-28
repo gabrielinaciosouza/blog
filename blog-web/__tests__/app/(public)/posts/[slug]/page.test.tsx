@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 import SinglePage from '@/app/(public)/posts/[slug]/page';
 import { getPostBySlug } from '@/services/postService';
 
+jest.mock('@/services/firebase', () => ({
+    getIdTokenByCustomToken: jest.fn().mockResolvedValue('fake-token'),
+}));
+
 jest.mock('@/services/postService');
 
 const mockedGetPostBySlug = getPostBySlug as jest.MockedFunction<typeof getPostBySlug>;
