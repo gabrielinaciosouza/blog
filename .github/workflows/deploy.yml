@@ -7,6 +7,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./blog-backend
 
     steps:
       - name: Checkout
@@ -25,6 +28,9 @@ jobs:
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v4
+
+      - name: Set execute permissions for Gradle wrapper
+        run: chmod +x ./gradlew
 
       - name: Build native Quarkus app with Gradle
         run: ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
