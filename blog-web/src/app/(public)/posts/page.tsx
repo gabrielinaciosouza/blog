@@ -22,7 +22,7 @@ const getData = async (page: number): Promise<{ posts: Post[], totalCount: numbe
     return data;
 };
 
-const Posts = async ({ searchParams }: { searchParams: { page: number | null } }) => {
+const Posts = async ({ searchParams }: { searchParams: Promise<{ page: number | null }> }) => {
     try {
         const page = (await searchParams).page || 1;
         const { posts, totalCount } = await getData(page);

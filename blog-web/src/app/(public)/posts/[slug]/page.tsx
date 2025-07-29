@@ -3,13 +3,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getPostBySlug } from "@/services/postService";
 import Image from "next/image";
 
-interface SinglePageProps {
-    params: {
-        slug: string;
-    };
-}
-
-const SinglePage = async ({ params }: SinglePageProps) => {
+const SinglePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug } = await params;
     try {
         const post = await getPostBySlug(slug);
