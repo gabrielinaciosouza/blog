@@ -51,13 +51,4 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
         .build();
   }
 
-  /**
-   * Internal class to represent standardized error responses.
-   * Uses a record for simplicity and immutability.
-   *
-   * @param error   Type of the error.
-   * @param message Detailed error message.
-   */
-  private record ErrorResponse(String error, String message) {
-  }
 }
