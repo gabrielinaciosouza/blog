@@ -1,4 +1,4 @@
-export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080";
+export const SERVER_URL = process.env.BLOG_API_URL || "http://127.0.0.1:8080";
 
 import AuthResponse from "@/models/auth-response";
 import { jwtDecode } from "jwt-decode";

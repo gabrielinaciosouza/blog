@@ -1,6 +1,6 @@
 import BlogImage from "@/models/blog-image";
 
-export const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080";
+export const SERVER_URL = process.env.BLOG_API_URL || "http://127.0.0.1:8080";
 export const uploadImage = async (body: FormData): Promise<BlogImage> => {
     const response = await fetch(`${SERVER_URL}/files/images`, {
         method: "POST",

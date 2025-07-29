@@ -3,7 +3,6 @@ import CreatePostRequest from "@/models/create-post-request";
 import Post from "@/models/post";
 import { getIdTokenByCustomToken } from "./firebase";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3000";
 export const SERVER_URL = process.env.BLOG_API_URL || "http://127.0.0.1:8080";
 export const POSTS_PATH = `${SERVER_URL}/posts`;
 
