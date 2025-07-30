@@ -43,7 +43,7 @@ public class GcsImageBucketRepository implements ImageBucketRepository {
     final var bucket = getOrCreateBucket(bucketName);
 
     final var blob = bucket.create(params.fileName(), params.fileData(), params.fileMimeType());
-    return new Image(gcsUrl + bucketName + "/o/" + blob.getName() + "?alt=media");
+    return new Image(gcsUrl + bucketName + "/" + blob.getName() + "?alt=media");
   }
 
   private Bucket getOrCreateBucket(final String bucketName) {

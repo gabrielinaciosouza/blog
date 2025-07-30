@@ -44,7 +44,7 @@ class GcsImageBucketRepositoryTest {
     final var result = gcsImageBucketRepository.createImage(params);
 
     assertNotNull(result);
-    assertEquals(GCS_URL + bucketName + "/o/" + fileName + "?alt=media",
+    assertEquals(GCS_URL + bucketName + "/" + fileName + "?alt=media",
         result.toString());
     verify(storage).get(bucketName);
     verify(bucket).create(fileName, fileData, fileMimeType);
@@ -70,7 +70,7 @@ class GcsImageBucketRepositoryTest {
     final var result = gcsImageBucketRepository.createImage(params);
 
     assertNotNull(result);
-    assertEquals(GCS_URL + bucketName + "/o/" + fileName + "?alt=media",
+    assertEquals(GCS_URL + bucketName + "/" + fileName + "?alt=media",
         result.toString());
     verify(storage).get(bucketName);
     verify(storage).create(BucketInfo.of(bucketName));
