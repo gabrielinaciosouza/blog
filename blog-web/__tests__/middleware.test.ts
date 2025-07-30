@@ -51,4 +51,13 @@ describe('middleware', () => {
         expect(res.status).toBe(307);
         expect(res.headers.get('location')).toBe('http://localhost/');
     });
+
+    it('redirects if user is not admin', () => {
+        const validJwt = createJwt(Math.floor(Date.now() / 1000) + 1000);
+        const authResponse = createAuthResponse(validJwt);
+        authResponse.role = 'USER';
+        const res = middleware(createRequest(JSON.stringify(authResponse)));
+        expect(res.status).toBe(307);
+        expect(res.headers.get('location')).toBe('http://localhost/');
+    });
 });

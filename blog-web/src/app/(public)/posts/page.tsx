@@ -6,7 +6,7 @@ import Pagination from "@/components/pagination/Pagination";
 const POST_PER_PAGE = 9;
 const getData = async (page: number): Promise<{ posts: Post[], totalCount: number }> => {
     const response = await fetch(
-        `api/posts?page=${page}&size=${POST_PER_PAGE}`,
+        `/api/posts?page=${page}&size=${POST_PER_PAGE}`,
         {
             cache: "no-store",
         }

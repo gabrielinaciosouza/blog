@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
         const authResponse = JSON.parse(request.cookies.get('authResponse')?.value || '{}') as AuthResponse;
         const authToken = authResponse.authToken;
         const origin = request.nextUrl.origin;
-        if (!authToken) {
+        if (!authToken || authResponse.role !== 'ADMIN') {
             return NextResponse.redirect(`${origin}/`);
         }
 
