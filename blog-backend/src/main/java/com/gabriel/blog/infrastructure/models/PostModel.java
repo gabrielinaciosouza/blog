@@ -10,12 +10,14 @@ import com.gabriel.blog.domain.valueobjects.Slug;
 import com.gabriel.blog.domain.valueobjects.Title;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.DocumentId;
+import com.google.errorprone.annotations.Keep;
 
 /**
  * Represents a Firestore-compatible model for storing blog posts.
  * This class is used to convert {@link Post} entities into a format
  * that can be saved in Firestore, ensuring proper serialization.
  */
+@Keep
 public class PostModel {
 
   @DocumentId
