@@ -1,5 +1,7 @@
 package com.gabriel.blog.infrastructure.config;
 
+import com.gabriel.blog.infrastructure.models.PostModel;
+import com.gabriel.blog.presentation.exceptions.ErrorResponse;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.logging.Severity;
@@ -13,14 +15,15 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 
 @ApplicationScoped
-@RegisterForReflection(targets = {AbstractFuture.class, Severity.class, GetAccountInfoResponse.class})
+@RegisterForReflection(targets = { AbstractFuture.class, Severity.class,
+    GetAccountInfoResponse.class, PostModel.class, ErrorResponse.class })
 public class GoogleCredentialsConfig {
 
-	@Mock
-	@Produces
-	@Singleton
-	@IfBuildProfile(anyOf = {"test", "local"})
-	public Credentials localCredendials() {
-		return NoCredentials.getInstance();
-	}
+  @Mock
+  @Produces
+  @Singleton
+  @IfBuildProfile(anyOf = { "test", "local" })
+  public Credentials localCredendials() {
+    return NoCredentials.getInstance();
+  }
 }
