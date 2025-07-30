@@ -2,13 +2,17 @@ package com.gabriel.blog.infrastructure.config;
 
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
+import com.google.cloud.logging.Severity;
+import com.google.common.util.concurrent.AbstractFuture;
 import io.quarkus.arc.profile.IfBuildProfile;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.quarkus.test.Mock;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 
 @ApplicationScoped
+@RegisterForReflection(targets = {AbstractFuture.class, Severity.class})
 public class GoogleCredentialsConfig {
 
   @Mock
