@@ -30,8 +30,8 @@ public interface ImageBucketRepository {
    * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
    */
   enum BucketType {
-    COVER_IMAGES("cover-images"),
-    CONTENT_IMAGES("content-images");
+    COVER_IMAGES("blog-cover-images"),
+    CONTENT_IMAGES("blog-content-images");
 
     private final String bucketName;
 

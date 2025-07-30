@@ -34,7 +34,7 @@ class UploadImageUseCaseTest {
     final var fileData = "fileData".getBytes();
     final var fileName = "fileName.jpg";
     final var fileMimeType = "image/jpeg";
-    final var bucketName = "content-images";
+    final var bucketName = "blog-content-images";
 
     return new UploadImageRequest(fileData, fileName, fileMimeType, bucketName);
   }

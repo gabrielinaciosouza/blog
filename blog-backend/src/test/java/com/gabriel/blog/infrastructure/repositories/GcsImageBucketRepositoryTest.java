@@ -28,7 +28,7 @@ class GcsImageBucketRepositoryTest {
   @Test
   void createImageSuccessfully() {
     final var bucketType = ImageBucketRepository.BucketType.CONTENT_IMAGES;
-    final var bucketName = bucketType.toString();
+    final var bucketName = bucketType.getBucketName();
     final var fileName = "fileName.jpg";
     final var fileData = "fileData".getBytes();
     final var fileMimeType = "image/jpeg";
@@ -53,7 +53,7 @@ class GcsImageBucketRepositoryTest {
   @Test
   void createImageWithNonExistentBucketCreatesBucket() {
     final var bucketType = ImageBucketRepository.BucketType.CONTENT_IMAGES;
-    final var bucketName = bucketType.toString();
+    final var bucketName = bucketType.getBucketName();
     final var fileName = "fileName.jpg";
     final var fileData = "fileData".getBytes();
     final var fileMimeType = "image/jpeg";
@@ -70,7 +70,7 @@ class GcsImageBucketRepositoryTest {
     final var result = gcsImageBucketRepository.createImage(params);
 
     assertNotNull(result);
-    assertEquals(GCS_URL + bucketType + "/o/" + fileName + "?alt=media",
+    assertEquals(GCS_URL + bucketName + "/o/" + fileName + "?alt=media",
         result.toString());
     verify(storage).get(bucketName);
     verify(storage).create(BucketInfo.of(bucketName));

@@ -161,7 +161,7 @@ describe('CreatePostPage', () => {
     await user.click(uploadToolbarButton);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/images?type=content-images'), expect.any(Object));
+      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/images?type=blog-content-images'), expect.any(Object));
     });
     await waitFor(() => {
       expect(screen.getByText(/Image uploaded successfully/i)).toBeInTheDocument();

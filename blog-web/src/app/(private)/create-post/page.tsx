@@ -157,7 +157,7 @@ export default function CreatePostPage() {
                     accept="image/*"
                     style={{ display: "none" }}
                     onChange={async (e) => {
-                        const url = await handleImageUpload(e, "cover-images");
+                        const url = await handleImageUpload(e, "blog-cover-images");
                         if (url) {
                             setCoverImage(url);
                         }
@@ -182,7 +182,7 @@ export default function CreatePostPage() {
                             const fileInput = (e as { target: HTMLInputElement }).target;
                             if (fileInput.files && fileInput.files[0]) {
                                 const fakeEvent = { target: fileInput } as React.ChangeEvent<HTMLInputElement>;
-                                const url = await handleImageUpload(fakeEvent, "content-images");
+                                const url = await handleImageUpload(fakeEvent, "blog-content-images");
                                 if (url) {
                                     insertImageToEditor(url);
                                 }
