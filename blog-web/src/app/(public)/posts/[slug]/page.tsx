@@ -2,6 +2,7 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getPostBySlug } from "@/services/postService";
 import Image from "next/image";
+import MarkdownContent from "@/components/MarkdownContent";
 
 const SinglePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug } = await params;
@@ -30,11 +31,11 @@ const SinglePage = async ({ params }: { params: Promise<{ slug: string }> }) => 
                 )}
                 {/* Overlay content on top of the faded image */}
                 <section
-                    className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-8 flex flex-col items-start z-10"
-                    style={{ minHeight: '420px', justifyContent: 'flex-end', display: 'flex', paddingBottom: '2rem', paddingTop: '0', marginTop: '10rem' }}
+                    className="relative w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-8 flex flex-col items-start z-10"
+                    style={{ minHeight: '420px', justifyContent: 'flex-end', display: 'flex', paddingBottom: '2rem', paddingTop: '0', marginTop: '20rem' }}
                 >
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-0 drop-shadow-xl">
-                        {post.title}
+                        <span className="block pb-4 md:pb-6">{post.title}</span>
                     </h1>
                     <div className="flex items-center gap-4" style={{ marginTop: '3rem' }}>
                         <Avatar className="w-14 h-14 shadow-lg">
@@ -49,8 +50,10 @@ const SinglePage = async ({ params }: { params: Promise<{ slug: string }> }) => 
                 </section>
                 {/* Main content below the header */}
                 <section className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-8 pb-16 z-10" style={{ marginTop: '3rem' }}>
-                    <article className="prose prose-lg prose-zinc dark:prose-invert max-w-none text-foreground rounded-xl shadow-xl p-8 -mt-16 bg-transparent">
-                        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                    <article className="prose prose-lg prose-zinc dark:prose-invert max-w-none text-foreground rounded-xl shadow-xl p-4 -mt-16 bg-transparent">
+                        <div className="text-xl md:text-2xl">
+                            <MarkdownContent content={post.content} />
+                        </div>
                     </article>
                 </section>
             </main>

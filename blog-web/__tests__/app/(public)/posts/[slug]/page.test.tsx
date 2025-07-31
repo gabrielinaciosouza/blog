@@ -11,38 +11,41 @@ jest.mock('@/services/postService');
 const mockedGetPostBySlug = getPostBySlug as jest.MockedFunction<typeof getPostBySlug>;
 
 describe('SinglePage', () => {
-    it('should render the post content when post is found', async () => {
+    it('renders cover image, title, author, and markdown content', async () => {
         const post = {
             postId: '1',
-            title: 'Test Title',
-            content: '<p>This is the content of the post.</p>',
-            creationDate: '2021-12-12T00:00:00Z',
-            slug: 'test-title',
-            coverImage: '/test-image.jpg',
+            title: 'Test Post',
+            content: '# Heading\nSome content',
+            creationDate: '2025-07-31',
+            slug: 'test-post',
+            coverImage: '/test-image.png',
         };
 
         mockedGetPostBySlug.mockResolvedValueOnce(post);
 
-        const { container } = render(await SinglePage({
-            params: {
-                slug: 'test-title',
-            }
+        // Mock next/image to render a normal img
+        jest.mock('next/image', () => ({
+            __esModule: true,
+            default: (props: any) => <img {...props} />,
         }));
 
-        expect(screen.getByText('Test Title')).toBeInTheDocument();
+        // @ts-ignore
+        render(await SinglePage({ params: Promise.resolve({ slug: 'test-post' }) }));
+        expect(screen.getByAltText('Test Post')).toBeInTheDocument();
+        expect(screen.getByText('Test Post')).toBeInTheDocument();
         expect(screen.getByText('Gabriel Inacio')).toBeInTheDocument();
-        expect(screen.getByText('2021-12-12T00:00:00Z')).toBeInTheDocument();
-        const paragraph = container.querySelector('p');
-        expect(paragraph?.innerHTML).toBe('This is the content of the post.');
+        expect(screen.getByText('2025-07-31')).toBeInTheDocument();
+        expect(screen.getByText('Heading')).toBeInTheDocument();
+        expect(screen.getByText('Some content')).toBeInTheDocument();
     });
 
     it('should render error message when post is not found', async () => {
         mockedGetPostBySlug.mockRejectedValueOnce(new Error('Post not found'));
 
         render(await SinglePage({
-            params: {
+            params: Promise.resolve({
                 slug: 'non-existent-post'
-            }
+            })
         }));
 
 
@@ -53,9 +56,10 @@ describe('SinglePage', () => {
         mockedGetPostBySlug.mockRejectedValueOnce("Any error");
 
         render(await SinglePage({
-            params: {
+            params: Promise.resolve({
+
                 slug: 'non-existent-post'
-            }
+            })
         }));
 
 
