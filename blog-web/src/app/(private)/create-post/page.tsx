@@ -98,19 +98,24 @@ export default function CreatePostPage() {
         startLoading();
 
         try {
-            const response = await fetch('/api/create-post', {
+            const res = await fetch('/api/create-post', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(new CreatePostRequest(title, content, coverImage)),
-            }).then(res => res.json());
-            openModal("Post saved successfully", () => {
-                setTitle("");
-                setContent("");
-                setCoverImage(null);
-                router.push(`/posts/${response.slug}`);
             });
+            const response = await res.json();
+            if (res.ok && res.status >= 200 && res.status < 300) {
+                openModal("Post saved successfully", () => {
+                    setTitle("");
+                    setContent("");
+                    setCoverImage(null);
+                    router.push(`/posts/${response.slug}`);
+                });
+            } else {
+                openModal(response?.error || "Server error. Please try again.", () => { });
+            }
         } catch (error) {
             openModal((error as Error).message, () => { });
         } finally {

@@ -30,7 +30,7 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                         alt={alt}
                         style={{
                             width: '100%',
-                            maxWidth: '500px', // define a largura exata visual
+                            maxWidth: '500px',
                             height: 'auto',
                             display: 'block',
                             margin: '1.5rem auto',

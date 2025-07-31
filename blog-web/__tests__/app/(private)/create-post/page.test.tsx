@@ -200,6 +200,14 @@ describe('CreatePostPage', () => {
     });
   });
 
+  it('calls handlePublish and shows modal if title or content is empty', async () => {
+    const { user } = setup(<CreatePostPage />);
+    await user.click(screen.getByText('Publish'));
+    await waitFor(() => {
+      expect(screen.getByText(/required/i)).toBeInTheDocument();
+    });
+  });
+
   it('renders the CreatePostPage component', () => {
     setup(<CreatePostPage />);
     expect(screen.getByPlaceholderText('Title')).toBeInTheDocument();
@@ -277,6 +285,65 @@ describe('CreatePostPage', () => {
       // Filter out buttons
       const errorMessages = errorElements.filter((el) => el.tagName !== 'BUTTON');
       expect(errorMessages.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('calls handlePublish and shows success modal, clears fields, and navigates on success', async () => {
+    const pushMock = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({
+      push: pushMock,
+      back: jest.fn(),
+      forward: jest.fn(),
+      refresh: jest.fn(),
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+    });
+    // Ensure fetch returns a successful response
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ slug: 'test-slug' }),
+    } as Response);
+    const { user } = setup(<CreatePostPage />);
+    await user.type(screen.getByPlaceholderText('Title'), 'Test Title');
+    await user.type(screen.getByPlaceholderText('Write your post in Markdown...'), 'Test Content');
+    await user.click(screen.getByText('Publish'));
+    await waitFor(() => {
+      const modal = screen.queryByRole('dialog');
+      expect(modal).toBeInTheDocument();
+      // Check for success message in modal content
+      expect(modal?.textContent?.toLowerCase()).toContain('post saved successfully');
+    });
+    // Simulate closing modal
+    const closeButtons = screen.getAllByText(/close/i);
+    // Click the last button (should be the modal's Close button)
+    await user.click(closeButtons[closeButtons.length - 1]);
+    expect(pushMock).toHaveBeenCalledWith('/posts/test-slug');
+  });
+
+  it('calls handlePublish and shows error modal on fetch failure', async () => {
+    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+    const { user } = setup(<CreatePostPage />);
+    await user.type(screen.getByPlaceholderText('Title'), 'Test Title');
+    await user.type(screen.getByPlaceholderText('Write your post in Markdown...'), 'Test Content');
+    await user.click(screen.getByText('Publish'));
+    await waitFor(() => {
+      expect(screen.getByText(/network error/i)).toBeInTheDocument();
+    });
+  });
+
+  it('calls handlePublish and shows error modal on non-OK response', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: false, json: async () => ({ message: 'Server error' }) } as Response);
+    const { user } = setup(<CreatePostPage />);
+    await user.type(screen.getByPlaceholderText('Title'), 'Test Title');
+    await user.type(screen.getByPlaceholderText('Write your post in Markdown...'), 'Test Content');
+    await user.click(screen.getByText('Publish'));
+    await waitFor(() => {
+      // Fallback: check for any modal/dialog and print its content for debug
+      const modal = screen.queryByRole('dialog');
+      expect(modal).toBeInTheDocument();
+      // Try to find the error message in the modal textContent
+      expect(modal?.textContent?.toLowerCase()).toContain('server error');
     });
   });
 });
