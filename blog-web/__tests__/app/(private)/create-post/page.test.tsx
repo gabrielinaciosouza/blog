@@ -328,7 +328,7 @@ describe('CreatePostPage', () => {
     await user.type(screen.getByPlaceholderText('Write your post in Markdown...'), 'Test Content');
     await user.click(screen.getByText('Publish'));
     await waitFor(() => {
-      expect(screen.getByText(/network error/i)).toBeInTheDocument();
+      expect(screen.getByText(/an error occurred/i)).toBeInTheDocument();
     });
   });
 
