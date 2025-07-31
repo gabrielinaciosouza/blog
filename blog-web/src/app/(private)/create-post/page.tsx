@@ -84,7 +84,7 @@ export default function CreatePostPage() {
             const data = await res.json();
             setCoverImage(data.url);
             openModal("Image uploaded successfully", () => { });
-        } catch (err) {
+        } catch {
             openModal("Image upload failed", () => { });
         }
     };
@@ -116,8 +116,8 @@ export default function CreatePostPage() {
             } else {
                 openModal(response?.error || "Server error. Please try again.", () => { });
             }
-        } catch (error) {
-            openModal((error as Error).message, () => { });
+        } catch {
+            openModal("An error occurred", () => { });
         } finally {
             stopLoading();
         }
@@ -184,7 +184,7 @@ export default function CreatePostPage() {
                                 const imageUrl = data.url;
                                 insertAtCursor(`![](${imageUrl})`);
                                 openModal("Content image uploaded successfully", () => { });
-                            } catch (err) {
+                            } catch {
                                 openModal("Failed to upload content image.", () => { });
                             }
                         };

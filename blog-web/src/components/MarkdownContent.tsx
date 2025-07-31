@@ -38,12 +38,12 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                         }}
                     />
                 ),
-                h2: ({ node, ...props }) => <h2 className="text-2xl font-bold mt-6 mb-2" {...props} />,
-                h3: ({ node, ...props }) => <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />,
-                ol: ({ node, ...props }) => <ol className="list-decimal list-inside" {...props} />,
-                ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                h2: (props) => <h2 className="text-2xl font-bold mt-6 mb-2" {...props} />,
+                h3: (props) => <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />,
+                ol: (props) => <ol className="list-decimal list-inside" {...props} />,
+                ul: (props) => <ul className="list-disc list-inside" {...props} />,
                 br: () => <br />,
-                p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+                p: (props) => <p className="mb-4" {...props} />,
             }}
         >
             {content}
