@@ -1,71 +1,91 @@
-"use client"
+"use client";
 
-import React, { useRef } from "react";
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
-import Image from '@tiptap/extension-image';
-import { useModal } from "@/hooks/useModal";
-import { FaUpload, FaImage, FaEye } from "react-icons/fa";
-import PostCard from "@/components/postCard/PostCard";
-import Post from "@/models/post";
-import CreatePostRequest from "@/models/create-post-request";
-import { useRouter } from "next/navigation";
-import useStorage from "@/hooks/useStorage";
-import useLoading from "@/hooks/useLoading";
-import Loading from "@/components/loading/Loading";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import MarkdownContent from "@/components/MarkdownContent";
+import { useRouter } from "next/navigation";
+import { useModal } from "@/hooks/useModal";
+import useLoading from "@/hooks/useLoading";
+import CreatePostRequest from "@/models/create-post-request";
+import Loading from "@/components/loading/Loading";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function CreatePostPage() {
-    React.useEffect(() => {
-        const style = document.createElement('style');
-        style.innerHTML = `.ProseMirror:focus { outline: none !important; border-color: transparent !important; box-shadow: none !important; }`;
-        document.head.appendChild(style);
-        return () => {
-            document.head.removeChild(style);
-        };
-    }, []);
-
-    const [title, setTitle] = useStorage("draft-title", "");
-    const [content, setContent] = useStorage("draft-content", "");
-    const [coverImage, setCoverImage] = useStorage<string | null>("draft-coverImage", null);
-
-    const { modalState, openModal, closeModal } = useModal();
-    const { isLoading, startLoading, stopLoading } = useLoading();
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [coverImage, setCoverImage] = useState<string | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const { isLoading, startLoading, stopLoading } = useLoading();
+    const { modalState, openModal, closeModal } = useModal();
 
-    const titleRef = useRef<HTMLInputElement>(null);
-    const postImageInputRef = useRef<HTMLInputElement>(null);
+    const insertAtCursor = (before: string, after = "") => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
-        let message = "Image not uploaded";
-        try {
-            if (e.target.files && e.target.files[0]) {
-                const file = e.target.files[0];
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selected = text.slice(start, end);
+        const newText =
+            text.slice(0, start) + before + selected + after + text.slice(end);
+        setContent(newText);
 
-                const formData = new FormData();
-                formData.append("file", file);
-                formData.append("fileName", file.name);
-                formData.append("fileMimeType", file.type);
+        setTimeout(() => {
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd =
+                start + before.length + selected.length;
+        }, 0);
+    };
 
-                const result = await fetch(`/api/images?type=${type}`, {
-                    method: "POST",
-                    body: formData,
-                });
-                if (!result.ok) {
-                    throw new Error("Failed to upload image");
-                }
-                const data = await result.json();
-                message = "Image uploaded successfully";
-                return data.url;
+    const handleToolbar = (action: string) => {
+        switch (action) {
+            case "bold":
+                insertAtCursor("**", "**");
+                break;
+            case "italic":
+                insertAtCursor("_", "_");
+                break;
+            case "h1":
+                insertAtCursor("# ");
+                break;
+            case "quote":
+                insertAtCursor("> ");
+                break;
+            case "link": {
+                const url = prompt("Enter link URL");
+                if (url) insertAtCursor("[", `](${url})`);
+                break;
             }
-        } catch (error) {
-            message = (error as Error).message;
-        } finally {
-            openModal(message, () => { });
+            case "image": {
+                const url = prompt("Enter image URL");
+                if (url) insertAtCursor("![](", `${url})`);
+                break;
+            }
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || !e.target.files[0]) return;
+
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("fileName", file.name);
+        formData.append("fileMimeType", file.type);
+
+        try {
+            const res = await fetch("/api/images?type=blog-cover-images", {
+                method: "POST",
+                body: formData,
+            });
+            const data = await res.json();
+            setCoverImage(data.url);
+            openModal("Image uploaded successfully", () => { });
+        } catch {
+            openModal("Image upload failed", () => { });
         }
     };
 
@@ -78,53 +98,33 @@ export default function CreatePostPage() {
         startLoading();
 
         try {
-            const response = await fetch('/api/create-post', {
+            const res = await fetch('/api/create-post', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(new CreatePostRequest(title, content, coverImage)),
-            }).then(res => res.json());
-            openModal("Post saved successfully", () => {
-                setTitle("");
-                setContent("");
-                setCoverImage(null);
-                router.push(`/posts/${response.slug}`);
             });
-        } catch (error) {
-            openModal((error as Error).message, () => { });
+            const response = await res.json();
+            if (res.ok && res.status >= 200 && res.status < 300) {
+                openModal("Post saved successfully", () => {
+                    setTitle("");
+                    setContent("");
+                    setCoverImage(null);
+                    router.push(`/posts/${response.slug}`);
+                });
+            } else {
+                openModal(response?.error || "Server error. Please try again.", () => { });
+            }
+        } catch {
+            openModal("An error occurred", () => { });
         } finally {
             stopLoading();
         }
     };
 
-    const editor = useEditor({
-        extensions: [StarterKit, Underline, Link, Image],
-        content: content,
-        onUpdate: ({ editor }) => {
-            setContent(editor.getHTML());
-        },
-        immediatelyRender: false,
-    });
-
-    const insertImageToEditor = (imageUrl: string | undefined) => {
-        if (editor && imageUrl) {
-            editor.chain().focus().setImage({ src: imageUrl }).run();
-        }
-    };
-
-
-    const post: Post = {
-        postId: "",
-        title: title,
-        content: content,
-        coverImage: coverImage ?? "/logo2.png",
-        creationDate: new Date().toISOString().replace('T', ' ').split('.')[0].slice(0, -3),
-        slug: "",
-    };
-
     return (
-        <div className="max-w-2xl mx-auto p-6 space-y-6">
+        <div className="max-w-4xl mx-auto p-6 space-y-6">
             {isLoading && <Loading />}
             <Dialog open={modalState.isOpen} onOpenChange={closeModal}>
                 <DialogContent>
@@ -140,61 +140,70 @@ export default function CreatePostPage() {
                 </DialogContent>
             </Dialog>
             <Input
-                ref={titleRef}
                 placeholder="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mb-4"
             />
-            {/* Cover Image Upload Button */}
-            <div className="mb-4 flex gap-2">
-                <Button variant="outline" onClick={() => postImageInputRef.current?.click()} aria-label="Upload Cover Image">
-                    <FaUpload /> Cover Image
-                </Button>
+
+            <div className="flex flex-wrap gap-2">
+                <Button onClick={() => handleToolbar("h1")}>H1</Button>
+                <Button onClick={() => handleToolbar("bold")}>Bold</Button>
+                <Button onClick={() => handleToolbar("italic")}>Italic</Button>
+                <Button onClick={() => handleToolbar("quote")}>Quote</Button>
+                <Button onClick={() => handleToolbar("link")}>Link</Button>
+                <Button onClick={() => handleToolbar("image")}>Image</Button>
+                <Button onClick={() => fileInputRef.current?.click()}>Upload Cover</Button>
                 <input
+                    ref={fileInputRef}
                     type="file"
-                    ref={postImageInputRef}
                     accept="image/*"
                     style={{ display: "none" }}
-                    onChange={async (e) => {
-                        const url = await handleImageUpload(e, "blog-cover-images");
-                        if (url) {
-                            setCoverImage(url);
-                        }
-                    }}
+                    onChange={handleImageUpload}
                 />
-                <Button variant="outline" onClick={() => openModal(<PostCard {...post} />, () => { })} aria-label="Preview">
-                    <FaEye /> Preview
-                </Button>
-            </div>
-            <div className="border rounded p-2 bg-background mt-4">
-                <div className="flex gap-2 mb-2">
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleBold().run()}><b>Bold</b></Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleItalic().run()}><i>Italic</i></Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().toggleUnderline().run()}><u>Underline</u></Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => editor?.chain().focus().setLink({ href: prompt('Enter link URL') || '' }).run()}>Link</Button>
-                    <Button type="button" size="sm" variant="outline" onClick={async () => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = async (e: unknown) => {
-                            if (!(e && typeof e === 'object' && 'target' in e && (e as { target?: unknown }).target instanceof HTMLInputElement)) return;
-                            const fileInput = (e as { target: HTMLInputElement }).target;
-                            if (fileInput.files && fileInput.files[0]) {
-                                const fakeEvent = { target: fileInput } as React.ChangeEvent<HTMLInputElement>;
-                                const url = await handleImageUpload(fakeEvent, "blog-content-images");
-                                if (url) {
-                                    insertImageToEditor(url);
-                                }
+                <Button
+                    onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
+                        input.onchange = async (e: Event) => {
+                            const target = e.target as HTMLInputElement;
+                            if (!target.files || !target.files[0]) return;
+
+                            const file = target.files[0];
+                            const formData = new FormData();
+                            formData.append("file", file);
+                            formData.append("fileName", file.name);
+                            formData.append("fileMimeType", file.type);
+
+                            try {
+                                const res = await fetch("/api/images?type=blog-content-images", {
+                                    method: "POST",
+                                    body: formData,
+                                });
+                                const data = await res.json();
+                                const imageUrl = data.url;
+                                insertAtCursor(`![](${imageUrl})`);
+                                openModal("Content image uploaded successfully", () => { });
+                            } catch {
+                                openModal("Failed to upload content image.", () => { });
                             }
                         };
                         input.click();
-                    }} aria-label="Upload Content Image">
-                        <FaImage />
-                    </Button>
-                </div>
-                <EditorContent editor={editor} className="min-h-[180px] outline-none focus:outline-none" />
+                    }}
+                >
+                    Upload Content Image
+                </Button>
+
             </div>
+
+            <textarea
+                ref={textareaRef}
+                className="w-full min-h-[300px] border rounded p-2 bg-background"
+                placeholder="Write your post in Markdown..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+            />
+
             <Button
                 onClick={handlePublish}
                 disabled={isLoading}
@@ -202,6 +211,14 @@ export default function CreatePostPage() {
             >
                 Publish
             </Button>
+
+            <div>
+                <h2 className="text-lg font-semibold mb-2">Live Preview</h2>
+                <div className="prose prose-neutral max-w-none">
+                    <MarkdownContent content={content} />
+                </div>
+            </div>
+
         </div>
     );
 }
