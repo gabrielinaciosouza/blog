@@ -44,21 +44,6 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                 ul: (props) => <ul className="list-disc list-inside" {...props} />,
                 br: () => <br />,
                 p: (props) => <p className="mb-4" {...props} />,
-                li: ({ children, ...props }) => {
-                    const flattenParagraphs = (node: React.ReactNode): React.ReactNode => {
-                        if (React.isValidElement(node) && node.type === 'p') {
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-expect-error
-                            return node.props.children;
-                        }
-                        if (Array.isArray(node)) {
-                            return node.map(flattenParagraphs);
-                        }
-                        return node;
-                    };
-
-                    return <li {...props}>{flattenParagraphs(children)}</li>;
-                },
             }}
         >
             {content}
