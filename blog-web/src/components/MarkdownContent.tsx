@@ -35,7 +35,7 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content, imageWidth =
                         height={height ? Number(height) : imageHeight}
                         style={{
                             width: '100%',
-                            maxWidth: imageWidth + 'px',
+                            maxWidth: `${imageWidth}px`,
                             display: 'block',
                             margin: '1.5rem auto',
                             objectFit: 'cover',
