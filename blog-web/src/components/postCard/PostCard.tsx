@@ -9,9 +9,6 @@ export function stripHtml(html: string): string {
     return html.replace(/<[^>]*>/g, "");
 }
 
-
-
-
 function formatDate(dateStr: string) {
     const date = new Date(dateStr);
     return date.toLocaleDateString(undefined, {
@@ -20,7 +17,6 @@ function formatDate(dateStr: string) {
         day: "numeric",
     });
 }
-
 
 const PostCard = (post: Post) => {
     const plainText = stripHtml(post.content);

@@ -6,9 +6,11 @@ import Image from "next/image";
 
 interface MarkdownContentProps {
     content: string;
+    imageWidth?: number;
+    imageHeight?: number;
 }
 
-const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
+const MarkdownContent: React.FC<MarkdownContentProps> = ({ content, imageWidth = 500, imageHeight = 281 }) => (
 
     <div className="prose prose-neutral max-w-none">
         <ReactMarkdown
@@ -25,15 +27,15 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                         {children}
                     </a>
                 ),
-                img: ({ src = '', alt = '' }) => (
+                img: ({ src = '', alt = '', width, height }) => (
                     <Image
                         src={src}
                         alt={alt}
-                        width={500}
-                        height={281}
+                        width={width ? Number(width) : imageWidth}
+                        height={height ? Number(height) : imageHeight}
                         style={{
                             width: '100%',
-                            maxWidth: '500px',
+                            maxWidth: imageWidth,
                             display: 'block',
                             margin: '1.5rem auto',
                             objectFit: 'cover',
