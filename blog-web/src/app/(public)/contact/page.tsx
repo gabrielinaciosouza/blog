@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SiMaildotcom, SiLinkedin, SiGithub, SiYoutube } from "react-icons/si";
 
-const linkedinUrl = process.env.LINKEDIN_URL || "https://linkedin.com";
-const githubUrl = process.env.GITHUB_URL || "https://github.com";
-const youtubeUrl = process.env.YOUTUBE_URL || "https://youtube.com";
-const email = process.env.CONTACT_EMAIL || "your@email.com";
+const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com";
+const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com";
+const youtubeUrl = process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://youtube.com";
+const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "your@email.com";
 
 export default function ContactPage() {
     return (
