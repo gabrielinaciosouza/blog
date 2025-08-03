@@ -2,11 +2,12 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SiMaildotcom, SiLinkedin, SiGithub, SiYoutube } from "react-icons/si";
+import { SiMaildotcom, SiLinkedin, SiGithub, SiYoutube, SiInstagram } from "react-icons/si";
 
 const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com";
 const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com";
 const youtubeUrl = process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://youtube.com";
+const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com";
 const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "your@email.com";
 
 export default function ContactPage() {
@@ -53,6 +54,11 @@ export default function ContactPage() {
                         <Button variant="outline" className="w-full flex justify-start gap-2" asChild>
                             <a href={youtubeUrl} target="_blank" rel="noopener noreferrer">
                                 <SiYoutube className="h-5 w-5" /> Youtube
+                            </a>
+                        </Button>
+                        <Button variant="outline" className="w-full flex justify-start gap-2" asChild>
+                            <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
+                                <SiInstagram className="h-5 w-5" /> Instagram
                             </a>
                         </Button>
                     </div>
