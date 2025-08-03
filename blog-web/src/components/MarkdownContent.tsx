@@ -2,6 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import Image from "next/image";
 
 interface MarkdownContentProps {
     content: string;
@@ -25,7 +26,7 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                     </a>
                 ),
                 img: ({ src = '', alt = '' }) => (
-                    <img
+                    <Image
                         src={src}
                         alt={alt}
                         style={{

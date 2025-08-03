@@ -2,14 +2,15 @@ import React from "react";
 import Post from "@/models/post";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function stripHtml(html: string): string {
     if (!html) return "";
     return html.replace(/<[^>]*>/g, "");
 }
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
+
 
 function formatDate(dateStr: string) {
     const date = new Date(dateStr);
