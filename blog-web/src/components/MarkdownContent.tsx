@@ -29,10 +29,11 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                     <Image
                         src={src}
                         alt={alt}
+                        width={500}
+                        height={281}
                         style={{
                             width: '100%',
                             maxWidth: '500px',
-                            height: 'auto',
                             display: 'block',
                             margin: '1.5rem auto',
                             objectFit: 'cover',
