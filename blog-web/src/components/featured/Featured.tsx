@@ -9,11 +9,11 @@ export const Highlight = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Featured = () => (
-  <Card className="max-w-5xl mx-auto mt-8 p-0 bg-black rounded-2xl shadow-xl border border-border text-white">
+  <Card className="w-full max-w-7xl mx-auto p-0 bg-black rounded-2xl shadow-xl border border-border text-white">
     <CardContent className="flex flex-col md:flex-row items-center gap-10 p-10">
       <div className="flex flex-col items-center gap-4">
         <div className="group flex flex-col items-center">
-          <Avatar className="w-40 h-40 border-4 border-primary shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-primary/40 mb-6">
+          <Avatar className="w-40 h-40 border-4 border-primary shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-primary/40 mb-2">
             <AvatarImage src="/profile-picture.png" alt="Gabriel's profile picture" />
             <AvatarFallback>G</AvatarFallback>
           </Avatar>

@@ -8,7 +8,7 @@ const PostList = async () => {
     try {
         const { posts, totalCount } = await getPosts(1, 10);
         return (
-            <section className="w-full mt-12 flex flex-col items-center">
+            <section className="w-full mt-2 flex flex-col items-center">
                 {totalCount > 0 && (
                     <div className="mb-6 w-full flex justify-center">
                         <h2 className="text-2xl font-bold text-primary text-center">Recent Stories</h2>
