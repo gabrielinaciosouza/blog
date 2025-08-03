@@ -12,27 +12,28 @@ const SinglePage = async ({ params }: { params: Promise<{ slug: string }> }) => 
             <main className="relative min-h-screen bg-background flex flex-col items-center">
                 {/* Cover image background with fade overlay */}
                 {post.coverImage && (
-                    <div className="absolute top-0 left-0 w-full h-[420px] z-0">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1280px] aspect-[16/9] z-0 overflow-hidden rounded-xl">
                         <Image
                             src={post.coverImage}
                             alt={post.title}
                             fill
                             priority
-                            className="object-cover w-full h-full rounded-xl opacity-80"
+                            quality={100}
+                            className="opacity-80"
                         />
                         {/* Fade overlay: image fully visible at top, fades out to transparent at bottom */}
                         <div
                             className="absolute inset-0 w-full h-full pointer-events-none"
                             style={{
-                                background: "linear-gradient(to bottom, rgba(0,0,0,0) 60%, var(--background) 100%)"
+                                background: "linear-gradient(to bottom, rgba(0,0,0,0) 40%, var(--background) 90%)"
                             }}
                         />
                     </div>
                 )}
                 {/* Overlay content on top of the faded image */}
                 <section
-                    className="relative w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-8 flex flex-col items-start z-10"
-                    style={{ minHeight: '420px', justifyContent: 'flex-end', display: 'flex', paddingBottom: '2rem', paddingTop: '0', marginTop: '20rem' }}
+                    className="relative w-full max-w-5xl mx-auto px-3 sm:px-4 md:px-8 flex flex-col items-start z-10 mt-40 md:mt-64 lg:mt-96 xl:mt-[32rem]"
+                    style={{ minHeight: '420px', justifyContent: 'flex-end', display: 'flex', paddingBottom: '2rem', paddingTop: '0' }}
                 >
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-0 drop-shadow-xl">
                         <span className="block pb-4 md:pb-6">{post.title}</span>

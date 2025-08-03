@@ -13,7 +13,7 @@ describe("MarkdownContent", () => {
         expect(link).toHaveAttribute("href", "https://google.com");
         // Check image
         const img = screen.getByRole("img", { name: /alt text/i });
-        expect(img).toHaveAttribute("src", "https://example.com/image.png");
+        expect(img).toHaveAttribute("src", "/_next/image?url=https%3A%2F%2Fexample.com%2Fimage.png&w=1080&q=75");
     });
 
     it("renders lists and paragraphs", () => {

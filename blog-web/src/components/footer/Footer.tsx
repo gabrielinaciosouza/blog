@@ -1,15 +1,16 @@
 import React from "react";
 import Link from "next/link";
-import { SiLinkedin, SiGithub, SiYoutube } from "react-icons/si";
+import { SiLinkedin, SiGithub, SiYoutube, SiInstagram } from "react-icons/si";
 
 const iconProps = {
     size: 18,
     className: "text-muted-foreground"
 };
 
-const linkedinUrl = process.env.LINKEDIN_URL || "https://linkedin.com";
-const githubUrl = process.env.GITHUB_URL || "https://github.com";
-const youtubeUrl = process.env.YOUTUBE_URL || "https://youtube.com";
+const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com";
+const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com";
+const youtubeUrl = process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://youtube.com";
+const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com";
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -31,6 +32,11 @@ const Footer = () => {
                     <Link href={youtubeUrl} aria-label="Youtube" target="_blank" rel="noopener noreferrer">
                         <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
                             <SiYoutube {...iconProps} />
+                        </span>
+                    </Link>
+                    <Link href={instagramUrl} aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                        <span className="inline-flex items-center justify-center rounded-full bg-muted w-8 h-8 hover:bg-primary transition">
+                            <SiInstagram {...iconProps} />
                         </span>
                     </Link>
                 </div>

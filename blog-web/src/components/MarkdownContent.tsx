@@ -2,12 +2,15 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import Image from "next/image";
 
 interface MarkdownContentProps {
     content: string;
+    imageWidth?: number;
+    imageHeight?: number;
 }
 
-const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
+const MarkdownContent: React.FC<MarkdownContentProps> = ({ content, imageWidth = 500, imageHeight = 281 }) => (
 
     <div className="prose prose-neutral max-w-none">
         <ReactMarkdown
@@ -24,14 +27,15 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
                         {children}
                     </a>
                 ),
-                img: ({ src = '', alt = '' }) => (
-                    <img
+                img: ({ src = '', alt = '', width, height }) => (
+                    <Image
                         src={src}
                         alt={alt}
+                        width={width ? Number(width) : imageWidth}
+                        height={height ? Number(height) : imageHeight}
                         style={{
                             width: '100%',
-                            maxWidth: '500px',
-                            height: 'auto',
+                            maxWidth: `${imageWidth}px`,
                             display: 'block',
                             margin: '1.5rem auto',
                             objectFit: 'cover',

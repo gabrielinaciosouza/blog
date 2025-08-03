@@ -5,8 +5,9 @@ import Pagination from "@/components/pagination/Pagination";
 
 const POST_PER_PAGE = 9;
 const getData = async (page: number): Promise<{ posts: Post[], totalCount: number }> => {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
     const response = await fetch(
-        `/api/posts?page=${page}&size=${POST_PER_PAGE}`,
+        `${baseUrl}/api/posts?page=${page}&size=${POST_PER_PAGE}`,
         {
             cache: "no-store",
         }

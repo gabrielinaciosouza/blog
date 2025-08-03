@@ -2,14 +2,12 @@ import React from "react";
 import Post from "@/models/post";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function stripHtml(html: string): string {
     if (!html) return "";
     return html.replace(/<[^>]*>/g, "");
 }
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 function formatDate(dateStr: string) {
     const date = new Date(dateStr);
@@ -25,20 +23,20 @@ const PostCard = (post: Post) => {
     const truncated = plainText.length > 120 ? plainText.slice(0, 120) + "..." : plainText;
     return (
         <Link href={`/posts/${post.slug}`} className="block group">
-            <Card className="flex flex-col overflow-hidden rounded-2xl shadow-lg bg-background transition-all duration-200 w-[320px] h-[480px] mx-auto border border-border hover:shadow-2xl hover:scale-105 p-2">
-                <div className="w-full h-48 rounded-t-2xl overflow-hidden">
+            <div className="w-full max-w-[480px] sm:w-[400px] md:w-[480px] rounded-2xl overflow-hidden shadow-lg bg-background transition-all duration-200 mx-auto hover:shadow-2xl hover:scale-105 flex flex-col">
+                <div className="w-full aspect-[16/9] ">
                     <Image
                         src={post.coverImage}
                         alt="Post Image"
-                        width={320}
-                        height={192}
-                        className="w-full h-full object-cover rounded-t-2xl"
-                        sizes="(max-width: 700px) 100vw, 320px"
+                        width={1280}
+                        height={720}
+                        className="w-full h-full object-cover rounded-2xl"
+                        sizes="(max-width: 700px) 100vw, 360px"
                         priority
                     />
                 </div>
-                <CardContent className="flex flex-col gap-2 p-5 flex-1">
-                    <h2 className="text-xl font-bold text-primary mb-1 line-clamp-2">{post.title}</h2>
+                <div className="flex flex-col gap-3 p-4 md:p-8 flex-1">
+                    <h2 className="text-lg md:text-2xl font-bold text-primary mb-2 line-clamp-2">{post.title}</h2>
                     <div className="text-xs text-muted-foreground mb-2">{formatDate(post.creationDate)}</div>
                     <div className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1">
                         <p>{truncated}</p>
@@ -46,8 +44,8 @@ const PostCard = (post: Post) => {
                     <div className="flex justify-end">
                         <Button variant="secondary" size="sm" className="px-4 py-1">Read more</Button>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </Link>
     );
 };

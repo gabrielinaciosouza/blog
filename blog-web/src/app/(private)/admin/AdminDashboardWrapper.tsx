@@ -16,7 +16,7 @@ export default function AdminDashboardWrapper() {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = 10;
 
-    const fetchData = async () => {
+    const fetchData = React.useCallback(async () => {
         startLoading();
         try {
             const [deletedResponse, postsResponse] = await Promise.all([
@@ -49,11 +49,11 @@ export default function AdminDashboardWrapper() {
         } finally {
             stopLoading();
         }
-    };
+    }, [page, startLoading, stopLoading, router, pageSize]);
 
     useEffect(() => {
         fetchData();
-    }, [page, startLoading, stopLoading]);
+    }, [fetchData]);
 
     const handleDelete = async (slug: string) => {
         try {
