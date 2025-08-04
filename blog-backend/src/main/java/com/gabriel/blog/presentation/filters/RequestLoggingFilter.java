@@ -32,7 +32,22 @@ public class RequestLoggingFilter implements ContainerRequestFilter {
       }
     }
 
-    LOG.infof("Incoming request: %s %s | IP: %s | UA: %s", method, path, ip, userAgent);
+    LOG.infof("Incoming request: %s %s | IP: %s | UA: %s", method, path, ip, sanitizedUserAgent);
+  }
+
+  /**
+   * Sanitizes the user agent string by removing control characters and truncating to 200 chars.
+   */
+  private String sanitizeUserAgent(String userAgent) {
+    if (userAgent == null) {
+      return "unknown";
+    }
+    // Remove control characters (including newlines, carriage returns, etc.)
+    String sanitized = userAgent.replaceAll("[\\p{Cntrl}]", "");
+    // Truncate to 200 characters
+    if (sanitized.length() > 200) {
+      sanitized = sanitized.substring(0, 200) + "...";
+    }
+    return sanitized;
   }
 }
-
