@@ -8,7 +8,6 @@ const PostList = async () => {
     try {
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
         const response = await fetch(`${baseUrl}/api/posts?page=1&size=6`, {
-            cache: "force-cache",
             method: "GET"
         });
 
