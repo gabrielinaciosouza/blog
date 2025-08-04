@@ -26,7 +26,7 @@ public class RequestLoggingFilter implements ContainerRequestFilter {
       ip = requestContext.getHeaderString("X-Real-IP");
     }
     if (ip == null) {
-      ip = requestContext.getHeaders().getFirst("Host");
+      ip = "unknown";
     }
 
     LOG.infof("Incoming request: %s %s | IP: %s | UA: %s", method, path, ip, userAgent);
