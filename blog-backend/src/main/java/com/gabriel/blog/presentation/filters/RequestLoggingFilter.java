@@ -22,11 +22,14 @@ public class RequestLoggingFilter implements ContainerRequestFilter {
     final String path = requestContext.getUriInfo().getRequestUri().getPath();
     final String userAgent = requestContext.getHeaderString("User-Agent");
     String ip = requestContext.getHeaderString("X-Forwarded-For");
-    if (ip == null) {
+    if (ip != null) {
+      // Extract only the first IP address from the comma-separated list
+      ip = ip.split(",")[0].trim();
+    } else {
       ip = requestContext.getHeaderString("X-Real-IP");
-    }
-    if (ip == null) {
-      ip = "unknown";
+      if (ip == null) {
+        ip = "unknown";
+      }
     }
 
     LOG.infof("Incoming request: %s %s | IP: %s | UA: %s", method, path, ip, userAgent);
