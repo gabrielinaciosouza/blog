@@ -3,7 +3,7 @@ package com.gabriel.blog.application.usecases;
 import com.gabriel.blog.application.exceptions.AlreadyExistsException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
-import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.gabriel.blog.application.requests.PostRequest;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.services.IdGenerator;
 import com.gabriel.blog.domain.entities.Post;
@@ -19,14 +19,14 @@ import java.util.Objects;
 
 /**
  * The {@link CreatePostUseCase} class is responsible for handling the creation of a new blog post.
- * It coordinates the process of converting a {@link CreatePostRequest}
+ * It coordinates the process of converting a {@link PostRequest}
  * into a domain {@link Post} entity,
  * saving it using the {@link PostRepository}, and then returning a {@link PostResponse}.
  *
  * <p>Created by Gabriel Inacio de Souza on February 2, 2025.</p>
  *
  * <p>This use case encapsulates the business logic for creating a new post in the blog, including
- * the transformation of input data (from {@link CreatePostRequest} to {@link Post})
+ * the transformation of input data (from {@link PostRequest} to {@link Post})
  * and the interaction with the repository to store the new post.</p>
  */
 @ApplicationScoped
@@ -51,13 +51,13 @@ public class CreatePostUseCase {
 
   /**
    * Handles the creation of a new blog post.
-   * This method converts the incoming {@link CreatePostRequest}
+   * This method converts the incoming {@link PostRequest}
    * into a {@link Post} entity, saves it using the {@link PostRepository}, and then returns a
    * {@link PostResponse} containing the created post's information.
    *
    * <p>The method performs the following steps:</p>
    * <ol>
-   *   <li>Converts the {@link CreatePostRequest} into a domain {@link Post} entity</li>
+   *   <li>Converts the {@link PostRequest} into a domain {@link Post} entity</li>
    *   <li>Saves the created post using the {@link PostRepository#save(Post)} method.</li>
    *   <li>Transforms saved {@link Post} entity into {@link PostResponse} and returns it.</li>
    * </ol>
@@ -65,7 +65,7 @@ public class CreatePostUseCase {
    * @param postRequest the request data to create a new post; must not be {@code null}.
    * @return a {@link PostResponse} containing the information of the newly created post.
    */
-  public PostResponse create(final CreatePostRequest postRequest) {
+  public PostResponse create(final PostRequest postRequest) {
     if (Objects.isNull(postRequest)) {
       throw new ValidationException("Tried to create a Post with null request");
     }

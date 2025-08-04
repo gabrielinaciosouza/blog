@@ -1,12 +1,13 @@
 package com.gabriel.blog.presentation.resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.requests.FindPostsRequest;
+import com.gabriel.blog.application.requests.PostRequest;
 import com.gabriel.blog.application.responses.FindPostsResponse;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
@@ -14,6 +15,7 @@ import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
 import com.gabriel.blog.application.usecases.GetDeletedPosts;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
+import com.gabriel.blog.application.usecases.UpdatePostUseCase;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,7 @@ class PostResourceTest {
   private FindPostsUseCase findPostsUseCase;
   private DeletePostUseCase deletePostUseCase;
   private GetDeletedPosts getDeletedPosts;
+  private UpdatePostUseCase updatePostUseCase;
   private PostResource postResource;
 
   @BeforeEach
@@ -34,14 +37,15 @@ class PostResourceTest {
     findPostsUseCase = mock(FindPostsUseCase.class);
     deletePostUseCase = mock(DeletePostUseCase.class);
     getDeletedPosts = mock(GetDeletedPosts.class);
+    updatePostUseCase = mock(UpdatePostUseCase.class);
     postResource =
         new PostResource(createPostUseCase, getPostBySlug, findPostsUseCase, deletePostUseCase,
-            getDeletedPosts);
+            getDeletedPosts, updatePostUseCase);
   }
 
   @Test
   void shouldCreatePostSuccessfully() {
-    final var request = new CreatePostRequest("title", "content", "https://example.com/image.jpg");
+    final var request = new PostRequest("title", "content", "https://example.com/image.jpg");
     final var expectedResponse =
         new PostResponse("id", "title", "content", "date", "slug", "https://example.com/image.jpg");
     when(createPostUseCase.create(request)).thenReturn(expectedResponse);
@@ -100,5 +104,18 @@ class PostResourceTest {
 
     assertEquals(expectedPosts, response);
     verify(getDeletedPosts).getDeletedPosts();
+  }
+
+  @Test
+  void shouldUpdatePostSuccessfully() {
+    final var slug = "slug";
+    final var request = new PostRequest("updated title", "updated content",
+        "https://example.com/updated-image.jpg");
+
+    doNothing().when(updatePostUseCase).updatePost(slug, request);
+
+    postResource.updatePost(slug, request);
+
+    verify(updatePostUseCase).updatePost(slug, request);
   }
 }
