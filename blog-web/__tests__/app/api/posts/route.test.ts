@@ -56,7 +56,7 @@ describe("GET /api/posts", () => {
         const data = await response.json();
 
         expect(data).toEqual({ posts: posts, totalCount: 9 });
-        expect(getPosts).toHaveBeenCalledWith(1, 9, { "Content-Type": "application/json" });
+        expect(getPosts).toHaveBeenCalledWith(1, 9, {});
     });
 
     it("should return 500 when an error occurs", async () => {
@@ -68,6 +68,6 @@ describe("GET /api/posts", () => {
         const data = await response.json();
 
         expect(data).toEqual({ message: "Something went wrong!" });
-        expect(getPosts).toHaveBeenCalledWith(1, 9, { "Content-Type": "application/json" });
+        expect(getPosts).toHaveBeenCalledWith(1, 9, {});
     });
 });

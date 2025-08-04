@@ -20,9 +20,7 @@ export const GET = async (req: NextRequest) => {
 };
 
 const buildRequestHeaders = (request: Request): Record<string, string> => {
-    const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-    };
+    const headers: Record<string, string> = {};
 
     const ip = request.headers.get("X-Forwarded-For") || request.headers.get("Remote-Addr");
     if (ip) {
