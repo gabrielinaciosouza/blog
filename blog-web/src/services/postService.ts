@@ -43,11 +43,12 @@ export const getPostBySlug = async (slug: string): Promise<Post> => {
     return new Post(data.postId, data.title, data.content, data.creationDate, data.slug, data.coverImage);
 };
 
-export const getPosts = async (page: number, size: number): Promise<{ posts: Post[], totalCount: number }> => {
+export const getPosts = async (page: number, size: number, headers: Record<string, string> | undefined): Promise<{ posts: Post[], totalCount: number }> => {
     const response = await fetch(`${POSTS_PATH}/find`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            ...headers
         },
         body: JSON.stringify({ page, size }),
     });
