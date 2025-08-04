@@ -1,10 +1,7 @@
 import React, { Suspense } from "react";
 import { render, screen, act, waitFor } from "@testing-library/react";
 import PostList from "@/components/postList/PostList";
-import { getPosts } from "@/services/postService";
 import Post from "@/models/post";
-
-jest.mock("@/services/postService");
 
 jest.mock("next/image", () => ({
     __esModule: true,
@@ -29,11 +26,13 @@ describe("PostList Component", () => {
         { postId: "7", title: "Post 7", content: "<p>Content 7</p>", creationDate: "2025-01-07", slug: "post-7", coverImage: "cover7.jpg" },
     ];
 
-    beforeEach(() => {
-        (getPosts as jest.Mock).mockResolvedValue({ posts, totalCount: posts.length });
-    });
-
     it("should render the header and 'Load more' link if there are more than 6 posts", async () => {
+        global.fetch = jest.fn().mockImplementation(() => {
+            return Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({ posts, totalCount: 7 }),
+            });
+        });
         await act(async () => {
             render(
                 <Suspense fallback={<div>Loading...</div>}>
@@ -49,6 +48,13 @@ describe("PostList Component", () => {
     });
 
     it("should render the first 6 posts", async () => {
+        global.fetch = jest.fn().mockImplementation(() => {
+            return Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({ posts, totalCount: 7 }),
+            });
+        });
+
         await act(async () => {
             render(
                 <Suspense fallback={<div>Loading...</div>}>
@@ -65,7 +71,12 @@ describe("PostList Component", () => {
     });
 
     it("should not render the 'Load more' link if there are 6 or fewer posts", async () => {
-        (getPosts as jest.Mock).mockResolvedValue({ posts: posts.slice(0, 6), totalCount: 6 });
+        global.fetch = jest.fn().mockImplementation(() => {
+            return Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({ posts: posts.slice(0, 6), totalCount: 6 }),
+            });
+        });
         await act(async () => {
             render(
                 <Suspense fallback={<div>Loading...</div>}>
@@ -81,7 +92,12 @@ describe("PostList Component", () => {
     });
 
     it("should handle errors gracefully", async () => {
-        (getPosts as jest.Mock).mockRejectedValue(new Error("Failed to fetch posts"));
+        global.fetch = jest.fn().mockImplementation(() => {
+            return Promise.resolve({
+                ok: false,
+                json: () => Promise.resolve({ message: "Failed to fetch posts" }),
+            });
+        });
         await act(async () => {
             render(
                 <Suspense fallback={<div>Loading...</div>}>

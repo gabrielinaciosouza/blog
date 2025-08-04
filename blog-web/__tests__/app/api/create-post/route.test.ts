@@ -10,6 +10,10 @@ jest.mock("@/services/postService", () => ({
 
 jest.mock('@/services/authService');
 
+jest.mock('next/cache', () => ({
+    revalidatePath: jest.fn(),
+}));
+
 
 jest.mock('next/server', () => ({
     ...jest.requireActual('next/server'),
@@ -123,5 +127,24 @@ describe("POST /api/create-post", () => {
         expect(data).toEqual({ message: "Something went wrong!" });
         expect(response.status).toBe(500);
         expect(createPost).toHaveBeenCalled();
+    });
+
+    it("should revalidate paths after creating a post", async () => {
+        const postData = { title: "New Post", content: "Post content" };
+        (createPost as jest.Mock).mockResolvedValue(postData);
+        const authReponse = new AuthResponse(
+            'validAuthToken',
+            'userId123',
+            'ADMIN',
+            'John Doe',
+            'email@example.com',
+            'http://example.com/picture.jpg'
+        );
+        (validateAuthResponse as jest.Mock).mockReturnValueOnce(authReponse);
+        const request = new NextRequest("http://localhost/api/create-post", { body: JSON.stringify(postData) });
+        const revalidatePath = require('next/cache').revalidatePath;
+        await POST(request);
+        expect(revalidatePath).toHaveBeenCalledWith('/');
+        expect(revalidatePath).toHaveBeenCalledWith('/posts');
     });
 });

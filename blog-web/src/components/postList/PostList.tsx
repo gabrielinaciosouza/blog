@@ -1,12 +1,18 @@
 import React from "react";
 import PostCard from "../postCard/PostCard";
 import Link from "next/link";
-import { getPosts } from "@/services/postService";
 import { Button } from "@/components/ui/button";
+import Post from "@/models/post";
 
 const PostList = async () => {
     try {
-        const { posts, totalCount } = await getPosts(1, 10);
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+        const response = await fetch(`${baseUrl}/api/posts?page=1&size=6`, {
+            cache: "force-cache",
+            method: "GET"
+        });
+
+        const { posts, totalCount } = await response.json();
         return (
             <section className="w-full mt-2 flex flex-col items-center">
                 {totalCount > 0 && (
@@ -15,7 +21,7 @@ const PostList = async () => {
                     </div>
                 )}
                 <div className="flex flex-row flex-wrap gap-4 justify-center items-stretch w-full">
-                    {posts.slice(0, 6).map((post) => (
+                    {posts.slice(0, 6).map((post: Post) => (
                         <PostCard key={post.postId} {...post} />
                     ))}
                 </div>
