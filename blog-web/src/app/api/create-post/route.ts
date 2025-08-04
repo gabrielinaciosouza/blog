@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createPost } from '@/services/postService';
 import { validateAuthResponse } from '@/services/authService';
 import { parse } from 'cookie';
@@ -22,6 +23,9 @@ export async function POST(req: NextRequest) {
         }
         const body = await req.json();
         const response = await createPost(validatedAuthResponse, body);
+
+        revalidatePath('/');
+        revalidatePath('/posts');
         return NextResponse.json(response, { status: 201 });
     }
     catch (err) {
