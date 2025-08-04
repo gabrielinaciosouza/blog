@@ -23,7 +23,6 @@ public class RequestLoggingFilter implements ContainerRequestFilter {
     final String userAgent = requestContext.getHeaderString("User-Agent");
     String ip = requestContext.getHeaderString("X-Forwarded-For");
     if (ip != null) {
-      // Extract only the first IP address from the comma-separated list
       ip = ip.split(",")[0].trim();
     } else {
       ip = requestContext.getHeaderString("X-Real-IP");
@@ -32,19 +31,20 @@ public class RequestLoggingFilter implements ContainerRequestFilter {
       }
     }
 
-    LOG.infof("Incoming request: %s %s | IP: %s | UA: %s", method, path, ip, sanitizedUserAgent);
+    LOG.infof("Incoming request: %s %s | IP: %s | UA: %s", method, path, ip,
+        sanitizeUserAgent(userAgent));
   }
 
   /**
    * Sanitizes the user agent string by removing control characters and truncating to 200 chars.
    */
-  private String sanitizeUserAgent(String userAgent) {
+  private String sanitizeUserAgent(final String userAgent) {
     if (userAgent == null) {
       return "unknown";
     }
     // Remove control characters (including newlines, carriage returns, etc.)
-    String sanitized = userAgent.replaceAll("[\\p{Cntrl}]", "");
-    // Truncate to 200 characters
+    String sanitized = userAgent.replaceAll("\\p{Cntrl}", "");
+
     if (sanitized.length() > 200) {
       sanitized = sanitized.substring(0, 200) + "...";
     }
