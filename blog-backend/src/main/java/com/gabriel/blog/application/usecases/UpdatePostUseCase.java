@@ -4,7 +4,10 @@ import com.gabriel.blog.application.exceptions.NotFoundException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.PostRequest;
+import com.gabriel.blog.domain.valueobjects.Content;
+import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
+import com.gabriel.blog.domain.valueobjects.Title;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
@@ -40,6 +43,8 @@ public class UpdatePostUseCase {
     }
 
     postRepository.findBySlug(Slug.fromString(slug))
+        .map(post -> post.update(new Title(request.title()), new Content(request.content()),
+            new Image(request.coverImage())))
         .ifPresentOrElse(postRepository::update, () -> {
           throw new NotFoundException("Post not found with slug: " + slug);
         });

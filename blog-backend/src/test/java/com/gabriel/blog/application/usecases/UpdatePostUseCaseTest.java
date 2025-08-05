@@ -2,7 +2,6 @@ package com.gabriel.blog.application.usecases;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,8 +9,11 @@ import com.gabriel.blog.application.exceptions.NotFoundException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
 import com.gabriel.blog.application.requests.PostRequest;
-import com.gabriel.blog.domain.entities.Post;
+import com.gabriel.blog.domain.valueobjects.Content;
+import com.gabriel.blog.domain.valueobjects.Image;
 import com.gabriel.blog.domain.valueobjects.Slug;
+import com.gabriel.blog.domain.valueobjects.Title;
+import com.gabriel.blog.fixtures.PostFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,13 +37,16 @@ class UpdatePostUseCaseTest {
   void shouldUpdatePostSuccessfully() {
     final var slug = "test-title";
     final var request = new PostRequest("New Title", "New Content", "https://img.com/new.jpg");
-    final var post = mock(Post.class);
+    final var post = PostFixture.post();
     when(postRepository.findBySlug(Slug.fromString(slug))).thenReturn(Optional.of(post));
 
     updatePostUseCase.updatePost(slug, request);
 
     verify(postRepository).findBySlug(Slug.fromString(slug));
-    verify(postRepository).update(post);
+    verify(postRepository).update(
+        post.update(new Title(request.title()),
+            new Content(request.content()),
+            new Image(request.coverImage())));
   }
 
   @Test
