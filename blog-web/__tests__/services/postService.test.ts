@@ -267,4 +267,62 @@ describe('postService', () => {
     });
   });
 
+  describe('editPost', () => {
+    it('should edit a post successfully', async () => {
+      const postRequest: CreatePostRequest = {
+        title: 'Updated Title',
+        content: 'Updated Content',
+        coverImage: 'updated-cover-image',
+      };
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+      });
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+      await expect(
+        import('@/services/postService').then(({ editPost }) => editPost(authResponse, 'test-slug', postRequest))
+      ).resolves.toBeUndefined();
+      expect(fetch).toHaveBeenCalledWith(
+        `${POSTS_PATH}/test-slug`,
+        expect.objectContaining({
+          method: 'PUT',
+          headers: expect.objectContaining({
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer fake-token',
+          }),
+          body: JSON.stringify(postRequest),
+        })
+      );
+    });
+
+    it('should throw an error if the API call fails', async () => {
+      const postRequest: CreatePostRequest = {
+        title: 'Updated Title',
+        content: 'Updated Content',
+        coverImage: 'updated-cover-image',
+      };
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        json: jest.fn().mockResolvedValue({ message: 'Failed to edit post' }),
+      });
+      const authResponse = new AuthResponse(
+        'validAuthToken',
+        'userId123',
+        'ADMIN',
+        'John Doe',
+        'email@email.com',
+        'http://example.com/picture.jpg'
+      );
+      await expect(
+        import('@/services/postService').then(({ editPost }) => editPost(authResponse, 'test-slug', postRequest))
+      ).rejects.toThrow('Failed to edit post');
+    });
+  });
+
 });
