@@ -129,4 +129,19 @@ class PostTest {
         DeletedStatus.notDeleted());
     assertEquals(coverImage, post.getCoverImage());
   }
+
+  @Test
+  void shouldUpdatePostSuccessfully() {
+    final var post = new Post(id, title, content, creationDate, slug, coverImage,
+        DeletedStatus.notDeleted());
+    final var newTitle = new Title("any title updated");
+    final var newContent = new Content("any content updated");
+    final var newCoverImage = new Image("https://example.com/image-updated.jpg");
+
+    final var updatedPost = post.update(newTitle, newContent, newCoverImage);
+
+    assertEquals(newTitle, updatedPost.getTitle());
+    assertEquals(newContent, updatedPost.getContent());
+    assertEquals(newCoverImage, updatedPost.getCoverImage());
+  }
 }

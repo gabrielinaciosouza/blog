@@ -1,7 +1,7 @@
 package com.gabriel.blog.presentation.resources;
 
-import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.requests.FindPostsRequest;
+import com.gabriel.blog.application.requests.PostRequest;
 import com.gabriel.blog.application.responses.FindPostsResponse;
 import com.gabriel.blog.application.responses.PostResponse;
 import com.gabriel.blog.application.usecases.CreatePostUseCase;
@@ -9,11 +9,13 @@ import com.gabriel.blog.application.usecases.DeletePostUseCase;
 import com.gabriel.blog.application.usecases.FindPostsUseCase;
 import com.gabriel.blog.application.usecases.GetDeletedPosts;
 import com.gabriel.blog.application.usecases.GetPostBySlug;
+import com.gabriel.blog.application.usecases.UpdatePostUseCase;
 import com.gabriel.blog.presentation.filters.Secured;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -35,6 +37,7 @@ public class PostResource {
   private final FindPostsUseCase findPostsUseCase;
   private final DeletePostUseCase deletePostUseCase;
   private final GetDeletedPosts getDeletedPosts;
+  private final UpdatePostUseCase updatePostUseCase;
 
   /**
    * Default constructor for the {@link PostResource} class.
@@ -44,17 +47,20 @@ public class PostResource {
    * @param findPostsUseCase  The repository for managing post data.
    * @param deletePostUseCase The use case for deleting a post.
    * @param getDeletedPosts   The use case for retrieving deleted posts.
+   * @param updatePostUseCase The use case for updating a post.
    */
   public PostResource(final CreatePostUseCase createPostUseCase,
                       final GetPostBySlug getPostBySlug,
                       final FindPostsUseCase findPostsUseCase,
                       final DeletePostUseCase deletePostUseCase,
-                      final GetDeletedPosts getDeletedPosts) {
+                      final GetDeletedPosts getDeletedPosts,
+                      final UpdatePostUseCase updatePostUseCase) {
     this.createPostUseCase = createPostUseCase;
     this.getPostBySlug = getPostBySlug;
     this.findPostsUseCase = findPostsUseCase;
     this.deletePostUseCase = deletePostUseCase;
     this.getDeletedPosts = getDeletedPosts;
+    this.updatePostUseCase = updatePostUseCase;
   }
 
   /**
@@ -68,7 +74,7 @@ public class PostResource {
   @POST
   @ResponseStatus(201)
   @Secured
-  public PostResponse create(final CreatePostRequest request) {
+  public PostResponse create(final PostRequest request) {
     return createPostUseCase.create(request);
   }
 
@@ -127,5 +133,21 @@ public class PostResource {
   @Secured
   public List<PostResponse> getDeletedPosts() {
     return getDeletedPosts.getDeletedPosts();
+  }
+
+  /**
+   * Endpoint to update an existing blog post.
+   * This method receives a request to update a post by its slug and delegates the
+   * action to the corresponding use case.
+   *
+   * @param slug    The slug of the post to update.
+   * @param request The request containing the updated details of the post.
+   */
+  @PUT
+  @Path("/{slug}")
+  @ResponseStatus(204)
+  @Secured
+  public void updatePost(@RestPath final String slug, final PostRequest request) {
+    updatePostUseCase.updatePost(slug, request);
   }
 }

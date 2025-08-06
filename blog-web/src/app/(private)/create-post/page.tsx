@@ -1,25 +1,50 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MarkdownContent from "@/components/MarkdownContent";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useModal } from "@/hooks/useModal";
 import useLoading from "@/hooks/useLoading";
 import CreatePostRequest from "@/models/create-post-request";
 import Loading from "@/components/loading/Loading";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export default function CreatePostPage() {
+
+function CreatePostPageInner() {
+    // ...all the logic and JSX from above, unchanged...
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [coverImage, setCoverImage] = useState<string | null>(null);
+    const [isFetching, setIsFetching] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { isLoading, startLoading, stopLoading } = useLoading();
     const { modalState, openModal, closeModal } = useModal();
+
+    const slug = searchParams.get("slug");
+
+    useEffect(() => {
+        if (!slug) return;
+        setIsFetching(true);
+        (async () => {
+            try {
+                const res = await fetch(`/api/posts/${encodeURIComponent(slug)}`);
+                if (!res.ok) throw new Error("Failed to fetch post");
+                const data = await res.json();
+                setTitle(data.title || "");
+                setContent(data.content || "");
+                setCoverImage(data.coverImage || null);
+            } catch {
+                openModal("Failed to load post for editing", () => { });
+            } finally {
+                setIsFetching(false);
+            }
+        })();
+    }, [slug, openModal]);
 
     const insertAtCursor = (before: string, after = "") => {
         const textarea = textareaRef.current;
@@ -98,20 +123,24 @@ export default function CreatePostPage() {
         startLoading();
 
         try {
-            const res = await fetch('/api/create-post', {
-                method: 'POST',
+            const isEdit = Boolean(slug);
+            const apiUrl = isEdit ? `/api/posts/${encodeURIComponent(slug!)}` : '/api/create-post';
+            const method = isEdit ? 'PUT' : 'POST';
+            const res = await fetch(apiUrl, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(new CreatePostRequest(title, content, coverImage)),
             });
             const response = await res.json();
+            const finalSlug = isEdit ? slug : response.slug;
             if (res.ok && res.status >= 200 && res.status < 300) {
                 openModal("Post saved successfully", () => {
                     setTitle("");
                     setContent("");
                     setCoverImage(null);
-                    router.push(`/posts/${response.slug}`);
+                    router.push(`/posts/${finalSlug}`);
                 });
             } else {
                 openModal(response?.error || "Server error. Please try again.", () => { });
@@ -125,7 +154,7 @@ export default function CreatePostPage() {
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-6">
-            {isLoading && <Loading />}
+            {(isLoading || isFetching) && <Loading />}
             <Dialog open={modalState.isOpen} onOpenChange={closeModal}>
                 <DialogContent>
                     <DialogHeader>
@@ -220,5 +249,13 @@ export default function CreatePostPage() {
             </div>
 
         </div>
+    );
+}
+
+export default function CreatePostPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CreatePostPageInner />
+        </Suspense>
     );
 }

@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.gabriel.blog.application.requests.CreatePostRequest;
 import com.gabriel.blog.application.requests.FindPostsRequest;
+import com.gabriel.blog.application.requests.PostRequest;
 import com.gabriel.blog.fixtures.CreationDateFixture;
 import com.gabriel.blog.infrastructure.models.PostModel;
 import com.google.cloud.Timestamp;
@@ -33,7 +33,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("title", "content", "https://example.com/image.jpg"))
+        .body(new PostRequest("title", "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -68,7 +68,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("title", "content", "https://example.com/image.jpg"))
+        .body(new PostRequest("title", "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -84,7 +84,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest(null, "content", "https://example.com/image.jpg"))
+        .body(new PostRequest(null, "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -95,7 +95,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("   ", "content", "https://example.com/image.jpg"))
+        .body(new PostRequest("   ", "content", "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -109,7 +109,7 @@ class PostResourceIntegrationTest {
     given()
         .when()
         .header(new Header("content-type", MediaType.APPLICATION_JSON))
-        .body(new CreatePostRequest("title", null, "https://example.com/image.jpg"))
+        .body(new PostRequest("title", null, "https://example.com/image.jpg"))
         .post("/posts")
         .then()
         .log()
@@ -440,6 +440,64 @@ class PostResourceIntegrationTest {
         .body("size()", equalTo(1));
 
     deleteTestPosts();
+  }
+
+  @Test
+  void shouldUpdatePost() throws InterruptedException {
+    final var timestamp = Timestamp.ofTimeSecondsAndNanos(
+        CreationDateFixture.creationDate().getValue().getEpochSecond(),
+        CreationDateFixture.creationDate().getValue().getNano());
+    firestore.collection("posts").document("update").set(Map.of(
+        "title", "title",
+        "content", "content",
+        "slug", "slug",
+        "creationDate", timestamp,
+        "coverImage", "https://example.com/image.jpg",
+        "deleted", false
+    ));
+
+    Thread.sleep(1000);
+
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRequest("updated title", "updated content",
+            "https://example.com/updated-image.jpg"))
+        .put("/posts/slug")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(204);
+
+    deleteTestPosts();
+  }
+
+  @Test
+  void shouldReturn404WhenUpdatingNonExistentPost() {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .body(new PostRequest("updated title", "updated content",
+            "https://example.com/updated-image.jpg"))
+        .put("/posts/non-existent")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(404)
+        .body("message", equalTo("Post not found with slug: non-existent"));
+  }
+
+  @Test
+  void shouldReturn422WhenUpdatingPostWithNullRequest() {
+    given()
+        .when()
+        .header(new Header("content-type", MediaType.APPLICATION_JSON))
+        .put("/posts/slug")
+        .then()
+        .log()
+        .ifValidationFails(LogDetail.BODY)
+        .statusCode(400)
+        .body("message", equalTo("Request cannot be null"));
   }
 
   private void createTestPosts() throws InterruptedException {

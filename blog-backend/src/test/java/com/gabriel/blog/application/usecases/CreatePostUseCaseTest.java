@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import com.gabriel.blog.application.exceptions.AlreadyExistsException;
 import com.gabriel.blog.application.exceptions.ValidationException;
 import com.gabriel.blog.application.repositories.PostRepository;
-import com.gabriel.blog.application.requests.CreatePostRequest;
+import com.gabriel.blog.application.requests.PostRequest;
 import com.gabriel.blog.application.services.IdGenerator;
 import com.gabriel.blog.domain.entities.Post;
 import com.gabriel.blog.domain.valueobjects.Slug;
@@ -43,7 +43,7 @@ class CreatePostUseCaseTest {
 
   @Test
   void shouldCreatePostSuccessfully() {
-    final var createPostRequest = new CreatePostRequest(title, content, coverImage);
+    final var createPostRequest = new PostRequest(title, content, coverImage);
 
     final var generatedId = "mocked-id";
     when(idGeneratorMock.generateId("posts")).thenReturn(generatedId);
@@ -53,7 +53,6 @@ class CreatePostUseCaseTest {
 
     verify(idGeneratorMock).generateId("posts");
     verify(postRepositoryMock).save(any(Post.class));
-
 
     assertNotNull(response);
     assertEquals(generatedId, response.postId());
@@ -65,13 +64,11 @@ class CreatePostUseCaseTest {
 
   @Test
   void shouldNotHandleErrorWhenRepositoryFails() {
-    final var createPostRequest = new CreatePostRequest(title, content, coverImage);
-
+    final var createPostRequest = new PostRequest(title, content, coverImage);
 
     final var generatedId = "mocked-id";
     when(idGeneratorMock.generateId("posts")).thenReturn(generatedId);
     when(postRepositoryMock.findBySlug(Slug.fromString("test-title"))).thenReturn(Optional.empty());
-
 
     doThrow(new RuntimeException("Repository error")).when(postRepositoryMock)
         .save(any(Post.class));
@@ -94,7 +91,7 @@ class CreatePostUseCaseTest {
   void shouldThrowAlreadyExistsExceptionWhenPostAlreadyExists() {
     final var title = "Test Title";
     final var content = "Test Content";
-    final var createPostRequest = new CreatePostRequest(title, content, coverImage);
+    final var createPostRequest = new PostRequest(title, content, coverImage);
 
     when(postRepositoryMock.findBySlug(Slug.fromString("test-title")))
         .thenReturn(Optional.of(PostFixture.post()));
@@ -108,7 +105,7 @@ class CreatePostUseCaseTest {
 
   @Test
   void shouldUseDefaultImageWhenCoverImageIsNull() {
-    final var createPostRequest = new CreatePostRequest(title, content, null);
+    final var createPostRequest = new PostRequest(title, content, null);
 
     final var generatedId = "mocked-id";
     when(idGeneratorMock.generateId("posts")).thenReturn(generatedId);
@@ -128,3 +125,4 @@ class CreatePostUseCaseTest {
     assertNotNull(response.coverImage());
   }
 }
+

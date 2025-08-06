@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Post from "@/models/post";
@@ -18,7 +19,6 @@ type AdminDashboardProps = {
     deletedPosts: Post[];
     isLoading: boolean;
     handleDelete: (slug: string) => void;
-    handleCreateNewPost: () => void;
     page: number;
     hasPrev: boolean;
     hasNext: boolean;
@@ -26,15 +26,21 @@ type AdminDashboardProps = {
     pageSize: number;
 };
 
+import { useRouter } from "next/navigation";
+
 export default function AdminDashboard({
     posts,
     deletedPosts,
     isLoading,
     handleDelete,
-    handleCreateNewPost,
 }: AdminDashboardProps) {
+    const router = useRouter();
     const [activeMenu, setActiveMenu] = React.useState("Active Posts");
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+    const handleEdit = (slug: string) => {
+        router.push(`/create-post?slug=${encodeURIComponent(slug)}`);
+    };
 
     return (
         <div className="min-h-screen bg-muted/60 flex items-stretch rounded-xl relative">
@@ -120,7 +126,7 @@ export default function AdminDashboard({
                         </button>
                         <h2 className="text-2xl font-bold text-foreground ml-0">{activeMenu}</h2>
                     </div>
-                    <Button onClick={handleCreateNewPost} variant="default" className="px-4 py-1.5 text-sm font-medium shadow-sm ml-auto">
+                    <Button onClick={() => router.push('/create-post')} variant="default" className="px-4 py-1.5 text-sm font-medium shadow-sm ml-auto">
                         + New Post
                     </Button>
                 </div>
@@ -134,7 +140,12 @@ export default function AdminDashboard({
                         posts.length > 0 ? (
                             <div className="flex flex-col gap-4 flex-1">
                                 {posts.map((post: Post) => (
-                                    <PostTile key={post.postId} post={post} onDelete={() => handleDelete(post.slug)} />
+                                    <PostTile
+                                        key={post.postId}
+                                        post={post}
+                                        onEdit={() => handleEdit(post.slug)}
+                                        onDelete={() => handleDelete(post.slug)}
+                                    />
                                 ))}
                             </div>
                         ) : (

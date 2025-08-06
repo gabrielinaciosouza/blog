@@ -55,6 +55,27 @@ public class Post extends AbstractEntity {
     this.deletedStatus = nonNull(deletedStatus, "Tried to create a Post with a null deletedStatus");
   }
 
+  /**
+   * Updates the post with the provided title, content, and cover image.
+   *
+   * @param title      the new title for the post, must not be null
+   * @param content    the new content for the post, must not be null
+   * @param coverImage the new cover image for the post, can be null
+   * @return a new Post instance with updated values
+   * @throws DomainException if title or content is null
+   */
+  public Post update(final Title title, final Content content, final Image coverImage) {
+    return new Post(
+        this.getId(),
+        nonNull(title, "Tried to update a Post with a null title"),
+        nonNull(content, "Tried to update a Post with a null content"),
+        this.creationDate,
+        this.slug,
+        coverImage == null ? DEFAULT_IMAGE : coverImage,
+        this.deletedStatus
+    );
+  }
+
   public Title getTitle() {
     return title;
   }

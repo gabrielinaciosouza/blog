@@ -2,8 +2,9 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import CreatePostPage from '@/app/(private)/create-post/page';
 import useLoading from '@/hooks/useLoading';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import userEvent from '@testing-library/user-event';
+import Post from '@/models/post';
 
 jest.mock('@/hooks/useLoading', () => ({
   __esModule: true,
@@ -19,8 +20,16 @@ jest.mock('@/hooks/useLoading', () => ({
   __esModule: true,
   default: jest.fn(),
 }));
+
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(() => ({
+    get: () => null
+  })),
 }));
 
 global.fetch = jest.fn();
@@ -344,6 +353,63 @@ describe('CreatePostPage', () => {
       expect(modal).toBeInTheDocument();
       // Try to find the error message in the modal textContent
       expect(modal?.textContent?.toLowerCase()).toContain('server error');
+    });
+  });
+
+  it('fetch slug from search params and sets it in the editor', async () => {
+    const mockSlug = 'test-slug';
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue(mockSlug),
+    });
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        id: '1',
+        title: 'Test Title',
+        content: 'Test Content',
+        date: '2025-01-01',
+        slug: mockSlug,
+        image: 'http://image.com',
+      }),
+    } as Response);
+    setup(<CreatePostPage />);
+
+    const titleInput = screen.getByPlaceholderText('Title');
+    await waitFor(() => {
+      expect(titleInput).toHaveValue('Test Title');
+      expect(screen.getByPlaceholderText('Write your post in Markdown...')).toHaveValue('Test Content');
+    });
+  });
+
+  it('handlePublish handles editing existing post', async () => {
+    const mockSlug = 'test-slug';
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue(mockSlug),
+    });
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      status: 204,
+      json: async () => ({
+        postId: '1',
+        title: 'Test Title',
+        content: 'Test Content',
+        creationDate: '2025-01-01',
+        slug: mockSlug,
+        coverImage: 'http://image.com',
+      }),
+    } as Response);
+
+    const { user } = setup(<CreatePostPage />);
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Title')).toHaveValue('Test Title');
+      expect(screen.getByPlaceholderText('Write your post in Markdown...')).toHaveValue('Test Content');
+    });
+
+    await user.click(screen.getByText('Publish'));
+    await waitFor(() => {
+      const modal = screen.queryByRole('dialog');
+      expect(modal).toBeInTheDocument();
+      expect(modal?.textContent?.toLowerCase()).toContain('post saved successfully');
     });
   });
 });

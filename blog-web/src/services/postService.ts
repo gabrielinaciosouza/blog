@@ -95,3 +95,20 @@ export const deletePost = async (authResponse: AuthResponse, slug: string): Prom
         throw new Error("Failed to delete post");
     }
 }
+
+export const editPost = async (authResponse: AuthResponse, slug: string, request: CreatePostRequest): Promise<void> => {
+    const idToken = await getIdTokenByCustomToken(authResponse.authToken);
+
+    const response = await fetch(`${POSTS_PATH}/${slug}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to edit post");
+    }
+}

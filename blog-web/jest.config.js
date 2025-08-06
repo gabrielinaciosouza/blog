@@ -75,6 +75,10 @@ const customJestConfig = {
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
   ],
+  setupFiles: ['<rootDir>/setup.jest.ts'],
+  globals: {
+    Uint8Array: Uint8Array,
+  },
   coverageThreshold: {
     global: {
       branches: 90,
