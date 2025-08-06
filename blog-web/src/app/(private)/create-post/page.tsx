@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MarkdownContent from "@/components/MarkdownContent";
@@ -11,7 +11,9 @@ import CreatePostRequest from "@/models/create-post-request";
 import Loading from "@/components/loading/Loading";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export default function CreatePostPage() {
+
+function CreatePostPageInner() {
+    // ...all the logic and JSX from above, unchanged...
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -42,7 +44,7 @@ export default function CreatePostPage() {
                 setIsFetching(false);
             }
         })();
-    }, [slug]);
+    }, [slug, openModal]);
 
     const insertAtCursor = (before: string, after = "") => {
         const textarea = textareaRef.current;
@@ -247,5 +249,13 @@ export default function CreatePostPage() {
             </div>
 
         </div>
+    );
+}
+
+export default function CreatePostPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CreatePostPageInner />
+        </Suspense>
     );
 }

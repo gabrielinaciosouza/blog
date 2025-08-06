@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Post from "@/models/post";
@@ -18,7 +19,6 @@ type AdminDashboardProps = {
     deletedPosts: Post[];
     isLoading: boolean;
     handleDelete: (slug: string) => void;
-    handleCreateNewPost: () => void;
     page: number;
     hasPrev: boolean;
     hasNext: boolean;
@@ -33,7 +33,6 @@ export default function AdminDashboard({
     deletedPosts,
     isLoading,
     handleDelete,
-    handleCreateNewPost,
 }: AdminDashboardProps) {
     const router = useRouter();
     const [activeMenu, setActiveMenu] = React.useState("Active Posts");

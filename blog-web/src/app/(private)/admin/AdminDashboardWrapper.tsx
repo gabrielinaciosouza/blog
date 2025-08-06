@@ -73,9 +73,6 @@ export default function AdminDashboardWrapper() {
         }
     };
 
-    const handleCreateNewPost = () => {
-        router.push('/create-post');
-    };
 
     const totalPages = Math.ceil(totalCount / pageSize);
     const hasPrev = page > 1;
@@ -87,7 +84,6 @@ export default function AdminDashboardWrapper() {
             deletedPosts={deletedPosts}
             isLoading={isLoading}
             handleDelete={handleDelete}
-            handleCreateNewPost={handleCreateNewPost}
             page={page}
             hasPrev={hasPrev}
             hasNext={hasNext}
