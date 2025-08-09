@@ -3,6 +3,8 @@ import PostCard from "@/components/postCard/PostCard"
 import Post from "@/models/post";
 import Pagination from "@/components/pagination/Pagination";
 
+export const dynamic = 'force-dynamic';
+
 const POST_PER_PAGE = 9;
 const getData = async (page: number): Promise<{ posts: Post[], totalCount: number }> => {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";

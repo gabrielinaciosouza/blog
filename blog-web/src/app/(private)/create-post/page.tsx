@@ -27,6 +27,7 @@ function CreatePostPageInner() {
 
     const slug = searchParams.get("slug");
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (!slug) return;
         setIsFetching(true);
@@ -44,7 +45,7 @@ function CreatePostPageInner() {
                 setIsFetching(false);
             }
         })();
-    }, [slug, openModal]);
+    }, [slug]);
 
     const insertAtCursor = (before: string, after = "") => {
         const textarea = textareaRef.current;
